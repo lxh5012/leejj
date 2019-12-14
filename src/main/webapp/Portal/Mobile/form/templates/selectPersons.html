@@ -1,0 +1,53 @@
+<ion-view title="选择用户" class="fetchUser" hide-nav-bar="{{$root.dingMobile.hideHeader}}">
+    <ion-nav-bar class="bar" >
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear ion-ios-arrow-left" ng-click="BackPage()">{{names.Back}}</button>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+
+    <ion-content ng-class="{'has-header' : NavBarShow }" class="has-footer ">
+        <div class="select-wrapper">
+            <ul ng-if="selectPersons.userLists && selectPersons.userLists.length > 0">
+                <li class="select-item" ng-repeat="item in selectPersons.userLists track by $index" ng-click="selectPersonItem(item, $index)">
+                        <span class="select-check" >
+                                <i class="icon ion-checkmark-circled" ng-if="item.checked"></i>
+                             <i class="icon ion-ios-circle-outline" ng-if="!item.checked"></i>
+                        </span>
+                    <div class="select-right">
+                        <div class="select-right-box">
+                                <span class="select-user-img">
+                                    <img src="Mobile/img/userman.png" ng-if="item.ExtendObject.UserGender===1" alt="">
+							        <img src="Mobile/img/userwoman.png" ng-if="item.ExtendObject.UserGender===2" alt="">
+							        <img src="Mobile/img/userman.png" ng-if="item.ExtendObject.UserGender===0" alt="">
+                                </span>
+                            <span class="select-username">{{item.Text}}</span>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="no-data" ng-if="selectPersons.personList.length < 1">
+                暂无数据
+            </div>
+        </div>
+    </ion-content>
+
+    <ion-footer-bar>
+        <div class="bottom-button">
+            <div class="select-btn-left bb-center f16" ng-click="checkedAll($event)">
+                <!--<label class="checkbox">-->
+                <!--<input type="checkbox" ng-model="selectPersons.checkedAllStatus" ng-checked="selectPersons.checkedAllStatus">-->
+                <!--</label>-->
+                <span class="select-check" >
+                      <i class="icon ion-checkmark-circled" ng-if="selectPersons.checkedAllStatus"></i>
+                     <i class="icon ion-ios-circle-outline" ng-if="!selectPersons.checkedAllStatus"></i>
+                </span>
+
+            </div>
+            <div  id="selectAll" class="select-btn-right bb-left f16" ng-click="checkedAll($event)" ng-show="!SearchMode">
+                <span class="select-text">{{names.SheetUser.checkAll}}</span>
+                <span>(<span>{{selectPersons.selectedPersonList.length}}</span>)</span>
+            </div>
+            <div id="confirm" class="select-btn-right f16" ng-click="selectedPerson()" ng-class="{' all-right ':SearchMode,'bb-right':!SearchMode}">{{names.SheetUser.confirm}}</div>
+        </div>
+    </ion-footer-bar>
+</ion-view>

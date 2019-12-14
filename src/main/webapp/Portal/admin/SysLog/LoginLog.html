@@ -1,0 +1,165 @@
+﻿<script>
+    //资源文件
+    $(function () {
+        initQuery();
+        $("#ToolBar").AspLinkToolBar();
+        $(".H3Panel").BuildPanel({ excludeIDs: ["LoginUserList"] });
+        $("#divUser").SheetUser({ Editable: true, Visiable: true, Originate: true });
+        initDefaultDate();
+        // 打开即执行查询
+        QueryFun();
+    })
+
+    function initQuery() {
+        $.ajax({
+            url: $.Controller.LoginLog.GetSiteType,
+            type: 'get',
+            dataType: "json",
+            async: false,//同步执行
+            success: function (result) {
+                if (result.Success) {
+                    var defaultSiteType = { id: "-1", text: $.Lang("LoginLog.AllType") };
+                    result.Extend.unshift(defaultSiteType);
+                    if (result.Extend) {
+                        $.each(result.Extend, function (i, n) {
+                            result.Extend[i].text = $.Lang(result.Extend[i].text);
+                        });
+                    }
+                    //初始化下拉菜单
+                    $("#sltSitetype").ligerComboBox({
+                        data: result.Extend, valueFieldID: 'SiteType', value: "-1"
+                    });
+                } else {
+                    $.H3Dialog.Warn({ content: $.Lang(result.Message) });
+                }
+            }
+        });
+    }
+    function QueryFun() {
+        var startTime = $("input[id=startTime]").val();
+        var endTime = $("input[id=endTime]").val();
+        var userid = $("#divUser").SheetUIManager().GetValue();
+        var siteType = $("#SiteType").val() || "";
+        var loginIP = $("input[id=loginIP]").val();
+        if (startTime && endTime && (startTime > endTime)) {
+            $.H3Dialog.Warn({ content: $.Lang("msgGlobalString.Portal_TimeMsg") });
+        }
+        else {
+            CreateLigerGrid(
+             $("#LoginUserList"),
+             GetCategoryColumns(),
+             $.Controller.LoginLog.GetLoginLogList,
+             false, "98%",
+             null, null, null,
+             {
+                 startTime: startTime,
+                 endTime: endTime,
+                 userId: userid,
+                 siteType: siteType,
+                 loginIP: loginIP
+             }
+            );
+        }
+    }
+    function GetCategoryColumns() {
+        var userCode = $.Lang("LoginLog.UserCode");
+        var userId = $.Lang("LoginLog.UserID");
+        var sitetype = $.Lang("LoginLog.SiteType");
+        var sitetypeWeb = $.Lang("LoginLog.SiteTypeWeb");
+        var sitetypeAdmin = $.Lang("LoginLog.SiteTypeAdmin");
+        var sitetypeMobile = $.Lang("LoginLog.SiteTypeMobile");
+        var loginTime = $.Lang("LoginLog.LoginTime");
+        var browser = $.Lang("LoginLog.Browser");
+        var platform = $.Lang("LoginLog.Platform");
+        var ip = $.Lang("LoginLog.IP");
+        return [
+            { display: 'ObjectID', name: 'ObjectID', hide: true },
+            { display: userCode, name: 'UserID' },
+            //{
+            //    display: '类型', name: 'LogType', render: function (row) {
+            //        return "<span>登陆</span>";
+            //    }
+            //},
+            { display: userId, name: 'UserName' },
+            {
+                display: sitetype, name: "SiteType", render: function (row) {
+                    //var siteType;
+                    //switch (row.SiteType) {
+                    //    case "0":
+                    //        siteType = "LoginLog.UserPortal";
+                    //        break;
+                    //    case "1":
+                    //        siteType = "LoginLog.AdminPortal";
+                    //        break;
+                    //    case "2":
+                    //        siteType = "LoginLog.Mobile";
+                    //        break;
+                    //    case "3":
+                    //        siteType = "LoginLog.WeChat";
+                    //        break;
+                    //    default:
+                    //        sitetype = "";
+                    //}
+                    return $.Lang(row.SiteType);
+                }
+            },
+            { display: loginTime, name: 'LoginTime' },
+            { display: browser, name: 'Browser' },
+            { display: ip, name: 'IP' },
+            { display: platform, name: 'PlatForm' }
+            //{ display: '设备号', name: 'DeviceToken' },
+            //{ display: 'SID', name: 'MobileSID' }
+
+        ];
+    }
+</script>
+
+<div id="ToolBar">
+    <a href="#" id="lnkQuery" onclick="QueryFun()" data-icon="fa fa-search" data-lang="LoginLog.Button_Q">
+    </a>
+</div>
+<div class="H3Panel">
+    <table class="tableList">
+        <tr>
+            <td data-lang="LoginLog.Date"></td>
+            <td>
+                <div class="tableNoCss">
+                    <table>
+                        <tr>
+                            <td class="tableNoCss" style="width:25px" data-lang="ExceptionLog.From">
+                                从
+                            </td>
+                            <td class="tableNoCss">
+                                <input name="startTime" type="text" id="startTime" onclick="InitWdatePicker(this)" style="width:95px;" data-datetime="start">
+                            </td>
+                            <td class="tableNoCss" style="width: 21px; padding-left: 10px" data-lang="ExceptionLog.To">
+                                到
+                            </td>
+                            <td class="tableNoCss">
+                                <input name="endTime" type="text" id="endTime" onclick="InitWdatePicker(this)" style="width:95px;" data-datetime="end">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+            <td data-lang="LoginLog.SiteType"></td>
+            <td>
+                <input id="sltSitetype" />
+            </td>
+        </tr>
+        <tr>
+        	<td data-lang="LoginLog.UserAccount"></td>
+            <td>
+                <div style="width:255px;" class="tableNoCss" id="divUser"></div>
+            </td>
+            <td class="tableNoCss" data-lang="LoginLog.LoginIP"></td>
+            <td>
+                <input id="loginIP" type="text" />
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="H3Panel">
+    <span data-lang="LoginLog.ListName"></span>
+    <div id="LoginUserList"></div>
+</div>

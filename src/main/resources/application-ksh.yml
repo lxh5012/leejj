@@ -1,0 +1,70 @@
+server:
+  #  address: 127.0.0.1
+  address: 192.168.8.251
+  port: 8081
+  compression:
+    enabled: true
+
+spring:
+  application:
+    name: portal-web
+
+  profiles:
+    active: ksh
+
+  cache:
+    type: redis
+
+  redis:
+    host: 127.0.0.1
+    database: 1
+    password: 123456
+  #    password: foobared
+
+  mvc:
+    locale: zh_CN
+    date-format: yyyy-MM-dd HH:mm:ss
+
+  thymeleaf:
+    cache: false
+    check-template: false
+
+  mobile:
+    devicedelegatingviewresolver:
+      enabled: true
+      mobile-prefix: mobile/
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    org.springframework.boot: info
+    org.springframework.security: info
+    OThinker: info
+    com.h3bpm: info
+
+h3:
+  cas:
+    enabled: false
+    server_url: http://127.0.0.1:8089
+    localhost: http://127.0.0.1:8081
+    success_target_url: /Portal/#/app/Workflow/MyUnfinishedWorkItem
+    failure_targer_url: /Portal/#/app/Workflow/MyUnfinishedWorkItem
+#    新版移动端
+#  scanBasePackages : OThinker.H3.Controller.*,com.h3bpm.mobile.controller,com.h3bpm.base.controller.handler
+#  旧版移动端
+  scanBasePackages : OThinker.H3.Controller.*,OThinker.H3.Mobile.Controller,com.h3bpm.base.controller.handler
+
+
+formEngine:
+  api:
+    host: http://192.168.8.251:8083/restful
+  page:
+    host: http://192.168.8.251:8080
+
+  instance:
+    state:
+      url: index.html#/InstanceDetail/{0}/{1}//?WorkItemType={2}
+      default:
+        url: index.html#/WorkflowInfo///{0}/{1}
+      circulate:
+        url: index.html#/InstanceDetail/{0}///?WorkItemType=Circulate

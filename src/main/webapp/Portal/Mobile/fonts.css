@@ -1,0 +1,116 @@
+@font-face {
+    font-family: 'icomoona';
+    src: url('fonts/icomoon.eot?z4lcj9');
+    src: url('fonts/icomoon.eot?z4lcj9#iefix') format('embedded-opentype'),
+        url('fonts/icomoon.ttf?z4lcj9') format('truetype'),
+        url('fonts/icomoon.woff?z4lcj9') format('woff'),
+        url('fonts/icomoon.svg?z4lcj9#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+.icon-emp:before,
+.icon-eye:before,
+.icon-eyeclose:before,
+.icon-faqinew:before,
+.icon-faqiopen:before,
+.icon-liuchengnew:before,
+.icon-liuchengopen:before,
+.icon-shouyenew:before,
+.icon-shouyeopen:before ,
+.icon-setting:before,
+.icon-shoucaang_2:before,
+.icon-goug:before,
+.icon-gouxuang:before,
+.icon-star:before,
+.icon-search:before,
+.icon-shaixuan:before {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icomoona' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-emp:before {
+    content: "\e900";
+    color: #1296db;
+}
+
+.icon-eye:before {
+    content: "\e901";
+    color: #77bcfa;
+}
+
+.icon-eyeclose:before {
+    content: "\e902";
+    color: #8b939f;
+}
+
+.icon-faqinew:before {
+    content: "\e903";
+    color: #78828f;
+}
+
+.icon-faqiopen:before {
+    content: "\e904";
+    color: #77bcfa;
+}
+
+.icon-goug:before {
+    content: "\e905";
+    color: #fff;
+}
+
+.icon-liuchengnew:before {
+    content: "\e906";
+    color: #78828f;
+}
+
+.icon-liuchengopen:before {
+    content: "\e907";
+    color: #77bcfa;
+}
+
+.icon-search:before {
+    content: "\e908";
+    color: #BDBDBD;
+}
+
+.icon-setting:before {
+    content: "\e909";
+    color: #77bcfa;
+}
+
+.icon-shaixuan:before {
+    content: "\e90a";
+    color: #a7a7a7;
+}
+
+.icon-shoucaang_2:before {
+    content: "\e90b";
+    color: #d3d8dc;
+}
+
+.icon-shouyenew:before {
+    content: "\e90c";
+    color: #78828f;
+}
+.font-yingyong{
+    font-size: 22px;
+}
+.icon-shouyeopen:before {
+    content: "\e90d";
+    color: #77bcfa;
+}
+
+.icon-star:before {
+    content: "\e90e";
+    color: #edac5b;
+}
+

@@ -1,0 +1,94 @@
+p{
+    margin: 0!important;
+}
+.fetchUser .scroll-content, .scroll {
+    background: #fff;
+}
+
+#ionicForm ion-footer-bar {
+    padding: 0;
+    border-top: 1px solid #e4e4e4;
+    display: flex;
+    justify-content: space-between;
+}
+
+.fetchUser .bar-footer .footer-comment {
+    background: #ffff;
+    text-align: center;
+    font-size: 17px;
+    line-height: 44px;
+    width: 100%;
+}
+
+.comment-box{
+    cursor: pointer;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.comment-box i{
+    color: #bcbcbc;
+    font-size: 16px;
+    line-height: 20px;
+}
+
+.comment-box span{
+    color: #888;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.comment-list{
+    height: auto;
+}
+
+.comment-item{
+    padding: 10px;
+    display: flex;
+    border-bottom: 0.5px solid #e4e4e4;
+}
+
+.comment-avator{
+    text-align: center;
+    flex: 0 0 15%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.comment-avator img{
+    border-radius:50%;
+    width: 40px;
+    height: 40px;
+}
+
+.comment-right{
+    flex: 1 0 85%;
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-right p{
+    font-size: 16px;
+    padding: 5px 0;
+}
+.comment-right span{
+    color: #2c3038;
+}
+.comment-right .title{
+    color: #797f89;
+}
+
+.comment-detail{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.at-user{
+    color: #007aff!important;
+    font-size: 16px;
+}

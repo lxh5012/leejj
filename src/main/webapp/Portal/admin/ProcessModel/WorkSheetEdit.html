@@ -1,0 +1,250 @@
+﻿<script>
+    var pageData = {
+        WorkSheet: {},
+        workType: '',
+        workValue: '0',
+        packageCode: '',
+        relationFromId: '', // 选中类型
+        relationFromObj: '', // 选中
+        Types: [
+            { Value: "0", Text: $.Lang("WorkSheetEdit.System"),type:'DefaultSheet',checked: true },
+            { Value: "1", Text: $.Lang("WorkSheetEdit.Custom"),type:'CustomSheet',checked: false },
+            { Value: "2", Text: $.Lang("WorkSheetEdit.Engine"),type:'FormEngineSheet',checked: false }
+            ],
+        LanData: $.Languages,
+        CalendarList: []
+    };
+    $(function () {
+        //初始化页面数据
+        initPageData();
+        var model = new Vue({
+            el: "#content",
+            data: pageData,
+            methods: {
+                changeType: function(item) {
+                    pageData.workType = item.Value;
+                    pageData.workValue = item.Value;
+                    pageData.WorkSheet.Type = item.type;
+                    if(item.Value=='2'){
+                        initSelectData(pageData.packageCode);
+                    }else{
+                        pageData.relationFromId = '';// 清空选中
+                        pageData.relationFromObj = {};// 清空选中
+                    }
+                },
+                selectFn: function(event) {
+                    console.log(pageData.relationFromId,'relationFromId')
+                    var eventId = event.target.value;
+                    var eventObj = {};
+                    pageData.CalendarList.forEach(function (item) {
+                        if(item.code == eventId) {
+                            eventObj = item
+                        }
+                    })
+                    // console.log(eventObj,'eventObj')
+                    pageData.relationFromObj = eventObj || {}
+                },
+                saveData: function () {
+                    this.$validate(true);//表单验证
+                    var validateCondition;
+                    if (pageData.workType == "1") {
+                        validateCondition = this.$formValidator.invalid;
+                    } else if(pageData.workType == "0"){
+                        validateCondition = this.$formValidator.System.invalid;
+                    } else {
+                        validateCondition = ''
+                    }
+                    if (validateCondition) {
+                        // $.H3Dialog.Warn({ content: $.Lang("msgGlobalString.FormInvalid") });
+                    } else {
+                        saveData();
+                    }
+                }
+            }
+        });
+        $("#ToolBar").AspLinkToolBar();
+        $(".H3Panel").BuildPanel();
+        //初始化页面数据
+        function initPageData() {
+            var id = getUrlParam("ID") || "";
+            var parentCode = getUrlParam("ParentCode") || "";
+            var parentId = getUrlParam("ParentID") || "";
+            if (id || parentId || parentCode) {
+                $.ajax({
+                    url: $.Controller.WorkSheet.GetWorkSheet,
+                    type: 'get',
+                    dataType: "json",
+                    data: { id: id, parentId: parentId, parentCode: parentCode },
+                    async: false,//同步执行
+                    success: function (result) {
+                        var type = result.Extend.Type;
+                        pageData.packageCode = result.Extend.Root
+                        switch (type) {
+                            case 'DefaultSheet':
+                                pageData.workValue = '0';
+                                pageData.workType = '0';
+                                break;
+                            case 'CustomSheet':
+                                pageData.workValue = '1';
+                                pageData.workType = '1';
+                                break;
+                            case 'FormEngineSheet':
+                                pageData.workValue = '2';
+                                pageData.workType = '2';
+                                initSelectData(pageData.packageCode);
+                                pageData.relationFromId = result.Extend.relationFromCode;
+                                break;
+                            default:
+                                pageData.workValue = '0';
+                                pageData.workType = '0';
+                                break
+                        }
+                        pageData.WorkSheet = result.Extend;
+                    }
+                });
+            }
+        }
+        //保存
+        function saveData() {
+            if(pageData.relationFromId) { // 选中类型
+                pageData.WorkSheet.relationFromCode = pageData.relationFromObj.code;
+                pageData.WorkSheet.relationSchemaCode = pageData.relationFromObj.schemaCode;
+            }
+            $.ajax({
+                url: $.Controller.WorkSheet.SaveWorkSheet,
+                type: "post",
+                dataType: "json",
+                data: pageData.WorkSheet,
+                success: function (result) {
+                    if (result.Success) {
+                        top.ReloadNode(pageData.WorkSheet.ParentId);
+                        $.H3Dialog.Success({ content: $.Lang("msgGlobalString.SaveSucced") });
+                        // console.log(parent.H3DialogManger,'parent')
+                        if(parent) {
+                            parent.H3DialogManger.Close();
+                        }
+                    } else {
+                        if (result.Message) {
+                            $.H3Dialog.Warn({ content: $.Lang(result.Message) });
+                        } else {
+                            $.H3Dialog.Warn({ content: $.Lang("msgGlobalString.CodeExisted") });
+                        }
+                    }
+                }
+            });
+        }
+        //初始选择列表
+        function initSelectData(code) {
+            var parentCode = getUrlParam("ParentCode") || code;
+            $.ajax({
+                url: $.Controller.WorkSheet.relationFromList,
+                type: 'get',
+                dataType: "json",
+                async: false,//同步执行
+                data: {
+                    packageCode: parentCode
+                },
+                success: function (result) {
+                    // console.log(result, 'result');
+                    if(result.code == '200' && result.data.length > 0) {
+                        pageData.CalendarList = result.data;
+                        pageData.relationFromId = result.data[0].code; // 初始选中引擎类型
+                        pageData.relationFromObj  = result.data[0]; // 初始选中引擎类型
+                    } else {
+                        $.H3Dialog.Warn({ content: result.errorMsg });
+                    }
+                }
+            });
+        }
+    });
+
+</script>
+<validator name="formValidator" v-bind:groups="['Custom','System']">
+    <div id="ToolBar">
+        <a id="lnkOK" v-on:click="saveData" data-icon="fa fa-save" href="javascript:void(0)" data-lang="GlobalButton.Save">保存</a>
+    </div>
+    <div class="H3Panel">
+        <span>{{LanData.msgGlobalString.BasicInfo}}</span>
+        <table>
+            <tr>
+                <td>{{LanData.WorkSheetEdit.Directory}}</td>
+                <td>
+                    <label>{{WorkSheet.Root}}</label>
+                </td>
+            </tr>
+            <tr>
+                <td>{{LanData.WorkSheetEdit.Code}}</td>
+                <td>
+                    <input group="System" v-model="WorkSheet.Code" detect-change="on" detect-blur="on" initial="off" v-validate:code="['htmlEscape','required']" type="text" v-bind:disabled="WorkSheet.ObjectID" />
+                    <span style="color:Red;" v-if="$formValidator.code.required" data-lang="msgGlobalString.EnumValueRequired"></span>
+                     <span style="color:Red;" v-if="$formValidator.code.htmlEscape">{{LanData.msgGlobalString.InvalidCode}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>{{LanData.WorkSheetEdit.Name}}</td>
+                <td>
+                    <input group="System" v-model="WorkSheet.Name" detect-change="on" detect-blur="on" initial="off" v-validate:name="['htmlEscape','required']" type="text" />
+                    <span style="color:Red;" v-if="$formValidator.name.required" data-lang="msgGlobalString.EnumValueRequired"></span>
+                     <span style="color:Red;" v-if="$formValidator.name.htmlEscape">{{LanData.msgGlobalString.InvalidCode}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>{{LanData.WorkSheetEdit.Type}}</td>
+                <td colspan="2" class="tableNoCss">
+                    <table border="0">
+                        <tr>
+                            <td v-for="item in Types" style="padding-right:50px;">
+                                <input type="radio" value="{{item.Value}}"  v-model="workValue" v-on:click="changeType(item)" />
+                                <label>{{item.Text}}</label>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <!--<tbody v-show="WorkSheet.Type=='false'">-->
+            <tbody v-show="workType=='1'">
+                <tr class="sheet">
+                    <td>{{LanData.WorkSheetEdit.PC}}</td>
+                    <td>
+                        <input group="Custom" v-model="WorkSheet.PCAdd" detect-change="on" detect-blur="on" initial="off" v-validate:pc="['htmlEscape','required']" type="text" />
+                        <span style="color:Red;" v-if="$formValidator.Custom.invalid" data-lang="msgGlobalString.EnumValueRequired"></span>
+                        <span style="color:Red;" v-if="$formValidator.Custom.htmlEscape">{{LanData.msgGlobalString.InvalidCode}}</span>
+                    </td>
+                </tr>
+                <tr class="sheet">
+                    <td>{{LanData.WorkSheetEdit.Mobile}}</td>
+                    <td>
+                        <input v-model="WorkSheet.isMobileAdd" type="checkbox" />{{LanData.WorkSheetEdit.AddTip}}
+                        <input v-model="WorkSheet.MobileAdd" type="text" v-show="!WorkSheet.isMobileAdd" />
+                    </td>
+                </tr>
+                <tr class="sheet">
+                    <td>{{LanData.WorkSheetEdit.Print}}</td>
+                    <td>
+                        <input type="checkbox" v-model="WorkSheet.isPrintAdd" />{{LanData.WorkSheetEdit.AddTip}}
+                        <input v-model="WorkSheet.PrintAdd" type="text" v-show="!WorkSheet.isPrintAdd" />
+                    </td>
+                </tr>
+            </tbody>
+            <tbody v-show="workType=='2'">
+                <tr class="sheet">
+                    <td>{{LanData.FormulaEditor.Type}}</td>
+                    <td>
+                        <select v-model="relationFromId" v-on:change="selectFn($event)">
+                            <option v-for="option in CalendarList" v-bind:value="option.code">
+                                {{option.code}}
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+            <tr style="display:none;">
+                <td>{{LanData.WorkSheetEdit.SortKey}}</td>
+                <td colspan="3">
+                    <input detect-change="on" detect-blur="on" initial="off" v-validate:sort-key="['number']" type="text" v-model="WorkSheet.SortKey" />
+                    <span style="color:Red;" v-if="$formValidator.sortKey.number">{{LanData.msgGlobalString.NumberValidate}}</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</validator>

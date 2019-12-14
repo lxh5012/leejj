@@ -1,0 +1,175 @@
+﻿/*tab 页的编辑表格*/
+.tableList {
+    /*margin-left: 20px;*/
+    width: 100%;
+}
+
+    .tableList tr td {
+        padding-left: 0px;
+        border: none;
+    }
+
+    .tableList .tableLeft {
+        width: 120px;
+        height: 30px;
+        line-height: 30px;
+        padding-left: 20px;
+    }
+
+    .tableList .tableDesCol {
+        color: #999;
+        font-style: oblique;
+        max-width:60%;
+    }
+
+    .tableList tr td span label {
+        margin-right: 20px;
+    }
+
+    .tableList input[type="text"], .tableList input[type="password"], .tableList select, .tableList input[type="file"] {
+        width: 250px;
+        margin: 1px;
+        border: 1px solid #a8a8a8;
+        height: 25px;
+        line-height: 25px;
+    }
+
+    .tableList input[type="radio"] {
+    }
+
+    .tableList input[type="checkbox"] {
+        border: 1px solid #a8a8a8;
+    }
+
+    .tableList input[type="submit"] {
+        border: 1px solid #a8a8a8;
+        height: 25px;
+        line-height: 25px;
+    }
+
+    .tableList textarea {
+        border: 1px solid #a8a8a8;
+        width: 250px;
+        height: 100px;
+        margin: 1px;
+    }
+
+    .tableList select {
+        height: 25px;
+        line-height: 25px;
+    }
+
+/*这个只是为了table 嵌套table时，可以清掉border，例如组织机构的选着用户*/
+.tableNoCss {
+    margin-left: 0px;
+}
+
+    .tableNoCss table, .tableNoCss tr, .tableNoCss tr td, .tableNoCss .tableLeft {
+        border: none;
+        padding-left: 0px;
+    }
+
+    .tableNoCss input[type="text"], .tableNoCss input[type="password"], .tableNoCss textarea, .tableNoCss select, .tableNoCss input[type="file"] {
+        /*margin-left: 0px;*/
+    }
+
+    .tableNoCss .tableLeft {
+        width: auto;
+    }
+
+
+/*表格里，用了ligerui 控件，如同步设置功能里的下拉列表选择，让样式统一*/
+.tableList .l-text {
+    width: 250px;
+    height: 25px;
+    line-height: 25px;
+}
+
+    .tableList .l-text input {
+        margin: 0px;
+        padding: 0px;
+        border: none;
+    }
+
+
+/*liger UI 表格列表样式*/
+.l-panel {
+    border: none;
+}
+
+    .l-panel table {
+        width: 100%;
+    }
+
+.l-grid-header {
+    background: #3399ff;
+    color: #fff;
+}
+
+.l-frozen .l-grid2 .l-grid-body {
+    /*overflow-x: hidden;*/
+}
+
+.l-grid-row-cell, .l-grid-body-table div {
+    border: none;
+}
+
+.l-grid-header, .l-grid-header-table, .l-grid-header-table tr, .l-grid-header-table td {
+    /*height: 40px;*/
+    line-height: 30px;
+    /*border: none;*/
+}
+
+.l-grid-body-table, .l-grid-body-table tr, .l-grid-body-table td, .l-grid-row-cell-inner {
+    border: none;
+    border-bottom: 1px solid #d0d0d0;
+    height: 30px;
+    line-height: 30px;
+    word-break: break-all;
+}
+
+.l-grid-row-cell-checkbox span, .l-grid-hd-cell-checkbox .l-grid-hd-cell-inner div {
+    margin-top: 8px;
+}
+
+/* liger UI 表格的文本都左对齐 */
+.l-grid-row-cell-inner {
+    text-align: left;
+    /*display:inherit;*/ /*添加这个图片可以只适应大小；但是序号和复选框就错位了*/
+}
+
+    .l-grid-row-cell-inner a {
+        text-align: center;
+        display: block;
+        width: 100%;
+    }
+
+
+/*Liger UI 表格底部 分页栏*/
+.l-bar-message {
+    left: 0px;
+    right: auto;
+}
+
+.l-bar-control {
+    float: right;
+}
+
+/*liger UI 表格列表样式 end*/
+
+/*DataGrid 样式*/
+.mywork_list_table tr {
+    border: 1px solid #fff;
+    height: 30px;
+}
+
+    .mywork_list_table tr td {
+        padding-left: 5px;
+        text-align: left;
+    }
+
+.mywork_list_table .left25 {
+    background: #3399ff;
+    color: #fff;
+    text-align: center;
+}

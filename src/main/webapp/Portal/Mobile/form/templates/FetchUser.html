@@ -1,0 +1,118 @@
+﻿<!-- 传阅、征询、转发界面 -->
+<ion-view title="{{Params.title}}" class="fetchUser" hide-nav-bar="{{$root.dingMobile.hideHeader}}">
+    <ion-nav-bar class="bar">
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear ion-ios-arrow-left" ng-click="BackPage()">{{names.Back}}</button>
+        </ion-nav-buttons>
+        <ion-nav-buttons side="right">
+            <!--<button class="button button-icon button-clear"
+                    ng-click="doAction()">
+                {{names.Confirm}}
+            </button>-->
+        </ion-nav-buttons>
+    </ion-nav-bar>
+
+    <ion-content ng-class="{'has-header' : NavBarShow }" class="has-footer ">
+    	<!-- update by ouyangsk 根据需求，不需显示下边提示信息，故注释 -->
+        <!-- <div class="divContent" style=" padding: 10px; font-size: 15px; color: #333333;line-height: 30px;">
+            “{{Params.UserName}}”向您发出关于“{{Params.DisplayName}}”的{{Params.title}}，请您尽快处理！
+        </div> -->
+        <div class="item item-divider" ng-if="NavBarShow"></div>
+        <div class="divContent" ng-show="ActionShow" style=" padding: 0 10px;">
+            <div class="list" style=" margin: 10px 0;">  {{Params.commentVaule}} </div>
+            <div class="list">
+                <div class="detail">
+                    <textarea placeholder="{{Params.commentVaule}}" id="commentVaule"></textarea>
+                    <!--<textarea ng-model="textArea" id="commentVaule"></textarea>-->
+                </div>
+            </div>
+        </div>
+        <div class="divContent" style=" padding: 0 10px;">
+            <div class="list" style=" margin: 10px 0;"> {{Params.Text}} </div>
+            <div class="list">
+                <div class="item item-input fetchUserContainer" style="width: 40% !IMPORTANT;">
+                    <div class="detail">
+                        <div data-datafield="fetchUserSelect" data-type="SheetUser" id="fetchUserSelect"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="divContentImg"> 
+             <img src="./Mobile/img/details/add.png" />
+             <img src="./Mobile/img/details/delet.png" />
+        </div>
+    </ion-content>
+    <ion-footer-bar>
+        <div class="footer-left" ng-click="BackPage()">{{names.Cancel}}</div>
+        <!--<div class="footer-left" ng-click="BackPage()">取消</div>-->
+        <div ng-click="doAction()" class="close footer-right">{{names.Confirm}}</div>
+    </ion-footer-bar>
+    <style>
+           /*tanll*/
+        .fetchUser .scroll-content, .scroll {
+            background: white;
+        }
+        #ionicForm ion-footer-bar {
+            padding: 0;
+            border-top: 1px solid #e4e4e4;
+            display: flex;
+            justify-content: space-between;
+            padding: 0px;
+        }
+
+        .fetchUser .bar-footer .footer-left {
+            font-size: 17px;
+            margin-left: 10px;
+            line-height: 44px;
+            flex-grow: 1;
+            text-align: center;
+            color: #2C3038;
+            letter-spacing: 0;
+        }
+
+        .fetchUser .bar-footer .close {
+            background: #77bcfa;
+            color: #fff;
+            text-align: center;
+            width: 128px;
+            font-size: 17px;
+            line-height: 44px;
+            width: 50%;
+        }
+     .fetchUser .divContentImg img {
+                width: 30px;
+                margin-right: 10px;
+            }
+
+        .fetchUser .depSelected {
+            background-color: #e9f3fe;
+            color: #333;
+            display: inline-block;
+            height: 30px;
+            line-height: 30px;
+            margin: 10px 2px;
+            text-align: center;
+        }
+
+        .fetchUser .detail textarea {
+            resize: none;
+            background: #FFFFFF;
+            border: 1px solid #CCCCCC;
+            border-radius: 4px;
+            font-size: 15px;
+            width: 100%;
+            padding: 5px;
+            min-height: 100px;
+            color: #666666;
+        }
+            /*人员展示区一定可见*/
+        .fetchUser .item.item-divider.bpm-userselectitems {
+            background: white;
+            display:block !important;
+        }
+        /*人员删除键部可见*/
+        .fetchUser .del-list {
+            display: none;
+        }
+    </style>
+</ion-view>

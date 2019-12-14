@@ -1,0 +1,199 @@
+<ion-view  hide-nav-bar="{{$root.dingMobile.hideHeader}}">
+    <ion-nav-bar class="bar">
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear ion-ios-arrow-left" ng-click="goBack()">
+                {{names.SheetUser.Back}}
+            </button>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+    <div class="bar has-header  item-input-inset sheetUserSearch" style="z-index:0 ;">
+        <label ng-click="resetSearchKey($event)" class="item-input-wrapper" ng-class="{'placeholder-icon-focus':SearchMode,'placeholder-icon-unfocus':!SearchMode}" style="transition-duration: 0.1s; transition-timing-function: linear; transition-property: all;">
+            <i class="icon-search"></i>
+            <input type="search" placeholder="{{names.SheetUser.search}}" class="input-placeholder"
+                   ng-model="searchKey" ng-change="doSearch(searchKey)"
+                   style="height:17px;font-size:14px;color:black;"
+                   ng-focus="goToSeach()" ng-blur="searchKey==''?SearchMode=false:SearchMode=true">
+            <span class="del-list" ng-if="searchKey.length"><i class="icon ion-android-close"></i></span>
+        </label>
+    </div>
+    <ion-content class="has-header has-subheader sheetUser">
+        <div ng-if="!SelectFormStructure&&!SearchMode" style="padding-bottom:50px; ">
+            <!--<ion-list>
+           <ion-item class="item-icon-right" ng-click="SelectStructure(true)">
+                  <img src="Mobile/img/details/liuc.svg" style="height:16px" />
+            组织机构
+            <i class="icon ion-ios-arrow-right"></i>
+        </ion-item>
+        </ion-list>-->
+            <div class="projectlist" ng-click="SelectStructure(true)">
+                <div class="itemleft">
+                    <img src="Mobile/img/details/liuc.svg" style="height:18px" />
+                </div>
+                <div class="itemcenter">
+                    {{names.SheetUser.organnization}}
+                </div>
+                <div class="itemright">
+                    <i class="icon ion-ios-arrow-right"></i>
+                </div>
+            </div>
+            <bpm-sheet-user-selected select-users="SelectItems" cancel-selected="delItem"></bpm-sheet-user-selected>
+            <div class="vertical-border">
+                <div class="vertical-line"></div>
+                <span class="vertical-title">{{names.SheetUser.departmentStaff}}</span>
+            </div>
+
+            <ion-list ng-if="sheetUserParams.options.UserVisible">
+                <ion-checkbox ng-repeat="user in UserOUMembers track by $index"
+                              ng-model="user.checked" ng-click="addItem($event,user)" class="userlist">
+                    <i ng-class="{'usercheckbox':!user.checked, 'usercheckboxed icon-goug':user.checked}" style="position:absolute;top:20px;"></i>
+
+                    <!--<i class="{{user.Icon}}" style="margin-l eft:40px;"></i>-->
+                    <!-- <i class="user-name userSelected" style=" margin: 0px 5px 0px 11px;" ng-class="{'user-a':$index%4==0,'user-b':$index%4==1,'user-c':$index%4==2,'user-d':$index%4==3}">
+                        <span>{{user.name|limitTo :-2}}</span>
+                    </i> -->
+                    <img class="user-name userSelected" style=" margin: 0px 5px 0px 38px;position:absolute;" ng-src="{{user.UserImageUrl}}" ng-if="user.UserImageUrl">
+                    <img class="user-name userSelected" style=" margin: 0px 5px 0px 38px;position:absolute;" src="Mobile/img/userman.png" ng-if="user.UserImageUrl.length==0||user.UserImageUrl==null?user.UserGender==0||user.UserGender==1:false">
+                    <img class="user-name userSelected" style=" margin: 0px 5px 0px 38px;position:absolute;" src="Mobile/img/userwoman.png" ng-if="user.UserImageUrl.length==0||user.UserImageUrl==null?user.UserGender==2:false">                   
+                    <span ng-if="user.type=='G'" style="position:absolute;left:50px;top:20px;">{{user.name|limitTo:16}}{{user.name.length>16?"...":""}}</span>
+                    <span ng-if="user.type=='U'" style="position:absolute;left:110px;top:20px;">{{user.name|limitTo:16}}{{user.name.length>16?"...":""}}</span>
+                    <span ng-if="user.type=='O'" style="position:absolute;left:50px;top:20px;">{{user.name|limitTo:16}}{{user.name.length>16?"...":""}}</span>
+                </ion-checkbox>
+            </ion-list>
+        </div>
+        <div ng-if="SelectFormStructure&&!SearchMode" style="padding-bottom:50px; ">
+            <!-- 目录 -->
+            <div class="item item-divider" style="padding-top:10px;padding-bottom:0px;">
+                <ion-scroll direction="x" scrollbar-x="false">
+                    <ul class="breadcrumb-wrapper" style = "white-space:normal;">
+                        <li class="breadcrumb" style="font-size:15px;"
+                            ng-repeat="dept in deptNav">
+                            <a ng-if="!$last" ng-click="navClick('{{dept.id}}',$index)">{{dept.name}}</a>
+                            <span ng-if="$last">{{dept.name}}</span>
+                        </li>
+                    </ul>
+                </ion-scroll>
+            </div>
+            <bpm-sheet-user-selected select-users="SelectItems" cancel-selected="delItem"></bpm-sheet-user-selected>
+            <div class="line-bottoms "></div>
+            <ion-list>
+                <div ng-repeat="org in Organizations" style="position:relative;">
+                    <!-- 能选择的 -->
+                    <ion-checkbox ng-if="org.canSelect"
+                                  ng-model="org.checked"
+                                  ng-click="itemClick($event,org)" class="canselectlist">
+                        <i ng-class="{'usercheckbox':!org.checked, 'usercheckboxed icon-goug':org.checked}" style="position:absolute;top:20px;"></i>
+                        <label class="item-label">
+                            <!--<i class="{{org.Icon}}" style="margin-left:40px;"></i>-->
+                            <!-- <i ng-if="org.type=='U'" class="user-name userSelected" ng-class="{'user-a':$index%4==0,'user-b':$index%4==1,'user-c':$index%4==2,'user-d':$index%4==3}">
+                                <span>{{org.name|limitTo :-2}}</span>
+                            </i> -->
+                            <img class="user-name userSelected" style=" margin: 0px 5px 0px 38px;position:absolute;" ng-src="{{org.UserImageUrl}}" ng-if="org.UserImageUrl">
+							<img class="user-name userSelected" style=" margin: 0px 5px 0px 38px;position:absolute;" src="Mobile/img/userman.png" ng-if="org.UserImageUrl.length==0||org.UserImageUrl==null?org.UserGender==0||org.UserGender==1:false">
+							<img class="user-name userSelected" style=" margin: 0px 5px 0px 38px;position:absolute;" src="Mobile/img/userwoman.png" ng-if="org.UserImageUrl.length==0||org.UserImageUrl==null?org.UserGender==2:false">                   
+							<span ng-if="org.type=='G'" style="position:absolute;left:50px;top:20px;"  ng-if="org.type!='O'">{{org.name|limitTo:16}}{{org.name.length>16?"...":""}}</span>
+							<span ng-if="org.type=='U'" style="position:absolute;left:110px;top:20px;"  ng-if="org.type!='O'">{{org.name|limitTo:16}}{{org.name.length>16?"...":""}}</span>
+							<span ng-if="org.type=='O'" style="position:absolute;left:50px;top:20px;" ng-if="org.type=='O'">{{org.name|limitTo:16}}{{org.name.length>16?"...":""}}</span>
+                            <!-- {{org.name|limitTo:16}}{{org.name.length>16?"...":""}} -->
+                        </label>
+                        <!-- icon -->
+                        <div class="depNum" ng-if="org.type!='U'&&org.root!=true">
+                            <span>{{org.ChildrenCount}}</span>
+                            <i class="ion-ios-arrow-right" style="float:right; padding-right:0;font-size: 15px;position:absolute;right:10px;"></i>
+                        </div>
+                    </ion-checkbox>
+                    <!-- 不能选择的 -->
+                    <!--<div ng-if="!org.canSelect" class="item item-icon-right userlist"ng-click="itemClick($event,org)" style=" margin: 10px 0px 10px 10px;">
+                    <label class="item-label">
+                        <span style="padding-left:5px;">
+                            <img src="mobile/img/details/L.svg" style="height:16px" />
+                            {{org.name}}
+                        </span>
+                    </label>
+                    <div class="depNum" ng-if="org.type!='U'&&org.root!=true">
+                        <span>{{org.ChildrenCount}}</span>
+                        <i class="ion-ios-arrow-right"
+                           style="float:right; padding-right:0px;font-size: 15px;"></i>
+                    </div>
+                </div>-->
+                    <!-- 新版 -->
+                    <div class="unselectlist" ng-if="!org.canSelect" ng-click="itemClick($event,org)">
+                        <div class="itemleft">
+                        </div>
+                        <div class="itemcenter" style = "margin: auto;width:85%;">
+                            <label class="item-label">
+                                <span style="padding-left:5px;">
+                                    {{org.name}}
+                                </span>
+                            </label>
+                        </div>
+                        <div class="itemright" style="min-width:40px;text-align:right;">
+                            <span class="dep-Num" ng-if="org.type!='U'&&org.root!=true">{{org.ChildrenCount}}</span>
+                            <i class="ion-ios-arrow-right"> </i>
+                        </div>
+                    </div>
+                </div>
+            </ion-list>
+        </div>
+        <div ng-if="SearchMode" style="padding-bottom:50px;">
+            <div class="vertical-border" ng-show="SearchEmp">
+                <div class="vertical-line"></div>
+                <span class="vertical-title">{{names.SheetUser.user}}</span>
+            </div>
+            <div ng-repeat="org in searchItems" class="searchConten" style="position:relative;top:20px;">
+                <ion-list ng-if="org.type=='U'">
+                    <ion-checkbox ng-model="org.checked"
+                                  ng-click="itemClick($event,org)" class="canselectlist">
+                        <i ng-class="{'usercheckbox':!org.checked, 'usercheckboxed icon-goug':org.checked}" style="position:absolute;top:20px"></i>
+                        <!-- <i class="user-name userSelected" style=" margin: 0px 5px 0px 11px;" ng-class="{'user-a':$index%4==0,'user-b':$index%4==1,'user-c':$index%4==2,'user-d':$index%4==3}">
+                            <span ng-bind-html="org.name|limitTo :-2"></span>
+                        </i> -->
+                        <img class="user-name userSelected" style=" margin: 0px 5px 0px 38px;position:absolute;" ng-src="{{org.UserImageUrl}}" ng-if="org.UserImageUrl">
+						<img class="user-name userSelected" style=" margin: 0px 5px 0px 38px;position:absolute;" src="Mobile/img/userman.png" ng-if="org.UserImageUrl.length==0||org.UserImageUrl==null?org.UserGender==0||org.UserGender==1:false">
+						<img class="user-name userSelected" style=" margin: 0px 5px 0px 38px;position:absolute;" src="Mobile/img/userwoman.png" ng-if="org.UserImageUrl.length==0||org.UserImageUrl==null?org.UserGender==2:false">                   
+                        <div class="groupRight" style="position:absolute;left:85px;top:14px;">
+                            <span ng-bind-html="org.names">  </span>
+                            <p>{{org.DepartmentName}}</p>
+                        </div>
+                    </ion-checkbox>
+                </ion-list>
+            </div>
+
+            <div class="vertical-border" ng-show="SearchDep">
+                <div class="vertical-line"></div>
+                <span class="vertical-title">{{names.SheetUser.organnization}}</span>
+            </div>
+
+            <div ng-repeat="org in searchItems">
+                <ion-list ng-if="org.type!='U'">
+                    <ion-checkbox ng-model=" org.checked"
+                                  ng-click="itemClick($event,org)" class="canselectlist">
+                        <i ng-class="{'usercheckbox':!org.checked, 'usercheckboxed icon-goug':org.checked}"></i>
+
+                        <span style=" margin-left: 16px;" ng-bind-html="org.names"></span>
+                        <!--<i class="ion-ios-arrow-right" style="float:right; padding-right:0px;font-size: 15px;"></i>-->
+                    </ion-checkbox>
+                </ion-list>
+            </div>
+            <ion-item ng-show="searchItems.length==0&&searchKey!=''&&searchOver" style="cursor:pointer">
+                <div class="item-icon-left" style="padding-left:20px;">
+                    <h2 style="margin-left:10px;" ng-show="names.SheetUser.isShow">未搜索到与 "<span style="color:blue;" ng-bind="searchKey"></span> " 相关的结果</h2>
+                    <h2 style="margin-left:10px;" ng-show="!names.SheetUser.isShow">{{names.SheetUser.result}}<span style="color:blue;" ng-bind="searchKey"></span> </h2>
+                </div>
+            </ion-item>
+        </div>
+    </ion-content>
+    <!--转办单选 协办或其他多选-->
+    <ion-footer-bar align-title="left" class="bar bar-footer" style="border:none;" ng-show="sheetUserParams.isMutiple">
+        <div class="bottom-button">
+            <div class=" pablicflex bb-center f16" ng-click="checkedAll($event)" ng-if="!SearchMode">
+                <!--<i ng-class="{'usercheckbox':checkedstetus, 'usercheckboxed icon-goug':!checkedstetus}"></i>-->
+                <i ng-if="checkedstetus" class="usercheckbox"></i>
+                <i ng-if="!checkedstetus" class="usercheckboxed icon-goug"></i>
+            </div>
+            <div  id="selectAll" class="pablicflex bb-left f16" ng-click="checkedAll($event)" ng-show="!SearchMode">
+                <span>{{names.SheetUser.checkAll}}</span>
+            </div>
+            <div id="confirm" class="pablicflex f16" ng-click="cancel()" ng-class="{' all-right ':SearchMode,'bb-right':!SearchMode}">{{names.SheetUser.confirm}}</div>
+        </div>
+    </ion-footer-bar>
+</ion-view>

@@ -1,0 +1,166 @@
+﻿/* 
+ * 公共设置 Begin
+ */
+html {
+    color: #000;
+    background: #FFF;
+}
+
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+fieldset, img {
+    border: 0;
+}
+
+address, caption, cite, code, dfn, em, strong, th, var {
+    font-style: normal;
+    font-weight: normal;
+}
+
+li {
+    list-style: none;
+}
+
+caption, th {
+    text-align: left;
+}
+
+q:before, q:after {
+    content: '';
+}
+
+abbr, acronym {
+    border: 0;
+    font-variant: normal;
+}
+
+sup {
+    vertical-align: text-top;
+}
+
+sub {
+    vertical-align: text-bottom;
+}
+
+input, textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+legend {
+    color: #000;
+}
+
+del, ins {
+    text-decoration: none;
+}
+
+body {
+    font-family: "宋体", Arial, sans-serif;
+    font-size: 12px;
+}
+
+/*滚动条*/
+body {
+    /*SCROLLBAR-FACE-COLOR: #187ebc;*/ /*滚动条凸出部分的颜色 */
+    /*SCROLLBAR-ARROW-COLOR: #d0d0d0;*/ /*上下按钮上三角箭头的颜色 */
+    /*SCROLLBAR-HIGHLIGHT-COLOR: #b5e8ec;*/ /*滚动条空白部分的颜色*/
+    /*SCROLLBAR-SHADOW-COLOR: #50cedd;*/ /*立体滚动条阴影的颜色 */
+    /*SCROLLBAR-3DLIGHT-COLOR: #50cedd;*/ /*滚动条亮边的颜色 */
+    /*SCROLLBAR-TRACK-COLOR: rgb(255,70,130);*/ /*滚动条的背景颜色 */
+    /*SCROLLBAR-DARKSHADOW-COLOR: rgb(10,0,209);*/ /*滚动条强阴影的颜*/
+    /*SCROLLBAR-BASE-COLOR: rgb(66,93,128);*/ /*滚动条的基本颜色 */
+}
+/* 公共设置 End*/
+/* 
+ * 左侧菜单 Begin
+ */
+.l-layout-header {
+    background: #fff;
+    border-bottom: 1px solid #d4d4d4;
+    /*height: 38px;
+    line-height: 48px;*/
+}
+
+.l-layout-left .l-layout-header-toggle {
+    top: 8px;
+    background: url("Images/togglebar.png") no-repeat;
+}
+/* 左侧菜单 End*/
+
+/*
+ * 中间拖动条
+ */
+.l-layout-drophandle-left {
+    background: #b6e8ef;
+}
+/* 中间拖动条 End*/
+
+/* 
+ * 右侧内容 Begin
+ */
+.l-layout-center {
+    /*margin-top:11px;
+    margin-left:11px;*/
+}
+
+.l-tab-links {
+    background: none;
+}
+
+    .l-tab-links li {
+        background: #f7f7f7;
+        text-align: center;
+        margin: 0px;
+        padding-left: 5px;
+        padding-right: 5px;
+        color: #525252;
+    }
+
+.l-tab-links-item-left, .l-tab-links-item-right {
+    background: #e2f2f4;
+    width: 0.5px;
+}
+
+.l-tab-links li.l-selected {
+    background: #3399fe;
+    text-align: center;
+    color: #fff;
+    font-weight: 100;
+}
+
+    .l-tab-links li.l-selected .l-tab-links-item-left, .l-tab-links li.l-selected .l-tab-links-item-right {
+        background: #3399fe;
+    }
+
+/*tab 的关闭*/
+.l-tab-links-item-close {
+    width: 18px;
+    height: 18px;
+    background: url('Images/icons/icon-close.png') no-repeat center;
+    margin-right: 5px;
+}
+
+.l-tab-links-item-close-over {
+    background: url('Images/icons/icon-close-over.png') no-repeat center;
+    width: 18px;
+    height: 18px;
+}
+
+/* 右侧内容 End*/
+
+
+/*liger UI 弹出框，去掉上面3px的空白*/
+.l-dialog-win .l-dialog-content {
+    padding-top: 0px;
+    padding-bottom:0px;
+}

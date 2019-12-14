@@ -1,0 +1,296 @@
+﻿<script language="javascript" type="text/javascript">
+    $(function () {
+        var pageData = {};
+
+        //初始化页面数据
+        initPageData();
+
+        var model = new Vue({
+            el: "#content",
+            data: pageData,
+            methods: {
+                saveData: function (event) {
+                    this.$validate(true);//表单验证
+                    if (this.$formValidator.invalid) {
+                        $.H3Dialog.Warn({ content: "请检查表单!" });
+                    } else {
+                        saveData();
+                    }
+                }
+            },
+            validators: {
+                match: function (val, result) {
+                    return result;
+                }
+            }
+        });
+
+        //初始化页面数据
+        function initPageData() {
+            $.ajax({
+                url: $.Controller.Setting.GetSetting,
+                type: 'get',
+                dataType: "json",
+                async: false,//同步执行
+                success: function (result) {
+                    if (result.Success) {
+                        pageData = result.Extend;
+                        pageData.Setting.ConfirmPassword = result.Extend.Setting.Password;
+                        pageData.Setting.ConfirmDBPassword = result.Extend.Setting.DBPassword;
+                    } else {
+                    	if(result.Message === "needLogin") {
+                    		toLoginPage();
+                    	} else {
+                    		$.H3Dialog.Warn({ content: result.Message });
+                    	}
+                    }
+                }
+            });
+        };
+        
+        function toLoginPage() {
+        	$.H3Dialog.Warn({ content: $.Lang("登录失效，请重新登录。") });
+        	top.location.href = "/Cluster/Login.html"
+        }
+
+        function saveData() {
+        //    debugger
+            $.ajax({
+                url: $.Controller.Setting.SaveSetting,
+                type: "post",
+                dataType: "json",
+                data: pageData.Setting,
+                success: function (result) {
+                    if (result.Success) {
+                        parent.$.H3Dialog.Success({ content: "保存成功!" });
+                    } else {
+                        if(result.Message === "needLogin") {
+                    		toLoginPage();
+                    	} else {
+                    		$.H3Dialog.Warn({ content: result.Message });
+                    	}
+                    }
+                }
+            });
+        }
+
+        $("#ToolBar").AspLinkToolBar();
+        $(".H3Panel").BuildPanel();
+
+        $("select[id*='lstSMSDbType']").change(function () {
+            var tr = $("tr.dbname");
+            if ($(this).val() && $(this).val() == "Oracle") {
+                tr.hide();
+            }
+            else
+                tr.show();
+        });
+
+        $("select[id*='lstSMSDbType']").change();
+    });
+</script>
+
+<validator name="formValidator">
+    <div>
+        <div id="ToolBar">
+            <a id="btnSave" title="save" href="javascript:void(0)" v-on:click="saveData">保存</a>
+        </div>
+        <div class="H3Panel" hidden="hidden">
+            <span>存储</span>
+            <table class="tableList">
+                <tr>
+                    <td align="right" width="12%">
+                        文件服务器
+                    </td>
+                    <td>
+                        <input name="txtFileStoragePath" type="text" id="txtFileStoragePath" v-model="Setting.StoragePath" />
+                    </td>
+                    <td class="tableDesCol">
+                        如果采用多台服务器，那么必须使用共享的文件存储
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right" width="12%">
+                        词库
+                    </td>
+                    <td>
+                        <input name="txtDictionaryPath" type="text" id="txtDictionaryPath" v-model="Setting.DictionaryPath" />
+                    </td>
+                    <td class="tableDesCol">
+                        如果采用多台服务器，那么必须使用共享的字典库
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="H3Panel">
+            <span>邮件配置</span>
+            <table class="tableList">
+                <tr>
+                    <td align="right" width="12%">
+                        SMTP
+                    </td>
+                    <td>
+                        <input name="txtSmtp" type="text" id="txtSmtp" v-model="Setting.Smtp" />
+                    </td>
+                    <td class="tableDesCol">
+                        示例：smtp.sina.com.cn
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        启用Ssl
+                    </td>
+                    <td>
+                        <input id="chkSmtpEnableSsl" type="checkbox" name="chkSmtpEnableSsl" v-model="Setting.EnableSsl" /><label for="chkSmtpEnableSsl">SSL</label>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        端口号
+                    </td>
+                    <td>
+                        <input name="txtSmtpPort" type="text" id="txtSmtpPort" v-model="Setting.SmtpPort" />
+                    </td>
+                    <td class="tableDesCol">
+                        默认是25，如果是SSL则可能是其他端口号
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        用户名
+                    </td>
+                    <td>
+                        <input name="txtUserName" type="text" id="txtUserName" v-model="Setting.UserName" />
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        密码
+                    </td>
+                    <td>
+                        <input name="txtPassword" type="password" id="txtPassword" v-model="Setting.Password" />
+                    </td>
+                    <td class="tableDesCol"></td>
+                </tr>
+                <tr>
+                    <td>密码确认</td>
+                    <td>
+                        <input name="txtPassword2" type="password" id="txtPassword2" v-model="Setting.ConfirmPassword" v-validate:confirmpassword="{match:Setting.Password ==Setting.ConfirmPassword}" />
+                    </td>
+                    <td class="tableDesCol">
+                        <span id="CompareValidator4" style="color:Red;" v-if="$formValidator.confirmpassword.match">密码不匹配</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        FROM
+                    </td>
+                    <td>
+                        <input name="txtFrom" type="text" id="txtFrom" v-model="Setting.From" />
+                    </td>
+                    <td class="tableDesCol">
+                        示例：authine@163.com
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        编码
+                    </td>
+                    <td>
+                        <select v-model="Setting.Encode">
+                            <option v-for="option in Encodes" v-bind:value="option.Value">{{option.Text}}</option>
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+        <div class="H3Panel">
+            <span>短信配置</span>
+            <table class="tableList">
+
+                <tr itemid="Db">
+                    <td align="right" width="12%">
+                        数据库类型
+                    </td>
+                    <td>
+                        <select name="lstSMSDbType" id="lstSMSDbType" v-model="Setting.DBType">
+                            <option v-for="option in DBTypes" v-bind:value="option.Value">{{option.Text}}</option>
+
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td align="right" width="12%">
+                        服务地址
+                    </td>
+                    <td align="left" colspan="5">
+                        <input name="txtDBServer" type="text" id="txtDBServer" v-model="Setting.DBServer" />
+                    </td>
+                </tr>
+                <tr class="dbname">
+                    <td align="right" width="12%">
+                        数据库名
+                    </td>
+                    <td align="left" colspan="5">
+                        <input name="txtDBName" type="text" id="txtDBName" v-model="Setting.DBName" />
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right" width="12%">
+                        帐号
+                    </td>
+                    <td align="left" colspan="5">
+                        <input name="txtDBUser" type="text" id="txtDBUser" v-model="Setting.DBUser" />
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right" width="12%">
+                        密码
+                    </td>
+                    <td align="left" colspan="5">
+                        <input name="txtDBPassword" type="password" id="txtDBPassword" v-model="Setting.DBPassword" />
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right" width="12%">
+                        确认密码
+                    </td>
+                    <td align="left" colspan="5">
+                        <input name="txtDBPassword1" type="password" id="txtDBPassword1" v-model="Setting.ConfirmDBPassword" v-validate:confirmdbpassword="{match:Setting.DBPassword ==Setting.ConfirmDBPassword}" />
+                        <span id="CompareValidator3" style="color:Red;" v-if="$formValidator.confirmdbpassword.match">密码不匹配</span>
+                    </td>
+                </tr>
+                <tr itemid="Db">
+                    <td>
+                        发送短信的SQL
+                    </td>
+                    <td colspan="2">
+                        <textarea name="txtSMSInsert" rows="2" cols="20" id="txtSMSInsert" style="height:50px;width:80%;" v-model="Setting.SMSInsert"></textarea>
+                        <br />
+                        <span class="tableDesCol">
+                            示例：INSERT INTO tbl_SMS (Number, Message, WorkItemID) VALUES ({Number}, {Message}, {WorkItemID})
+                        </span>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr itemid="Db" style="display: none;">
+                    <td>
+                        读短信的SQL
+                    </td>
+                    <td colspan="2">
+                        <textarea name="txtSMSRead" rows="2" cols="20" id="txtSMSRead" style="height:50px;width:80%;" v-model="Setting.SMSRead"></textarea>
+                        <br />
+                        <span class="tableDesCol">
+                            示例：SELECT (ID, Number, Message, WorkItemID) FROM tbl_SMS WHERE State=0。请注意：该SQL返回的数据表必须包含ID，Number，Message三个列
+                        </span>
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</validator>

@@ -1,0 +1,42 @@
+<ion-view cache-view="true"> <ion-nav-title>
+{{ParentName}} </ion-nav-title> <ion-nav-bar class="bar-stable"> <ion-nav-buttons
+	side="left">
+<button class="button button-icon button-clear ion-navicon"
+	menu-toggle="left"></button>
+<button class="button button-icon button-clear ion-ios-arrow-left"
+	ng-click="goback()"></button>
+</ion-nav-buttons> <ion-nav-buttons side="right"> <a
+	class="button button-clear icon ion-search" ng-click="showSearch();"></a>
+</ion-nav-buttons> </ion-nav-bar> <ion-content>
+<style type="text/css">
+.list {
+	padding-top: 0px;
+}
+</style>
+<ion-item ng-if="OrgUnits.length == 0 && OrgUsers==0 && loadComplete">
+<div class="item-icon-left" style="padding-left: 20px;">
+	<i class="icon ion-information-circled"></i>
+	<h2>当前组织没有用户</h2>
+</div>
+</ion-item>
+<div class="item item-divider"
+	style="padding-top: 5px; padding-bottom: 3px;" ng-show="DividerDisplay">
+	<i class="icon ion-ios-star dividerIcon"></i>组织
+</div>
+<ion-list> <ion-item ng-repeat="orgUnit in OrgUnits"
+	class="item-icon-right" style="cursor:pointer"
+	ng-click="openUnit('{{orgUnit.ObjectID}}')"> <!--<img src="" />-->
+<h2>{{orgUnit.Name}}</h2>
+<i class="icon ion-chevron-right icon-accessory"></i> </ion-item> </ion-list>
+<div class="item item-divider"
+	style="padding-top: 5px; padding-bottom: 3px;" ng-show="DividerDisplay">
+	<i class="icon ion-person dividerIcon"></i>用户
+</div>
+<ion-list> <ion-item ng-repeat="orgUser in OrgUsers"
+	class="item-icon-right" style="cursor:pointer"
+	ng-click="openUser('{{orgUser.ObjectID}}')"> <!--<img src="" />-->
+<h2>
+	{{orgUser.Name}}<a href="tel:{{orgUser.OfficePhone}}" class="item-note"
+		ng-click="openTel();" style="padding-top: 2px;">{{orgUser.OfficePhone}}</a>
+</h2>
+<i class="icon ion-chevron-right icon-accessory"></i> </ion-item> </ion-list> </ion-content> </ion-view>

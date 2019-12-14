@@ -1,0 +1,59 @@
+﻿<!--
+    待办任务
+     -->
+<!-- ng-init="
+     app.settings.asideFolded=false;
+     app.settings.asideDock=false;" -->
+<div class="hbox hbox-auto-xs hbox-auto-sm">
+    <!-- main -->
+    <!--<form>-->
+    <div class="col">
+        <!-- main header -->
+        <div class="bg-light lter b-b wrapper-md">
+            <div class="row">
+                <div class="col-sm-6 col-xs-12 form-title-name">
+                    <span class="h3" ng-bind="menuData.DisplayName"></span>
+                </div>
+                <div class="col-sm-6 col-xs-12 form-search-box">
+                        <!--<button class="btn btn-primary" type="button" ng-click="initWorkFlow()">发起流程</button>-->
+                       <div class="w-icon searchContainer password-input" style="float: right">
+                           <input type="text" class="icon-inline form-control" style="width:300px"
+                                  ng-model="searchKey"
+                                  ng-change="searchKeyChange()"
+                                  autocomplete="off"
+                                  placeholder="{{LanJson.search}}">
+                           <i class="icon aufontAll h-icon-all-search-o"></i>
+                   </div>
+                </div>
+            </div>
+        </div>
+
+        <!--表格部分Start-->
+        <div class="wrapper-md paddingbottomNone">
+            <div class="panel panel-default">
+                <div class="table-responsive">
+
+                    <table ui-jq="dataTable"
+                           id="tabUnfinishWorkitem"
+                           ui-options="options()"
+                           class="table table-striped m-b-none responsive" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th style="width:8%;" class="hide1024"><span translate="QueryTableColumn.Flag"></span></th>
+                                <th style="width:30%;"><span translate="QueryTableColumn.ProcessName"></span></th>
+                                <th style="width: 15%;"><span translate="QueryTableColumn.Title"></span></th>
+                                <th style="width: 15%;" class="hide414"><span translate="QueryTableColumn.ReceiveTime"></span></th>
+                                <th style="width: 15%;" class="hide414"><span translate="QueryTableColumn.Originator"></span></th>
+                                <th style="width: 15%;" class="hide1024"><span translate="QueryTableColumn.DeptOfOriginator"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--表格部分End-->
+    </div>
+    <!--</form>-->
+    <!-- / main -->
+</div>

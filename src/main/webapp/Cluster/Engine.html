@@ -1,0 +1,139 @@
+﻿<script language="javascript" type="text/javascript">
+    $(function () {
+        $("#H3ToolBar").AspLinkToolBar();
+        $("#divEngineToolBar").AspLinkToolBar();
+
+        CreateLigerGrid(
+            $("#gvEngine"),
+            CreateVesselColums(),
+            $.Controller.Engine.GetEngineList,
+            false);
+    });
+
+    function CreateVesselColums() {
+        return [
+            { display: "引擎实例编码", name: "Code" },
+            { display: "引擎数据库类型", name: "DBType" },
+            { display: "引擎数据库服务器", name: "DBServer" },
+            { display: "引擎数据库名称", name: "DBName" },
+            { display: "日志数据库类型", name: "LogDBType" },
+            { display: "日志数据库服务器", name: "LogDBServer" },
+            { display: "日志数据库名称", name: "LogDBName" },
+            { display: "运行状态", name: "UnitState" }
+        ];
+    }
+
+    function DelEngine(obj) {
+        var manager = $("#gvEngine").ligerGetGridManager();
+        var rows = manager.getSelectedRows();
+        if (rows == null || rows.length == 0) {
+            $.H3Dialog.Warn({ content: "请选中内容" });
+            return;
+        }
+        var codes = "";
+        for (var i = 0; i < rows.length; i++) {
+            codes = codes + rows[i].Code + ";";
+        }
+        if (ConfirmDel(obj)) {
+            $.ajax({
+                url: $.Controller.Engine.DelEngine,
+                data: { codes: codes },
+                type: 'get',
+                dataType: "json",
+                success: function (res) {
+                    if (res.Success) {
+                        manager.reload();                    	
+                    } else {
+                    	if(res.Message === "needLogin") {
+                    		toLoginPage();
+                    	} else {
+                            $.H3Dialog.Warn({ content: $.format($.Lang(res.Message), res.Extend.engineCode) });
+                    	}
+                    }
+                }
+            });
+        }
+    }
+
+    function SetEngineState(obj, option) {
+        var manager = $("#gvEngine").ligerGetGridManager();
+        var rows = manager.getSelectedRows();
+        if (rows == null || rows.length == 0) {
+            $.H3Dialog.Warn({ content: "请选中内容" });
+            return;
+        }
+        var codes = "";
+        for (var i = 0; i < rows.length; i++) {
+            codes = codes + rows[i].Code;
+            break;
+        }
+        var msg = "";
+        if (option == "Disabled") msg = "禁用";
+        else if (option == "Enabled") msg = "启用";
+        else if (option == "Suspended") msg = "挂起";
+        else if (option == "Restart") msg = "重启";
+        else if (option == "Initial") msg = "初始化";
+        if (confirm("确认执行[" + msg + "]操作？")) {
+            $.ajax({
+                url: $.Controller.Engine.DoAction,
+                type: 'post',
+                dataType: "json",
+                data: { action: option, codes: codes },
+                success: function (res) {
+                    if (res.Success) {
+                    	 manager.reload();
+                    } else {
+                    	if(res.Message === "needLogin") {
+                    		toLoginPage();
+                    	} else {
+                    		$.H3Dialog.Warn({ content: $.format($.Lang(res.Message), res.Extend.engineCode) });
+                    	}
+                    }
+                }
+            });
+        }
+    }
+    
+    function toLoginPage() {
+    	$.H3Dialog.Warn({ content: $.Lang("登录失效，请重新登录。") });
+    	top.location.href = "/Cluster/Login.html"
+    }
+
+    // 添加新服务器
+    function AddEngine(obj) {
+        //ShowDialog("编辑服务器", _CLUSTERROOT_GLOBAL + "/TabMaster.html?url=EditEngine.html");
+        ShowDialog("编辑服务器", "TabMaster.html?url=EditEngine.html");
+    }
+
+    function SetPassWord(obj) {
+        var manager = $("#gvEngine").ligerGetGridManager();
+        var rows = manager.getSelectedRows();
+        if (rows == null || rows.length == 0) {
+            $.H3Dialog.Warn({ content: "请选中内容" });
+            return;
+        }
+        var codes = "";
+        for (var i = 0; i < rows.length; i++) {
+            codes = codes + rows[i].Code;
+        }
+//        ShowDialog("编辑服务器", _CLUSTERROOT_GLOBAL + "/TabMaster.html?url=EditEngine.html?Code=" + codes);
+        ShowDialog("编辑服务器", "TabMaster.html?url=EditEngine.html?Code=" + codes);
+    }
+
+    function ReloadGrid() {
+        var manager = $("#gvEngine").ligerGetGridManager();
+        manager.reload();
+    }
+
+</script>
+<div>
+    <div id="H3ToolBar">
+        <a href="javascript:void(0)" onclick="AddEngine(this)" title="add">添加</a>
+        <a href="javascript:void(0)" onclick="SetEngineState(this,'Disabled')" title="disable">禁用</a>
+        <a href="javascript:void(0)" onclick="SetEngineState(this,'Enabled')" title="right">启用</a>
+        <a href="javascript:void(0)" onclick="SetEngineState(this,'Restart')" title="refresh">重启</a>
+        <a href="javascript:void(0)" onclick="DelEngine(this)" title="delete">移除</a>
+    </div>
+    <div id="gvEngine">
+    </div>
+</div>

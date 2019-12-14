@@ -1,0 +1,68 @@
+<div class="mt"></div>
+<div class="menu-bar progress-picture hasBorderBottom" ng-click="doComment()">
+    <div class="menu-bar-left">
+        <img src="Mobile/img/details/add_icon.svg" class="progress mr10">
+        <span class="f16">添加评论</span>
+    </div>
+    <div class="menu-bar-right">
+        <i class="icon ion-ios-arrow-right" style="color: #ccc;font-size: 20px; margin-right:10px;"></i>
+    </div>
+</div>
+<div class="comment-detail">
+    <!--节点-->
+    <div class="detail-inner">
+        <ul ng-if="commentsDetail.list && commentsDetail.list.length > 0">
+            <li class="detail-item" ng-repeat="item in commentsDetail.list track by $index">
+                <div class="detail-avator">
+                    <img ngf-thumbnail="item.userAvator" alt="">
+                </div>
+                <div class="detail-item-inner">
+                    <div class="detail-item-wrapper">
+                        <p class="item-name">
+                            <span>{{item.userName}}</span>
+                            <span class="detail-time">{{item.gmtCreate | date:'yyyy-MM-dd HH:mm:ss'}}</span>
+                        </p>
+                        <div ng-bind-html="item.content"></div>
+                        <div class="item-attachments" >
+                           <div class="item-img-box">
+                               <div class="item-img" ng-repeat="inner in item.attachments track by $index"  ng-if="inner.display === true">
+                                <span class="item-img-list">
+                                     <img
+                                             ngf-thumbnail="inner.url"
+                                             alt=""
+                                             ng-click="imgPreview(inner, $index)"/>
+                                    <!--<span>{{inner.fileName}}</span>-->
+                                </span>
+                                   <!--ngf-thumbnail="item.url"-->
+                                   <!--src="http://img4.imgtn.bdimg.com/it/u=3523923595,1898456857&fm=200&gp=0.jpg"-->
+                               </div>
+                           </div>
+                            <div class="item-file"
+                                 ng-repeat="inner in item.attachments track by $index"
+                                 ng-if="inner.display === false"
+                                >
+                                <p class="item-file-name">
+                                    <span class="item-file-icon">
+                                       <i class="icon ion-ios-folder-outline"></i>
+                                    </span>
+                                    <span class="item-file-icon">
+                                        <span>{{inner.fileName}}</span>
+                                    </span>
+                                </p>
+                                <p class="item-file-action"  ng-click="filePreview(inner, $index)">
+                                    <span>预览</span>
+                                </p>
+                                <p class="item-file-action"  ng-click="fileDown(inner, $index)">
+                                    <span>下载</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div ng-if="commentsDetail.list.length < 1" class="no-comment">
+            暂无评论
+        </div>
+    </div>
+</div>

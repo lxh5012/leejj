@@ -1,0 +1,160 @@
+server:
+  port: 8083
+  address: 127.0.0.1
+  compression:
+    enabled: true
+  tomcat:
+    max-swallow-size: -1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      enabled: true
+
+spring:
+  application:
+    name: portal-web
+  boot:
+    admin:
+      client:
+        url: http://127.0.0.1:9999
+
+  profiles:
+    active: local
+
+  cache:
+    type: redis
+
+  redis:
+    host: 127.0.0.1
+    database: 1
+    password: 1234
+    port: 6379
+
+  mvc:
+    view:
+      prefix: /
+      suffix: .jsp
+    locale: zh_CN
+    date-format: yyyy-MM-dd HH:mm:ss
+
+  thymeleaf:
+    cache: false
+    check-template: false
+
+  mobile:
+    devicedelegatingviewresolver:
+      enabled: true
+      mobile-prefix: mobile/
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 200MB         #上传单个文件大小限制
+      max-request-size: 200MB     #多个同时上传总大小限制
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    org.springframework.boot: info
+    org.springframework.security.oauth2: info
+
+# 日志输出路径
+log:
+  path: logs
+
+# 注册中心
+zookeeper:
+  enabled: false
+  server: 127.0.0.1:2181
+
+h3:
+  system:
+    version: @project.version@
+  engine:
+    server: Servers=127.0.0.1:8212;User=administrator;Password=000000;Engine=DefaultEngine;  #引擎连接地址
+
+  mobile:
+    new: false
+
+  #新版移动端
+#    scanBasePackages : OThinker.H3.Controller.*,com.h3bpm.mobile.controller,com.h3bpm.base.controller.handler
+  #旧版移动端
+    scanBasePackages: OThinker.H3.Controller.*,OThinker.H3.Mobile.Controller,com.h3bpm.base.controller.handler
+
+  datasource:
+    initialSize: 10
+    maxTotal: 250
+    maxIdle: 200
+    minIdle: 10
+    maxWaitMillis: 60000
+    timeBetweenEvictionRunsMillis: 30000
+    minEvictableIdleTimeMillis: 60000
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    validationQuery: select 1 from dual
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    maxConnLifetimeMillis: 300000
+    removeAbandonedTimeout: 60
+    removeAbandoned: true
+    removeAbandonedOnBorrow: true
+    removeAbandonedOnMaintenance: true
+    numTestsPerEvictionRun: 10
+    logAbandoned: true
+    connectionProperties: useUnicode=true;characterEncoding=UTF-8
+    defaultAutoCommit: true
+    defaultTransactionIsolation: READ_COMMITTED
+
+  portalRoot: /Portal
+
+  cas:
+    enabled: false
+    server_url: http://127.0.0.1:8089
+    localhost: http://127.0.0.1:8081
+    success_target_url: /Portal/#/app/Workflow/MyUnfinishedWorkItem
+    failure_targer_url: /Portal/#/app/Workflow/MyUnfinishedWorkItem
+
+  zipkin:
+    enabled: false
+    endpoint: http://127.0.0.1:9411/api/v2/spans
+
+  workflowcomment:
+    enabled: true #是否开始流程评论功能
+    dingtalk:
+      enabled: false #是否开始流程评论功能 钉钉推送消息
+
+
+
+  upload:
+    maxUploadFileSize: 10485760 #设置上传文件最大尺寸，单位为B，默认10MB
+    maxUploadImageSize: 2097152 #设置上传图片最大尺寸，单位为B，默认2MB
+
+  idocview:
+    host: cfdvf #idocview ip:端口
+    token: vfdbg #idocview token
+
+  webServices: #webservice发布地址
+    OrganizationAddress: http://127.0.0.1:21110/Portal/WebServices/Organization
+    SSOServiceAddress: http://127.0.0.1:21111/Portal/WebServices/SSOService
+    BPMServiceAddress: http://127.0.0.1:21112/Portal/WebServices/BPMService
+    ActivityInfoServiceAddress: http://127.0.0.1:21113/Portal/WebServices/ActivityInfoService
+
+formEngine:
+  api:
+    host: http://127.0.0.1:8083/restful
+  page:
+    host: http://127.0.0.1:8091
+
+  instance:
+    state:
+      url: index.html#/InstanceDetail/{0}/{1}//?WorkItemType={2}
+      default:
+        url: index.html#/WorkflowInfo///{0}/{1}
+      circulate:
+        url: index.html#/InstanceDetail/{0}///?WorkItemType=Circulate

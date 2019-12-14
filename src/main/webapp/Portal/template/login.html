@@ -1,0 +1,92 @@
+﻿<div class="container-login">
+    <div class="header-login">
+      <span class="header-login-img">
+            <img src="img/H3-BPMLogo.png" alt="">
+      </span>
+    </div>
+    <div class="signup-container">
+        <form name="form">
+            <div class="form-contanier">
+            <div class="login-content-contain-left">
+                <img src="img/bj.png" class="bj-image">
+            </div>
+            <div class="signup-form">
+                <div  class="login-box-header">账号登录</div>
+                <!--错误信息-->
+                <div ng-if="loginFail" class="login-fail">
+                    <span>{{errorText}}</span>
+                </div>
+                <div class="form-group w-icon">
+                    <input name="txtUser"
+                           type="text"
+                           id="txtUser"
+                           autofocus
+                           class="form-control" size="20"
+                           placeholder="{{LanJson.Code}}"
+                           ng-model="userCode"
+                           ng-change="removeValid()"
+                           ng-keypress="($event.which===13)?loginIn():''"
+                           required
+                           >
+                </div>
+                <div class="form-group w-icon password-input" style="margin-bottom: 16px">
+                    <input name="txtPassword"
+                           type="{{inputType}}"
+                           id="txtPassword"
+                           class="form-control"
+                           size="20"
+                           placeholder="{{LanJson.Password}}"
+                           ng-model="userPassword"
+                           required
+                           ng-keypress="($event.which===13)?loginIn():''">
+                    <i class="icon aufontAll h-icon-all-eye-o" ng-click="handleShowPassword()" ng-if="showPass"></i>
+                    <i class="icon aufontAll h-icon-all-eye-close" ng-click="handleShowPassword()" ng-if="!showPass"></i>
+
+                </div>
+                <div ng-if="validCode" style="line-height: 34px;margin-top: 10px;">{{LanJson.ValidCode}}
+                    <input id="codevalidate" type="text" style="width: 40%;height:32px;display: inline" class="form-control">
+                    <img  ng-src="{{validCodeImg}}" width="90px" height="32px" style="margin-left: 10px;" ng-click="changeUrl()" alt="" />
+                </div>
+
+                <p class="login-forget" ng-click="forgetPass()" data-toggle="modal" data-target="#myModal">忘记密码</p>
+                <div class="form-actions">
+                    <button type="submit"
+                            ng-disabled="loginDisabled"
+                            class="btn btn-block btn-login"
+                            ng-click="loginIn()">
+                        <span translate="LoginController.Login">登录</span>
+                    </button>
+                </div>
+            </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">提示</h4>
+                </div>
+                <div class="modal-body">
+                   <div class="forget-img">
+                       <img src="img/forget.png" alt="">
+                   </div>
+                    <p class="img-text">请联系系统管理员重置密码</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal" style="height: 32px; width: 64px;">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-login">
+        <div class="login-footer-center">
+            <div class="login-line"></div>
+            <div>版权所有 ©深圳奥哲网络科技有限公司 粤ICP备10083177号</div>
+            <div class="login-line"></div>
+        </div>
+    </div>
+</div>

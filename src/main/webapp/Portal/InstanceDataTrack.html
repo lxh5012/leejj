@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <link href="WFRes/_Content/themes/ligerUI/Aqua/css/ligerui-all.min.css" rel="stylesheet" type="text/css"/>
+    <link href="WFRes/_Content/themes/H3Default/H3-All.css" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" type="image/x-icon" href="WFRes/images/favicon.ico" media="screen"/>
+    <link rel="icon" type="image/x-icon" href="WFRes/images/favicon.ico" media="screen"/>
+    <script src="WFRes/_Scripts/jquery/jquery.js?v=1.12.4" type="text/javascript"></script>
+    <script src="WFRes/_Scripts/jquery/jquery.lang.js" type="text/javascript"></script>
+    <script src="WFRes/_Scripts/ligerUI/ligerui.all.min.js" type="text/javascript"></script>
+    <script src="WFRes/_Scripts/H3AdminPlugins.js" type="text/javascript"></script>
+
+    <script>
+        function CreateColumns() {
+            var ObjectID = "ObjectID";
+            var PropertyName = $.Lang("TrackTable.PropertyName");
+            var ModifiedTime = $.Lang("TrackTable.ModifiedTime");
+            var ModifiedBy = $.Lang("TrackTable.ModifiedBy");
+            var Value = $.Lang("TrackTable.Value");
+            return [
+                {display: ObjectID, name: 'ObjectID', hide: true},
+                {
+                    display: PropertyName, name: 'PropertyName',
+                    render: function (row, rowindex, value) {
+                        var PropertyName = value ? value.replace(/\</g, "&lt;").replace(/\>/g, "&gt;").replace(/\"/g, "&quot;").replace(/\'/g, "&apos;") : value;
+                        return PropertyName;
+                    }
+                },
+                {display: ModifiedTime, name: 'ModifiedTime'},
+                {display: ModifiedBy, name: 'ModifiedBy'},
+                {
+                    display: Value, name: 'Value',
+                    render: function (row, rowindex, value) {
+                        console.log(value);
+                        if(typeof value === 'object' && value && value.hasOwnProperty("days")){
+                            return value.days + $.Lang("TrackTable.Day") + value.hours + $.Lang("TrackTable.Hour") + value.minutes + $.Lang("TrackTable.Minute") + value.seconds + $.Lang("TrackTable.Second");
+                        }
+                        return typeof value === 'string' ? value.replace(/\</g, "&lt;").replace(/\>/g, "&gt;").replace(/\"/g, "&quot;").replace(/\'/g, "&apos;") : value;
+                    }
+                }
+            ]
+        }
+
+        // 获取PortalRoot
+        var _PORTALROOT_GLOBAL = window.localStorage.getItem("H3.PortalRoot") ? window.localStorage.getItem("H3.PortalRoot") : "/Portal";
+
+        var GetQueryString = function (name) {
+            var result = location.search.match(new RegExp("[\?\&]" + name + "=([^\&]+)", "i"));
+            if (result == null || result.length < 1) {
+                return ""
+            }
+            return result[1];
+        }
+        var InstanceId = GetQueryString("InstanceId");
+        var ItemName = GetQueryString("ItemName");
+        var WorkItemId = GetQueryString("WorkItemId");
+        //string instanceId, string itemName, string workItemID
+        $(function () {
+            //创建表格
+            var actionUrl = _PORTALROOT_GLOBAL + "/InstanceDataTrack/GetTrackTable";
+            //业务服务-adapterType:0,业务规则-adapterType:1
+            CreateLigerGrid(
+                $("#tractTable"),
+                CreateColumns(),
+                actionUrl,
+                false, "98%",
+                null, null, null,
+                {
+                    instanceId: InstanceId,
+                    itemName: ItemName,
+                    workItemID: WorkItemId
+                }
+            )
+        });
+    </script>
+</head>
+<body>
+<div>
+    <table class="edit_group" style="margin-top: initial; margin-bottom: initial; width:100%;">
+        <tr>
+            <th colspan="2">
+                <!--<%=this.PortalResource.GetString("InstanceDataTrack_DataItemName")%>-->
+                <!--<asp:Label ID="lblItemName" runat="server" Font-Bold="false"></asp:Label>-->
+            </th>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div id="divContent" style="overflow-y: auto;">
+                    <div id="tractTable"></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<script type="text/javascript">
+    $(function () {
+        var href = this.location.href;
+        if (href.indexOf("&F=") > 0) {
+            var id = href.split("&F=")[1];
+            var h = window.parent.$("#" + id).height() + 5;
+            // var h = window.parent.$("#" + id).height() - 36;
+            // console.log(h)
+            $("#divContent").css("height", h);
+        }
+    });
+</script>
+</body>
+</html>

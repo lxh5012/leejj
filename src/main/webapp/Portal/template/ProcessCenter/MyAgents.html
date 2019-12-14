@@ -1,0 +1,216 @@
+﻿<!--
+    任务委托
+     -->
+<!--  ng-init="
+     app.settings.asideFolded=false;
+     app.settings.asideDock=false;" -->
+<div class="hbox hbox-auto-xs hbox-auto-sm">
+    <!-- main -->
+    <div class="col">
+        <!-- main header -->
+        <div class="bg-light lter b-b wrapper-md">
+            <div class="row">
+                <div class="col-sm-6 col-xs-12 form-title-name">
+                    <span class="h3" ng-bind="menuData.DisplayName"></span>
+                </div>
+                <div class="col-sm-6 col-xs-12 form-search-box">
+                </div>
+            </div>
+        </div>
+        <!--委托详情-->
+        <div class="wrapper-md paddingbottomNone">
+            <div class="panel panel-default">
+                <div class="table-responsive">
+                    <div class="form-inline search-box">
+                        <div class="input-group searchContainer">
+                            <div class="form-group">
+                                <div class="btn-group" style="margin-bottom: 10px">
+                                    <a class="btn btn-default" ng-click="btn_addAgents()">
+                                        <i class="panel-title-icon icon aufontAll h-icon-all-plus-o" style="font-size: 14px;">
+                                            <span style="margin-left:3px;" translate="QueryTableColumn.Add"></span>
+                                        </i>
+                                    </a>
+                                    <button class="btn btn-default" ng-click="btn_removeAgents()">
+                                        <i class="panel-title-icon icon aufontAll h-icon-all-minus-o" style="font-size: 14px;">
+                                            <span style="margin-left:3px" translate="QueryTableColumn.Remove"></span>
+                                        </i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <table ui-jq="dataTable" id="tabMyAgents"
+                           ui-options="tabMyAgents"
+                           class="table table-striped m-b-none" style="width:99.5%;">
+                        <thead>
+                            <tr>
+                                <!--<th style="width:4%;padding-left:15px;">-->
+                                    <!--<input type="checkbox" ng-model="checkAll"  ng-click="checkAllSelect(true)"/>-->
+                                <!--</th>-->
+                                <th style="width:30px;padding-top: 3px">
+                                    <span class="checkbox checkbox-primary checkbox-single" style="padding-left: 4px;padding-top: 4px">
+                                        <input type="checkbox" ng-model="checkAll" ng-click="checkAllSelect(true);" aria-label="Single checkbox Two">
+                                        <label></label>
+                                    </span>
+                                </th>
+                                <th style="width:30%;">
+                                    <span translate="QueryTableColumn.WorkflowCode"></span>
+                                </th>
+                                <th style="width: 20%;">
+                                    <span translate="QueryTableColumn.Delegatee"></span>
+                                </th>
+                                <th style="width: 20%;">
+                                    <span translate="QueryTableColumn.StartTime"></span>
+                                </th>
+                                <th style="width: 20%;">
+                                    <span translate="QueryTableColumn.EndTime"></span>
+                                </th>
+                                <th style="width: 10%;" >
+                                    <span translate="QueryTableColumn.Edit"></span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- / main -->
+</div>
+
+<script type="text/ng-template" id="EditAgency.html">
+    <div class="modal-header">
+        <button type="button" class="close"
+                data-dismiss="modal" aria-hidden="true" ng-click="cancel()">
+            ×
+        </button>
+        <h4 class="modal-title" id="myModalLabel">
+            <span translate="QueryTableColumn.AddAgency">任务委托</span>
+        </h4>
+    </div>
+    <!--弹框提示-->
+    <alert class="animated fadeInDown hide fadeOut" id="EditError" type="danger" close="">
+        <i ng-class="['icon-status-' + Messagetype,'icon aufontAll h-icon-all-close-circle',Messagetype ? '' : 'icon-status-info']" style="font-size: 14px"></i>
+        <span ng-bind="FailMessage"></span>
+    </alert>
+    <div class="modal-body" style="padding-left:50px;padding-right:50px;">
+        <form class="bs-example form-horizontal">
+            <div class="row">
+                <div class="col-md-10">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" translate="QueryTableColumn.AgentInfo">委托人</label>
+                        <label class="col-md-8 control-label alignLeft" ng-bind="user.Name">
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" translate="QueryTableColumn.Delegatee">被委托人</label>
+                        <div class="col-md-8 input-group">
+                            <div ui-jq="SheetUser" ui-options="WasAgentOptions"
+                                 id="WasAgent" class="form-control" style="height:32px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" translate="QueryTableColumn.AllWorkFlow"></label>
+                        <div class="form-group">
+                            <label class="i-checks">
+                                <input ng-model="IsAllWorkflow"
+                                       ng-disabled="IsEdit"
+                                       name="Workflow" type="radio" value="true" >
+                                <i></i>
+                                <label translate="QueryTableColumn.AllWorkFlow">并且</label>
+                            </label>
+
+                            <label class="i-checks">
+                                <input ng-model="IsAllWorkflow"
+                                       ng-disabled="IsEdit"
+                                       name="Workflow" type="radio" value="false" >
+                                <i></i>
+                                <label translate="QueryTableColumn.PartWorkFlow">并且</label>
+                            </label>
+                            <!--<input ng-model="IsAllWorkflow"-->
+                                   <!--ng-disabled="IsEdit"-->
+                                   <!--name="Workflow" type="radio" value="true" />-->
+                            <!--<span translate="QueryTableColumn.AllWorkFlow"></span>-->
+                            <!--<input ng-model="IsAllWorkflow"-->
+                                   <!--ng-disabled="IsEdit"-->
+                                   <!--name="Workflow" type="radio" value="false" />-->
+                            <!--<span translate="QueryTableColumn.PartWorkFlow"></span>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+
+                </div>
+            </div>
+            <div class="row" ng-show="IsAllWorkflow=='false'">
+                <div class="col-md-10">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" translate="QueryTableColumn.WorkFlowPackage"></label>
+                        <div class="col-md-8 input-group">
+                            <div ui-jq="SheetWorkflow" ui-options="WorkflowOptions"
+                                 id="WorkflowCodes" class="form-control" style="height:32px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" translate="QueryTableColumn.DeadLine"></label>
+                        <div class="col-md-8 input-group">
+                            <label class="input-group">
+                                <input ng-model="StartTime"
+                                       ui-jq="wdatePicker" ui-options="EtartTimeOption"
+                                       class="input form-control"
+                                       placeholder="{{LanJson.StartTime}}" style="z-index: 0;" />
+                                <label class="input-group-addon"
+                                       style="border-left:0; border-right: 0; margin-left:0;"
+                                       translate="QueryTableColumn.To"></label>
+                                <input ng-model="EndTime"
+                                       ui-jq="wdatePicker" ui-options="EndTimeOption"
+                                       onchange=""
+                                       class="input form-control"
+                                       placeholder="{{LanJson.EndTime}}" style="z-index: 0;"/>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" translate="QueryTableColumn.OriginatorRange"></label>
+                        <div class="col-md-8 input-group">
+                            <div ui-jq="SheetUser" ui-options="OriginatorRangeOptions" id="OriginatorRange" class="form-control" style="height:32px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" ng-click="ok()">
+            <span translate="QueryTableColumn.Button_Save"></span>
+        </button>
+    </div>
+</script>

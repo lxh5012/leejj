@@ -1,0 +1,216 @@
+﻿<script language="javascript" type="text/javascript">
+    $(function () {
+        var pageData = { Engine: {} };
+        var model = new Vue({
+            el: "#content",
+            data: pageData,
+            methods: {
+                saveData: function (event) {
+                    this.$validate(true);//表单验证
+                    if (this.$formValidator.invalid) {
+                        $.H3Dialog.Warn({ content: "请检查表单!" });
+                    } else {
+                        saveData();
+                    }
+                }
+            },
+            validators: {
+                match: function (val, result) {
+                    return result;
+                }
+            }
+        });
+
+        $("#ToolBar").AspLinkToolBar();
+        $(".H3Panel").BuildPanel();
+
+        function saveData() {
+            $.ajax({
+                url: $.Controller.Engine.SaveEngine,
+                type: "post",
+                dataType: "json",
+                data: pageData.Engine,
+                success: function (result) {
+                    if (result.Success) {
+                        parent.ReloadGrid();
+                        parent.$.H3Dialog.Success({ content: "保存成功, 启动中" });
+                        parent.H3DialogManger.Cancel();
+                    } else {
+                    	if(result.Message === "needLogin") {
+                    		toLoginPage();
+                    	} else {
+	                        $.H3Dialog.Warn({ content: $.Lang(result.Message) });
+                    	}
+                    }
+                }
+            });
+        }
+        
+        function toLoginPage() {
+        	$.H3Dialog.Warn({ content: $.Lang("登录失效，请重新登录。") });
+        	top.location.href = "/Cluster/Login.html"
+        }
+
+        $("input[type='radio']").change(function () {
+            if (!this.checked) return;
+            var parent = $(this).parent().parent().parent();
+            while (parent != null && !parent.is("tr")) {
+                parent = parent.parent();
+            }
+            if (this.value == 1)
+                parent.next().next().show();
+            else
+                parent.next().next().hide();
+        });
+
+        $("input[type='radio']").change();
+    });
+</script>
+<validator name="formValidator">
+    <div>
+        <div id="ToolBar">
+            <a id="btnSave" title="save" href="javascript:void(0)" v-on:click="saveData">保存</a>
+        </div>
+        <div>
+            <div class="H3Panel">
+                <span>引擎服务信息</span>
+                <table class="tableList">
+
+                    <tr>
+                        <td align="right" width="12%">
+                            引擎服务编码
+                        </td>
+                        <td align="left" colspan="5">
+                            <input name="txtEngineCode" type="text" id="txtEngineCode" v-model="Engine.Code" detect-change="off" detect-blur="on" initial="off" v-validate:code="{required:true}" />
+                            <span style="color:Red;" v-if="$formValidator.code.required">不可为空!</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="6">
+                            引擎数据库
+                        </th>
+                    </tr>
+                    <tr>
+                        <td align="right" width="12%">
+                            数据库类型
+                        </td>
+                        <td align="left" colspan="5">
+                            <table id="lstDbType" border="0">
+                                <tr>
+                                    <td><input id="lstDbType_0" type="radio" name="lstDbType" value="1" checked="checked" v-model="Engine.DBType" /><label for="lstDbType_0">SQL SERVER</label></td>
+                                    <td><input id="lstDbType_1" type="radio" name="lstDbType" value="2" v-model="Engine.DBType" /><label for="lstDbType_1">ORACLE</label></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" width="12%">
+                            服务地址
+                        </td>
+                        <td align="left" colspan="5">
+                            <input name="txtDBServer" type="text" id="txtDBServer" v-model="Engine.DBServer" detect-change="off" detect-blur="on" initial="off" v-validate:dbserver="{required:true}" />
+                            <span style="color:Red;" v-if="$formValidator.dbserver.required">不可为空!</span>
+                        </td>
+                    </tr>
+                    <tr class="dbname">
+                        <td align="right" width="12%">
+                            数据库名
+                        </td>
+                        <td align="left" colspan="5">
+                            <input name="txtDBName" type="text" id="txtDBName" v-model="Engine.DBName"  />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" width="12%">
+                            帐号
+                        </td>
+                        <td align="left" colspan="5">
+                            <input name="txtDBUser" type="text" id="txtDBUser" v-model="Engine.DBUser" detect-change="off" detect-blur="on" initial="off" v-validate:dbuser="{required:true}" />
+                            <span style="color:Red;" v-if="$formValidator.dbuser.required">不可为空!</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" width="12%">
+                            密码
+                        </td>
+                        <td align="left" colspan="5">
+                            <input name="txtDBPassword" type="password" id="txtDBPassword" v-model="Engine.DBPassword" v-model="Engine.LogDBPassword" detect-change="off" detect-blur="on" initial="off" v-validate:dbpassword="{required:true}" />
+                            <span id="CompareValidator4" style="color:Red;" v-if="$formValidator.dbpassword.required">不可为空!</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" width="12%">
+                            确认密码
+                        </td>
+                        <td align="left" colspan="5">
+                            <input name="txtDBPassword1" type="password" id="txtDBPassword1" v-model="Engine.ConfirmDbPassword" v-validate:confirmdbpassword="{match:Engine.ConfirmDbPassword ==Engine.DBPassword}" />
+                            <span id="CompareValidator4" style="color:Red;" v-if="$formValidator.confirmdbpassword.match">密码不匹配</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="6">
+                            日志数据库
+                        </th>
+                    </tr>
+                    <tr>
+                        <td align="right" width="12%">
+                            数据库类型
+                        </td>
+                        <td align="left" colspan="5">
+                            <table id="lstLogDbType" border="0">
+                                <tr>
+                                    <td><input id="lstLogDbType_0" type="radio" name="lstLogDbType" value="1" checked="checked" v-model="Engine.LogDBType" /><label for="lstLogDbType_0">SQL SERVER</label></td>
+                                    <td><input id="lstLogDbType_1" type="radio" name="lstLogDbType" value="2" v-model="Engine.LogDBType" /><label for="lstLogDbType_1">ORACLE</label></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" width="12%">
+                            服务地址
+                        </td>
+                        <td align="left" colspan="5">
+                            <input name="txtLogDBServer" type="text" id="txtLogDBServer" v-model="Engine.LogDBServer" detect-change="off" detect-blur="on" initial="off" v-validate:logdbserver="{required:true}" />
+                            <span style="color:Red;" v-if="$formValidator.logdbserver.required">不可为空!</span>
+                        </td>
+                    </tr>
+                    <tr class="dbname">
+                        <td align="right" width="12%">
+                            数据库名
+                        </td>
+                        <td align="left" colspan="5">
+                            <input name="txtLogDBName" type="text" id="txtLogDBName" v-model="Engine.LogDBName"  />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" width="12%">
+                            帐号
+                        </td>
+                        <td align="left" colspan="5">
+                            <input name="txtLogDBUser" type="text" id="txtLogDBUser" v-model="Engine.LogDBUser" detect-change="off" detect-blur="on" initial="off" v-validate:logdbuser="{required:true}" />
+                            <span style="color:Red;" v-if="$formValidator.logdbuser.required">不可为空!</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" width="12%">
+                            密码
+                        </td>
+                        <td align="left" colspan="5">
+                            <input name="txtLogDBPassword" type="password" id="txtLogDBPassword" v-model="Engine.LogDBPassword" detect-change="off" detect-blur="on" initial="off" v-validate:logdbpassword="{required:true}" />
+                            <span style="color:Red;" v-if="$formValidator.logdbpassword.required">不可为空!</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" width="12%">
+                            确认密码
+                        </td>
+                        <td align="left" colspan="5">
+                            <input name="txtLogDBPassword1" type="password" id="txtLogDBPassword1" v-model="Engine.ConfirmLogDBPassword" v-validate:confirmlogdbpassword="{match:Engine.ConfirmLogDBPassword ==Engine.LogDBPassword}" />
+                            <span id="CompareValidator4" style="color:Red;" v-if="$formValidator.confirmlogdbpassword.match">密码不匹配</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</validator>

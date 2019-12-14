@@ -1,0 +1,133 @@
+<!--
+    查询流程实例
+     -->
+    
+<script src="vendor/jquery/jquery.table2excel.js">
+</script>
+<div class="hbox hbox-auto-xs hbox-auto-sm">
+    <div class="col">
+        <div class="bg-light lter b-b wrapper-md">
+            <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                    <span class="h3" ng-bind="menuData.DisplayName"></span>
+                </div>
+            </div>
+        </div>
+        <!--表格部分Start-->
+        <div class="wrapper-md paddingbottomNone">
+            <div class="panel panel-default">
+                <div class="table-responsive">
+                    <!-- 搜索 -->
+                    <form class="form-inline" role="form">
+                        <div class="form-group" >
+                        	<label>流程范围</label>
+                            <select class="form-control" id="allOrPart" ng-model="allOrPart" ng-init="allOrPart='2'" ng-change="allOrPartChange()">
+                                <option  value="1" selected="selected">全部流程</option>
+                                <option value="2">部分流程</option>
+                            </select>
+                        </div>
+                       <div class="forHide" style="display:none;"></div>
+                       <div class="form-group" ui-jq="SheetWorkflowPCQ" ui-options="WorkflowOptions" id="sheetWorkflow" style="width:280px;min-height: 27.6px !important;">
+                       </div> 
+                        <div class="form-group">
+                        	<label>创建日期</label>
+                            <div class="input-group">
+                            	
+                                <input ui-jq="wdatePicker" id="StartTime"
+                                       class="form-control"
+                                       placeholder="开始日期" />
+                                <span class="input-group-addon" style="border-left:0px;border-right:0px;" translate="QueryTableColumn.To"></span>
+                                <input ui-jq="wdatePicker" id="EndTime"
+                                       class="form-control"
+                                       placeholder="结束日期" />
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                        	<label>结束日期</label>
+                            <div class="input-group">
+                            	
+                                <input  ui-jq="wdatePicker" id="FinishStartTime"
+                                       class="form-control"
+                                       placeholder="开始日期" />
+                                <span class="input-group-addon" style="border-left:0px;border-right:0px;" translate="QueryTableColumn.To"></span>
+                                <input  ui-jq="wdatePicker" id="FinishEndTime"
+                                       class="form-control"
+                                       placeholder="结束日期" />
+                            </div>
+                        </div>
+                        
+                        </br></br>
+                        
+                        <div class="form-group" style="float:right;">
+                            <button  ng-click="exportByCase()" class="btn btn-default" type="submit" style="height:30px;">
+                               	  导出报表
+                            </button>
+                        </div>
+                        
+                        <div class="form-group" style="float:right;">
+                            <input ng-model="searchKey" type="text" class="input-sm form-control" style="width:200px;display:none;" placeholder="搜索...">
+                            <button class="btn btn-default" type="submit" style="height:30px;" ng-click="qryWorkItemVariety()">
+                               	查询
+                            </button>
+                        </div>
+                    </form>
+
+                    <table  id="tabInfoList" 
+                           ui-options="tabQueryInstance"
+                           class="table table-hover ng-scope" style="width: 99.5%;">
+                        <thead>
+                            <tr>
+                                <th style="width:200px">
+                                    <span>流程名称</span>
+                                </th>
+                                <th id="ProcessName">
+                                    <span>流程分类</span>
+                                </th>
+                                <th id="WorkFlow">
+                                    <span>总发起量</span>
+                                </th>
+                                <th id="Originator" class="hide1024">
+                                    <span>已完成量</span>
+                                </th>
+                                <th id="CreatTime">
+                                    <span>未完成量</span>
+                                </th>
+                                <th>
+                                    <span>已取消量</span>
+                                </th>
+                                <th style="width:160px">
+                                    <span>平均审批时长</span>
+                                </th>
+
+                                <th style="width:100px">
+                                    <span>流程异常量</span>
+                                </th>
+
+                                <th>
+                                    <span>报错率</span>
+                                </th>
+                                <th>
+                                    <span>流程占比</span>
+                                </th>
+<!--                                 <th colspan="2" style="text-align:center;">
+                                    <span>流程占比</span>
+                                </th> -->
+                                
+                            </tr>
+                        </thead>
+                        <tbody >
+                        <tr class="myPage" ng-repeat="variety in data" variety="variety" indexNum="variety_{{$index}}"></tr>
+                       	<!--新加最后一行且隐藏，满足js展开逻辑：  -->
+						<tr ng-show="false"></tr>	
+                        		
+                        </tbody>
+                    </table>
+                    
+                </div>
+            </div>
+        </div>
+        <!--表格部分End-->
+    </div>
+    <!-- / main -->
+</div>

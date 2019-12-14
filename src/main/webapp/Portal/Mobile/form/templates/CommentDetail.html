@@ -1,0 +1,89 @@
+<ion-view title="{{detailParams.title?detailParams.title: '评论'}}" class="fetchUser" hide-nav-bar="{{$root.dingMobile.hideHeader}}">
+    <ion-nav-bar class="bar" >
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear ion-ios-arrow-left" ng-click="BackPage()">{{names.Back}}</button>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+
+    <ion-content ng-class="{'has-header' : $root.dingMobile.hideHeader }" class="has-footer ">
+        <div class="comment-detail">
+            <!--详情-->
+            <div class="detail-box">
+                <p>
+                    <span>
+                        名称:
+                    </span>
+                    <span>{{detailParams.DisplayName}}</span>
+                </p>
+                <p>
+                    <span>
+                        发起人:
+                    </span>
+                    <span>{{detailParams.UserName}}</span>
+                </p>
+            </div>
+            <!--节点-->
+            <div class="detail-inner">
+                <ul ng-if="commentsDetail.list && commentsDetail.list.length > 0">
+                    <li class="detail-item" ng-repeat="item in commentsDetail.list track by $index">
+                        <div class="detail-avator">
+                            <img ngf-thumbnail="item.userAvator" alt="">
+                        </div>
+                        <div class="detail-item-inner">
+                            <div class="detail-item-wrapper">
+                                <p class="item-name">
+                                    <span>{{item.userName}}</span>
+                                    <span class="detail-time">{{item.createdTime | date:'yyyy-MM-dd HH:mm:ss'}}</span>
+                                </p>
+                                <div ng-bind-html="item.content"></div>
+                                <div class="item-attachments" >
+                                    <div class="item-img-box">
+                                        <div class="item-img" ng-repeat="inner in item.attachments track by $index"  ng-if="inner.display === true">
+                                        <span class="item-img-list">
+                                             <img
+                                                     ngf-thumbnail="inner.url"
+                                                     alt=""
+                                                     ng-click="imgPreview(inner, $index)"/>
+                                            <!--<span>{{inner.fileName}}</span>-->
+                                        </span>
+                                            <!--ngf-thumbnail="item.url"-->
+                                            <!--src="http://img4.imgtn.bdimg.com/it/u=3523923595,1898456857&fm=200&gp=0.jpg"-->
+                                        </div>
+                                    </div>
+                                    <div class="item-file"
+                                         ng-repeat="inner in item.attachments track by $index"
+                                         ng-if="inner.display === false"
+                                         ng-click="fileDown(inner, $index)">
+                                        <p class="item-file-name">
+                                            <span class="item-file-icon">
+                                               <i class="icon ion-ios-folder-outline"></i>
+                                            </span>
+                                            <span class="item-file-icon">
+                                                <span>{{inner.fileName}}</span>
+                                            </span>
+                                        </p>
+                                        <p class="item-file-action" >
+                                            <span>下载</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div ng-if="commentsDetail.list.length < 1" class="no-comment">
+                    暂无评论
+                </div>
+            </div>
+        </div>
+    </ion-content>
+
+    <ion-footer-bar>
+        <div ng-click="doComment()" class="footer-comment">
+            <p class="comment-box">
+                <i class="icon ion-chatbox"></i>
+                <span>去评论</span>
+            </p>
+        </div>
+    </ion-footer-bar>
+</ion-view>

@@ -1,0 +1,450 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>发起流程</title>
+    <script src="vendor/jquery/jquery.min.min.js"></script>
+    <script src="WFRes/_Scripts/jquery/jquery.lang.js"></script>
+    <script src="WFRes/_Scripts/H3AdminPlugins.js"></script>
+    <script src="http://g.alicdn.com/dingding/dingtalk-pc-api/2.3.1/index.js"></script>
+    <script src="https://g.alicdn.com/dingding/dingtalk-jsapi/2.7.13/dingtalk.open.js"></script>
+    <!--<script src="WFRes/dingtalk/dingTalk-pc.js"></script>-->
+    <!--<script src="WFRes/dingtalk/dingTalk.js"></script>-->
+    <script type="text/javascript">
+        //钉钉、微信打开消息
+        // var url = "";
+        // loginform = "";
+        // 判读Url是否有参数
+       getUrlParam = function (name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]);
+            return null;
+        };
+        // 获取Url字段
+        getUrlVars = function () {
+            var vars = {};
+            var hash;
+            var hashs = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < hashs.length; i++) {
+                hash = hashs[i].split('=');
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        };
+        $(function () {
+            // var url = window.location.toString().replace("__", "&");
+            var sourceUrl = document.location.href;
+            // var url = sourceUrl.toLocaleLowerCase();
+            console.log(sourceUrl,'sourceUrl');
+            var loginform = getUrlParam("loginfrom");
+            var IsMobile = getUrlParam("IsMobile");
+            var state = getUrlParam("state");
+            var code = getUrlParam("code");
+            // var workItemID = getUrlParam("WorkItemID");
+            //根据URL参数判断是否钉钉登录
+            if (loginform == "dingtalk" && IsMobile) { //手机钉钉
+                LoginForDingTalk(sourceUrl);
+            } else if (loginform == "dingtalk" && !IsMobile) { //pc钉钉
+                LoginForDingTalkPc(sourceUrl);
+            } else if(state && code) { //微信
+                LoginForWechat(state, code);
+            } else { //浏览器登录
+                LoginForWeb();
+            }
+        });
+
+        //移动钉钉登录
+        LoginForDingTalk = function (url) {
+            if (dd && dd.version) {
+                var _config = {};
+                $.ajax({
+                    url: "DingTalk/GetSignConfig",
+                    data: {
+                        url: url
+                    },
+                    async: false,
+                    success: function (res) {
+                        console.log(res,'res');
+                        //获取签名信息成功
+                        _config = res;
+                        // 配置jsAPI
+                        dd.config({
+                            agentId: _config.agentId,
+                            corpId: _config.corpId,
+                            timeStamp: _config.timeStamp,
+                            nonceStr: _config.nonce,
+                            signature: _config.signature,
+                            type: 0,
+                            jsApiList: ['runtime.info',
+                                'biz.contact.choose',
+                                'device.notification.confirm',
+                                'device.notification.alert',
+                                'device.notification.prompt',
+                                'biz.ding.post',
+                                'runtime.permission.requestAuthCode',
+                                'device.geolocation.get',
+                                'biz.ding.post',
+                                'biz.contact.complexChoose']
+                        });
+                        dd.ready(function () {
+                            //获取免登授权码 -- 注销获取免登服务，可以测试jsapi的一些方法
+                            dd.runtime.permission.requestAuthCode({
+                                corpId: _config.corpId,
+                                onSuccess: function (result) {
+                                    var code = result["code"];
+                                    var state = getUrlParam("state");
+                                    // var tartget = getUrlParam("target");
+                                    //WorkItemID 参数要和后台配置打开URL中的参数一致
+                                    // var WorkItemID = getUrlParam("WorkItemID");
+                                    $.ajax({
+                                        url: "DingTalk/ValidateLoginForDingTalk",
+                                        data: {
+                                            state: state,
+                                            code: code
+                                        },
+                                        async: false,
+                                        success: function (res) {
+                                            //获取URL参数
+                                            //console.log(new Date().getTime());
+                                            var IsMobile = true;
+                                            var dingTalk = true;
+                                            RedirectForm(IsMobile,dingTalk);
+                                            // Redirect();
+                                        }
+                                    })
+                                },
+                                onFail: function (err) {
+                                    console.log("error fail:" + err)
+                                    alert('dd error: ' + JSON.stringify(error));
+                                }
+                            });
+                        });
+                        dd.error(function (error) {
+                            //钉钉验证出错
+                            console.log(error);
+                            alert('dd error: ' + JSON.stringify(error));
+                        })
+                    },
+                    error: function () {
+                        alert('请求错误')
+                    }
+                });
+            }
+        };
+
+        //微信登录
+        LoginForWechat = function (state, code) {
+            $.ajax({
+                url: "WeChat/ValidateLoginForWeChat",
+                data: {
+                    state: state,
+                    code: code
+                },
+                async: false,
+                success: function (res) {
+                    // Redirect();
+                    var IsMobile = true;
+                    RedirectForm(IsMobile);
+                }
+            })
+        };
+        // 重定向
+        // Redirect = function () {
+        //     //获取URL参数
+        //     params = getUrlVars();
+        //     //update by ouyangsk 增加推送标识符，不允许移动端再次打开已经转办的推送表单
+        //     params.mobileNoticeFlag = true;
+        //     var paramString = JSON.stringify(params);
+        //     $.ajax({
+        //         type: "POST",
+        //         async: false,
+        //         url: "WorkItemSheets/WorkItemSheets",
+        //         data: { paramString: paramString },
+        //         dataType: "json",
+        //         success: function (data) {
+        //             if (data.Success) {
+        //                 if (loginform == "dingtalk") {
+        //                     window.location.href = data.Message + "&loginfrom=dingtalk&source=message";
+        //                 } else {
+        //                     window.location.href = data.Message + "&loginfrom=wechat&source=message";
+        //                 }
+        //             } else {
+        //                 if (loginform == "dingtalk") {
+        //                     dd.device.notification.alert({
+        //                         message: data.Message,
+        //                         title: "提示",//可传空
+        //                         buttonName: "确定",
+        //                         onSuccess: function () {
+        //                             dd.biz.navigation.close({
+        //                                 onSuccess: function (result) { },
+        //                                 onFail: function (err) { }
+        //                             });
+        //                         },
+        //                         onFail: function (err) { }
+        //                     });
+        //                 }
+        //             }
+        //         },
+        //         error: function (data) {}
+        //     });
+        // };
+        // getUrlVars = function () {
+        //     var vars = {};
+        //     var hash;
+        //     var hashs = window.location.href.replace("__", "&").slice(window.location.href.indexOf('?') + 1).split('&');
+        //     for (var i = 0; i < hashs.length; i++) {
+        //         hash = hashs[i].split('=');
+        //         vars[hash[0]] = hash[1];
+        //     }
+        //     vars["IsMobile"] = "true";
+        //     return vars;
+        // }
+
+        //PC钉钉登录
+        LoginForDingTalkPc = function(url) {
+            var portalroot = window.localStorage.getItem("H3.PortalRoot");
+            if (!portalroot) {
+                //从服务器获取
+                $.ajax({
+                    url: "Index/GetPortalRoot",
+                    dataType: "json",
+                    async: false,
+                    success: function (res) {
+                        portalroot = res.PortalRoot
+                    }
+                })
+            }
+            var _config = {};
+            //var sourceUrl = document.location.href;
+            //var url = sourceUrl.toLocaleLowerCase();
+            // var serviceUrl = document.location.origin;//url.split("/portal/")[0];
+            $.ajax({
+                url: "DingTalk/GetSignConfig",
+                data: { url: url },
+                success: function (res) {
+                    //获取签名信息成功
+                    _config = res;
+                    // 配置jsAPI
+                    DingTalkPC.config({
+                        agentId: _config.agentId,
+                        corpId: _config.corpId,
+                        timeStamp: _config.timeStamp,
+                        nonceStr: _config.nonce,
+                        signature: _config.signature,
+                        jsApiList: ['runtime.info',
+                            'biz.util.openLink',
+                            'biz.contact.choose',
+                            'device.notification.confirm',
+                            'device.notification.alert',
+                            'device.notification.prompt',
+                            'biz.ding.post',
+                            'runtime.permission.requestAuthCode',
+                            'device.geolocation.get',
+                            'biz.ding.post',
+                            'biz.contact.complexChoose']
+                    });
+                    DingTalkPC.ready(function () {
+                        DingTalkPC.runtime.permission.requestAuthCode({
+                            corpId: _config.corpId, //企业ID
+                            onSuccess: function (result) {
+                                //alert("ready code-------------------");
+                                var code = result["code"];
+                                var state = getUrlParam("state");
+                                // var tartget = getUrlParam("target");
+                                //WorkItemID 参数要和后台配置打开URL中的参数一致
+                                // var WorkItemID = getUrlParam("WorkItemID");
+                                $.ajax({
+                                    url: "DingTalk/ValidateLoginForDingTalk",
+                                    data: {
+                                        state: state,
+                                        code: code
+                                    },
+                                    async: false,
+                                    success: function (result) {
+                                        DingTalkPC.runtime.permission.requestAuthCode({
+                                            corpId: _config.corpId, //企业ID
+                                            onSuccess: function (data) {
+                                                RedirectForm();
+                                                //浏览器打开一个新窗口
+                                                // if (!WorkItemID) {
+                                                //     DingTalkPC.biz.util.openLink({
+                                                //         url: window.location.origin+result.PortalRoot+"/index.html?loginfrom=dingtalk&state=DefaultEngine&code=" + data.code,
+                                                //         onSuccess: function (result) {
+                                                //             //alert("1234");
+                                                //         },
+                                                //         onFail: function (err) {
+                                                //             console.log(err)
+                                                //         }
+                                                //     });
+                                                // }
+                                                // else {
+                                                //     //跳转到表单页面
+                                                //     //var url = "/Portal/Hybrid/index.html?WorkItemID=" + WorkItemID+"&code="+ result.MobileUser.ObjectID+"&loginfrom=dingtalk";
+                                                //     //window.location.href = window.location.origin + portalroot +"/workitemsheets.html?WorkItemID=" + WorkItemID + "&IsMobile=true&code=" + result.MobileUser.ObjectID + "&loginfrom=dingtalk";
+                                                //     $("a.pca").find("span").text("点击查看任务表单");
+                                                //     DingTalkPC.biz.util.openLink({
+                                                //         url: window.location.origin + "/Portal/WorkItemSheets.html?WorkItemID=" + WorkItemID + "&statepc=DefaultEngine&code=" + data.code + "&loginfrom=dingtalk",
+                                                //         onSuccess: function (result) {
+                                                //             //alert("1234");
+                                                //         },
+                                                //         onFail: function (err) {
+                                                //             console.log(err)
+                                                //             // alert(JSON.stringify(err));
+                                                //         }
+                                                //     });
+                                                // }
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        })
+                    });
+
+                    DingTalkPC.error(function (error) {
+                    	console.log(error)
+                        var msg = "";
+                        for (var key in error) {
+                            msg += key + ":" + error[key] + ";";
+                        }
+                        alert(msg);
+                    });
+                }
+            });
+        };
+
+        //正常登录
+        LoginForWeb = function () {
+            //获取URL参数
+            //console.log(new Date().getTime());
+            $.ajax({
+                url: "Organization/GetCurrentUser?" + new Date().getTime(),
+                type: "GET",
+                dataType: "JSON",
+                async: false,
+                params: {
+                    random: new Date().getTime()
+                },
+                success: function (result, header, config, status) {
+                    if (!result.Success) {
+                        window.top.location.href = "/Portal/#/platform/login";
+                    } else {
+                        RedirectForm()
+                    }
+                },
+                error: function (a, b, c) {
+                    //$state.go("platform.login");
+                    window.top.location.href = "/Portal/#/platform/login"
+                }
+            });
+        };
+
+        // 跳转到表单页面
+        RedirectForm = function (IsMobile,dingTalk) {
+            var params;
+            params = getUrlVars();
+            if(IsMobile) {
+                params.IsMobile = true;
+            }
+            params.mobileNoticeFlag = true;
+            var paramString = JSON.stringify(params);
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "StartInstance/StartInstance",
+                data: {paramString: paramString},
+                dataType: "json",
+                success: function (data) {
+                    if (data.Success) {
+                        console.log(data.Message, 'data');
+                        window.localStorage.setItem("divContent", data.DivContent);
+                        window.localStorage.setItem("postURL", data.PostURL);
+                        if(dingTalk) {
+                            window.location.href = data.Message + "&dingTalkClose=true";
+                        } else {
+                            window.location.href = data.Message;
+                        }
+                    } else {
+                        var message = "";
+                        if ($.Lang(data.Message) != null) {
+                            message = $.Lang(data.Message);
+                        } else {
+                            message = data.Messag
+                        }
+                        $.H3Dialog.Warn({content: message});
+                    }
+                },
+                error:function() {
+                    $.H3Dialog.Warn({content: '跳转失败'});
+                }
+            });
+        }
+        // //获取用户信息
+        // var params = [];
+        // getUrlVars = function () {
+        //     var vars = {};
+        //     var hash;
+        //     var hashs = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        //     for (var i = 0; i < hashs.length; i++) {
+        //         hash = hashs[i].split('=');
+        //         vars[hash[0]] = hash[1];
+        //     }
+        //     return vars;
+        // }
+        // window.onload = function () {
+        //     //获取URL参数
+        //     //console.log(new Date().getTime());
+        //     params = getUrlVars();
+        //     var paramString = JSON.stringify(params);
+        //     $.ajax({
+        //         url: "Organization/GetCurrentUser?" + new Date().getTime(),
+        //         type: "GET",
+        //         dataType: "JSON",
+        //         async: false,
+        //         params: {
+        //             random: new Date().getTime()
+        //         },
+        //         success: function (result, header, config, status) {
+        //             // console.log(result.Success, 'result')
+        //             if (!result.Success) {
+        //                 window.top.location.href = "/Portal/#/platform/login";
+        //             } else {
+        //                 $.ajax({
+        //                     type: "POST",
+        //                     async: false,
+        //                     url: "StartInstance/StartInstance",
+        //                     data: {paramString: paramString},
+        //                     dataType: "json",
+        //                     success: function (data) {
+        //                         if (data.Success) {
+        //                             // console.log(data.DivContent, 'data')
+        //                             // debugger
+        //                             window.localStorage.setItem("divContent", data.DivContent);
+        //                             window.localStorage.setItem("postURL", data.PostURL);
+        //                             window.location.href = data.Message;
+        //                         } else {
+        //                             var message = "";
+        //                             if ($.Lang(data.Message) != null) {
+        //                                 message = $.Lang(data.Message);
+        //                             } else {
+        //                                 message = data.Messag
+        //                             }
+        //                             $.H3Dialog.Warn({content: message});
+        //                         }
+        //                     }
+        //                 });
+        //             }
+        //         },
+        //         error: function (a, b, c) {
+        //             //$state.go("platform.login");
+        //             // alert("error");
+        //             window.top.location.href = "/Portal/#/platform/login"
+        //         }
+        //     });
+        // }
+    </script>
+</head>
+<body>
+</body>
+</html>

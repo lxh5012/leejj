@@ -1,0 +1,257 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>H3 BPM</title>
+    <link rel="stylesheet" href="welcome.css" />
+    <script src="../../WFRes/_Scripts/jquery/jquery.js?v=1.12.4"></script>
+    <script src="../../WFRes/_Scripts/jquery/jquery.lang.js" type="text/javascript"></script>
+    <script src="../../WFRes/_Scripts/vue/vue.min.js" type="text/javascript"></script>
+    <script src="Welcome.js"></script>
+    <script type="text/javascript">
+        var pageInfo = {
+            controls: {
+                divBody: ".body",
+                divSetting: "#divSetting",
+                divSync: "#divSync",
+                divOrg: "#divOrg",
+                divCategory: "#divCategory",
+                divOrgJob: "#divOrgJob",
+                divSearch: "#divSearch"
+            }
+        }
+
+        $(function () {
+            $.each(pageInfo.controls, function (k, v) {
+                pageInfo.controls[k] = $(v);
+            });
+            // $(".activityFoot").hide();
+            // 注册退格事件，回到主页
+            $("body").keydown(function (e) {
+                if (e.keyCode == 8) {
+                    window.location.href = "Home.html";
+                    e.preventDefault();
+                }
+            });
+            var a, b, c;
+        });
+
+        var getSidePoint = function (obj, side) {
+            if (side == "top") {
+                return {
+                    x: obj.position().left + obj.width() / 2,
+                    y: obj.position().top
+                };
+            }
+            else if (side == "left") {
+                return {
+                    x: obj.position().left,
+                    y: obj.position().top + obj.height() / 2
+                };
+            }
+            else if (side == "right") {
+                return {
+                    x: obj.position().left + obj.width(),
+                    y: obj.position().top + obj.height() / 2
+                };
+            }
+            else {
+                return {
+                    x: obj.position().left + obj.width() / 2,
+                    y: obj.position().top + obj.height()
+                };
+            }
+        }
+    </script>
+    <style type="text/css">
+        /*兼容小屏幕样式 屏幕宽度小于1024时*/
+        @media screen and (max-width:1280px) {
+            .body {
+                width: 90%;
+                left: 56px;
+            }
+        }
+
+        @media screen and (max-width:1024px) {
+            .body {
+                width: 100%;
+                left: -16px;
+            }
+        }
+    </style>
+</head>
+<body id="content">
+    <div class="head">
+        <div>
+            <div class="title">
+                {{Welcome.Wel_Settings}}
+            </div>
+            <hr class="line" />
+            <div class="description">
+                &nbsp;&nbsp;&nbsp;&nbsp;<!--H3 BPM系统参数集中了所有系统配置选项，供实施人员或系统管理员进行配置管理。-->
+                {{Welcome.Wel_Settings_Des}}
+            </div>
+        </div>
+    </div>
+    <div class="body">
+        <div id="divNormal" class="activity activityPointer" style="top: 10px; left: 10px;" onclick="openUrl('{{Welcome.Wel_GeneralParameters}}','../admin/SysParam/Settings.html')">
+            <div class="activityHead">
+                <div>
+                    {{Welcome.Wel_GeneralParameters}}
+                </div>
+            </div>
+            <div class="activityBody">
+                <div>
+                    {{Welcome.Wel_GeneralParametersDes}}
+                </div>
+            </div>
+            <div class="activityFoot">
+                <div>
+                    <a href="#" onclick="openUrl('{{Welcome.Wel_GeneralParameters}}','../admin/SysParam/Settings.html')">点击进入>></a>
+                </div>
+            </div>
+        </div>
+
+        <div id="divSystemAcl" class="activity activityPointer" style="top: 10px; left: 235px;" onclick="openUrl('{{Welcome.Wel_Administrator}}','../admin/SysParam/SystemAcl.html')">
+            <div class="activityHead">
+                <div>
+                    {{Welcome.Wel_Administrator}}
+                </div>
+            </div>
+            <div class="activityBody">
+                <div>
+                    {{Welcome.Wel_AdministratorDes}}
+                </div>
+            </div>
+            <div class="activityFoot">
+                <div>
+                    <a href="#">点击进入>></a>
+                </div>
+            </div>
+        </div>
+        <div id="divOrgAcl" class="activity activityPointer" style="top: 10px; left: 460px" onclick="openUrl('{{Welcome.Wel_OrganizationAuthority}}','../admin/SysParam/SystemOrgAcl.html')">
+            <div class="activityHead">
+                <div>
+                    {{Welcome.Wel_OrganizationAuthority}}
+                </div>
+            </div>
+            <div class="activityBody">
+                <div>
+                    {{Welcome.Wel_OrganizationAuthorityDes}}
+                </div>
+            </div>
+            <div class="activityFoot">
+                <div>
+                    <a href="#" onclick="openUrl('{{Welcome.Wel_OrganizationAuthority}}','../admin/SysParam/SystemOrgAcl.html')">点击进入>></a>
+                </div>
+            </div>
+        </div>
+        <div id="divNotice" class="activity activityPointer" style="top: 10px; left: 685px; "
+             onclick="openUrl('{{Welcome.Wel_MessageSettings}}','../admin/SysParam/MessageSettings.html')">
+            <div class="activityHead">
+                <div>
+                    {{Welcome.Wel_MessageSettings}}
+                </div>
+            </div>
+            <div class="activityBody">
+                <div>
+                    {{Welcome.Wel_MessageSettingsDes}}
+                </div>
+            </div>
+            <div class="activityFoot">
+                <div>
+                    <a href="#" onclick="openUrl('{{Welcome.Wel_MessageSettings}}','../admin/SysParam/MessageSettings.html')">点击进入>></a>
+                </div>
+            </div>
+        </div>
+        <div id="divCalendar" class="activity activityPointer" style="top: 140px; left: 10px;" onclick="openUrl('{{Welcome.Wel_WorkCalendar}}', '../admin/SysParam/WorkingCalendar.html')">
+            <div class="activityHead">
+                <div>
+                    {{Welcome.Wel_WorkCalendar}}
+                </div>
+            </div>
+            <div class="activityBody">
+                <div>
+                    {{Welcome.Wel_WorkCalendarDes}}
+                </div>
+            </div>
+            <div class="activityFoot">
+                <div>
+                    <a href="#" onclick="openUrl('{{Welcome.Wel_WorkCalendar}}', '../admin/SysParam/WorkingCalendar.html')">点击进入>></a>
+                </div>
+            </div>
+        </div>
+        <div id="divData" class="activity activityPointer" style="top: 140px; left: 235px;" onclick="openUrl('{{Welcome.Wel_DataDictionary}}','../admin/SysParam/EditMasterData.html')">
+            <div class="activityHead">
+                <div>
+                    {{Welcome.Wel_DataDictionary}}
+                </div>
+            </div>
+            <div class="activityBody">
+                <div>
+                    {{Welcome.Wel_DataDictionaryDes}}
+                </div>
+            </div>
+            <div class="activityFoot">
+                <div>
+                    <a href="#" onclick="openUrl('{{Welcome.Wel_DataDictionary}}','../admin/SysParam/EditMasterData.html')">点击进入>></a>
+                </div>
+            </div>
+        </div>
+        <div id="divEnviroment" class="activity activityPointer" style="top: 140px; left: 460px; " onclick="openUrl('{{Welcome.Wel_GlobalVariable}}','../admin/SysParam/EditGlobalData.html')">
+            <div class="activityHead">
+                <div>
+                    {{Welcome.Wel_GlobalVariable}}
+                </div>
+            </div>
+            <div class="activityBody">
+                <div>
+                    {{Welcome.Wel_GlobalVariableDes}}
+                </div>
+            </div>
+            <div class="activityFoot">
+                <div>
+                    <a href="#" onclick="openUrl('{{Welcome.Wel_GlobalVariable}}','../admin/SysParam/EditGlobalData.html')">点击进入>></a>
+                </div>
+            </div>
+        </div>
+        <div id="divDelegant" class="activity activityPointer" style="top: 140px; left: 685px" onclick="openUrl(' {{Welcome.Wel_DelegateSetting}}','../admin/SysParam/QueryAgent.html')">
+            <div class="activityHead">
+                <div>
+                    {{Welcome.Wel_DelegateSetting}}
+                </div>
+            </div>
+            <div class="activityBody">
+                <div>
+                    {{Welcome.Wel_DelegateSettingDes}}
+                </div>
+            </div>
+            <div class="activityFoot">
+                <div>
+                    <a href="#">点击进入>></a>
+                </div>
+            </div>
+        </div>
+        <div id="divCalendar" class="activity activityPointer" style="top: 270px; left: 10px;" onclick="openUrl(' {{Welcome.Wel_SSO}}', '../admin/SysParam/SSOManager.html')">
+            <div class="activityHead">
+                <div>
+                    {{Welcome.Wel_SSO}}
+                </div>
+            </div>
+            <div class="activityBody">
+                <div>
+                    {{Welcome.Wel_SSODes}}
+                </div>
+            </div>
+            <div class="activityFoot">
+                <div>
+                    <a href="#" onclick="openUrl(' {{Welcome.Wel_SSO}}', '../admin/SysParam/SSOManager.html')">点击进入>></a>
+                </div>
+            </div>
+        </div>
+
+        <!--        <div class="poly-line down-right" style="width: 200px; height: 200px; top: 20px; left: 400px"></div>
+        <div class="poly-line top-right" style="width: 200px; height: 200px; top: 20px; left: 700px"></div>-->
+    </div>
+</body>
+</html>

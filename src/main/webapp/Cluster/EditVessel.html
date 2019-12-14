@@ -1,0 +1,125 @@
+﻿<script language="javascript" type="text/javascript">
+    $(function () {
+
+        var pageData = {
+            Vessel: {
+
+            }
+        };
+        var model = new Vue({
+            el: "#content",
+            data: pageData,
+            methods: {
+                saveData: function (event) {
+                    this.$validate(true);//表单验证
+                    if (this.$formValidator.invalid) {
+                        $.H3Dialog.Warn({ content: "请检查表单!" });
+                    } else {
+                        saveData();
+                    }
+                }
+            }
+        });
+        $("#ToolBar").AspLinkToolBar();
+        $(".H3Panel").BuildPanel();
+
+        function saveData() {
+            $.ajax({
+                url: $.Controller.Vessel.SaveVessel,
+                type: "post",
+                dataType: "json",
+                data: pageData.Vessel,
+                success: function (result) {
+                    if (result.Success) {
+                        parent.ReloadGrid();
+                        parent.$.H3Dialog.Success({ content: "保存成功!" });
+                        parent.H3DialogManger.Cancel();
+                    } else {
+                    	if(result.Message === "needLogin") {
+                    		toLoginPage();
+                    	} else {
+                    		$.H3Dialog.Warn({ content: $.Lang(result.Message) });
+                    	}
+                    }
+                }
+            });
+        }
+        
+        function toLoginPage() {
+        	$.H3Dialog.Warn({ content: $.Lang("登录失效，请重新登录。") });
+        	top.location.href = "/Cluster/Login.html"
+        }
+
+    });
+</script>
+<validator name="formValidator">
+    <div>
+        <div id="ToolBar">
+            <a title="save" href="javascript:void(0)" v-on:click="saveData">保存</a>
+        </div>
+        <div>
+            <div class="H3Panel">
+                <span>服务器信息</span>
+                <table class="tableList" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td colspan="6">
+                            <span id="lblResult" style="color:Red;"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" width="12%">
+                            服务编码
+                        </td>
+                        <td align="left" colspan="5">
+                            <input name="txtCode" type="text" maxlength="32" id="txtCode" v-model="Vessel.Code" detect-change="on" detect-blur="on" initial="off" v-validate:code="['chineseforbid','required']" />
+                            <span style="color:Red;" v-if="$formValidator.code.chineseforbid">请勿输入汉字!</span>
+                            <span style="color:Red;" v-if="$formValidator.code.required">服务编码不可为空!</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" width="12%">
+                            服务器IP
+                        </td>
+                        <td align="left" colspan="5">
+                            <input name="txtAddress" type="text" maxlength="32" id="txtAddress" v-model="Vessel.Address" detect-change="on" detect-blur="on" initial="off" v-validate:address="['ipaddress']" />
+                            <span style="color:Red;" v-if="$formValidator.address.ipaddress">请输入正确的IP地址!</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" width="12%">
+                            端口号
+                        </td>
+                        <td align="left" colspan="5">
+                            <input name="txtPort" type="text" value="8211" maxlength="5" id="txtPort" v-model="Vessel.Port" detect-change="on" detect-blur="on" initial="off" v-validate:port="['number','required']" />
+                            <span style="color:Red;" v-if="$formValidator.port.number">请输入数字!</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" width="12%">
+                            权重
+                        </td>
+                        <td align="left" colspan="5">
+                            <input name="txtLoadWeight" value="0" type="text" maxlength="3" id="txtLoadWeight" v-model="Vessel.LoadWeight" detect-change="on" detect-blur="on" initial="off" v-validate:load-weight="['number']" />
+                            <span style="color:Red;" v-if="$formValidator.loadWeight.number">请输入数字!</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" width="12%">顺序号</td>
+                        <td align="left" colspan="5">
+                            <input name="txtMasterOrder"value="0" type="text" maxlength="5" id="txtMasterOrder" v-model="Vessel.Order" v-model="Vessel.LoadWeight" detect-change="on" detect-blur="on" initial="off" v-validate:order="['number']" />
+                            <span style="color:Red;" v-if="$formValidator.order.number">请输入数字!</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" width="12%">
+                            描述信息
+                        </td>
+                        <td align="left" colspan="5">
+                            <textarea name="txtDescription" rows="2" cols="20" id="txtDescription" v-model="Vessel.Description"></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</validator>

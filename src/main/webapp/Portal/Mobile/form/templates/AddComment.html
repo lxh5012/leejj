@@ -1,0 +1,98 @@
+<ion-view title="{{title}}" class="fetchUser" hide-nav-bar="{{$root.dingMobile.hideHeader}}">
+    <ion-nav-bar class="bar" >
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear ion-ios-arrow-left" ng-click="BackPage()">{{names.Back}}</button>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+
+    <ion-content ng-class="{'has-header' : NavBarShow }" class="has-footer ">
+        <div class="comment-add">
+            <div class="add-inner">
+                <!--<textarea name="" id="" cols="30" ng-model="comments.inner" rows="10" maxlength="200" placeholder="请输入评论"></textarea>-->
+                <!--<div class="add-text" id="editor" contenteditable="true" ng-model="comments.inner" placeholder="请输入评论"></div>-->
+                <div class="add-text"
+                     id="editor"
+                     ng-model="comments.inner"
+                     contenteditable="true"
+                     placeholder="{{comments.inner ? '' : '请输入评论内容！'}}"
+                ></div>
+            </div>
+            <!--附件选择-->
+            <div class="add-selection">
+                <div class="selection-item" id="addUser" ng-click="goToSelectPerson()">
+                <span>
+                <i class="icon ion-at"></i>
+                </span>
+                <span>提醒谁关注</span>
+                </div>
+
+                <div class="selection-item" ngf-select="uploadImg($file)" ng-model="file" name="file" ngf-pattern="'image/*'" ngf-accept="'image/*'" ngf-max-size="10MB">
+                     <span>
+                      <i class="icon ion-image"></i>
+                    </span>
+                    <span>图片</span>
+                </div>
+
+                <div class="selection-item" ngf-select="uploadFiles($files)" ng-model="files" name="files" ngf-max-size="30MB">
+                    <span>
+                      <i class="icon ion-paperclip"></i>
+                    </span>
+                    <span>附件选择</span>
+                </div>
+            </div>
+            <!--消息通知-->
+            <div class="msg-tip" ng-if=" comments.AltUserLists.length > 0">
+                <div class="msg-tip-box">
+                    <span class="tip-check">
+                        <!--<label class="checkbox">-->
+                        <!--<input type="checkbox" ng-model='comments.commentCheck' ng-checked="comments.commentCheck">-->
+                        <!--<span class="tip-text">评论通过聊天转发给:</span>-->
+                        <!--</label>-->
+                        已选择用户:
+                    </span>
+                    <span class="tip-name" ng-repeat="item in comments.AltUserLists track by $index">
+                        <span class="tip-name-text">{{item.name}}</span>
+                        <span ng-click="deleteUser(item, $index)" class="tip-name-icon">
+                             <i class="icon ion-ios-close "></i>
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <!--图片列表-->
+            <div class="img-view" ng-if="comments.imgList.length > 0">
+                <div class="img-view-box" ng-repeat="item in comments.imgList track by $index">
+                    <span class="img-delete" ng-click="deleteImg(item,$index)">
+                        <i class="icon ion-close"></i>
+                    </span>
+                    <img  ngf-thumbnail="item.url" alt="" ng-click="imgPreview(item, $index)"/>
+                </div>
+            </div>
+            <!--文件-->
+            <div class="file-view" ng-if="comments.filesList.length > 0">
+                <div class="file-view-box" ng-repeat="item in comments.filesList track by $index">
+                    <p class="file-name">
+                        <span class="file-name-icon">
+                             <i class="icon ion-ios-folder-outline"></i>
+                        </span>
+                        <span>{{item.fileName?item.fileName:'暂无名称'}}</span>
+                    </p>
+                    <p class="file-action">
+                        <span class="file-view-action" ng-click="PreviewFile(item, $index)">预览</span>
+                        <span class="file-delete" ng-click="deleteFile(item, $index)">
+                             <i class="icon ion-close"></i>
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+    <ion-footer-bar>
+        <div ng-click="SubmitComment()" class="footer-comment">
+            <p class="comment-box-add">
+                <i class="icon ion-plus-circled"></i>
+                <span>确认{{buttonName}}</span>
+            </p>
+        </div>
+    </ion-footer-bar>
+</ion-view>

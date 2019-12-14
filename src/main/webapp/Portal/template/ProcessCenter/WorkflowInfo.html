@@ -1,0 +1,93 @@
+﻿<!--
+    流程状态——Mode=Originate
+     -->
+
+<div class="main-container container" id="workflow">
+    <div class="panel">
+        <div id="content-wrapper">
+            <div class="panel-body">
+                <!-- 基本信息 -->
+                <!--<i class="nav-icon fa  fa-chevron-right bannerTitle"-->
+                   <!--ng-click="HiddenContent($event)">-->
+                    <!--<label>-->
+                        <!--{{LanJson.ProcessStep}}-->
+                    <!--</label>-->
+                <!--</i>-->
+                <p  class="bannerTitle" ng-click="BasicInfoShow=!BasicInfoShow">
+                    <span  class="text">
+                         {{LanJson.ProcessStep}}
+                    </span>
+                    <span class="icon aufontAll" ng-class="{'h-icon-all-right-o expanded':!BasicInfoShow,'h-icon-all-right-o':BasicInfoShow}"> </span>
+                </p>
+                <div class="divContent" ng-show="!BasicInfoShow">
+                    <table class="table table-striped m-b-none" style="width:100%;">
+                        <thead>
+                        <tr>
+                            <th>{{LanJson.SerialNumber}}</th>
+                            <th>{{LanJson.ActivityCode}}</th>
+                            <th>{{LanJson.ActivityName}}</th>
+                            <th>{{LanJson.PostActivity}}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="step in ActivitySteps">
+                            <td>
+                                <span ng-bind="step.SN"></span>
+                            </td>
+                            <td>
+                                <span ng-bind="step.code"></span>
+                            </td>
+                            <td>
+                                <span ng-bind="step.name"></span>
+                            </td>
+                            <td>
+                                <span ng-bind="step.post"></span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br />
+                <!-- 流程运行跟踪 -->
+                <!--<i class="nav-icon fa  fa-chevron-right bannerTitle" id="lblWorkflowTitle" ng-click="HiddenContent($event)">-->
+                    <!--<label>-->
+                        <!--{{LanJson.FlowChart}}-->
+                    <!--</label>-->
+                <!--</i>-->
+                <p class="bannerTitle" id="lblWorkflowTitle"
+                   ng-click="InstanceChartShow=!InstanceChartShow">
+                    <span class="text">
+                        {{LanJson.FlowChart}}
+                    </span>
+                    <span class="icon aufontAll"  ng-class="{'h-icon-all-right-o expanded':!InstanceChartShow,'h-icon-all-right-o':InstanceChartShow}"></span>
+                </p>
+                <div class="divContent" style="overflow-x: hidden; overflow-y: hidden;" ng-show="!InstanceChartShow" >
+                    <div ui-jq="workflowdocument" ui-options="options()">
+                        <div class="workspace"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        overflow-y: auto;
+    }
+
+    li a {
+        display: inline-block;
+    }
+
+    li span {
+        margin-left: 5px;
+    }
+
+    #TokenGrid a {
+        color: dodgerblue;
+    }
+.bannerTitle{
+    margin-bottom: 10px;
+}
+</style>

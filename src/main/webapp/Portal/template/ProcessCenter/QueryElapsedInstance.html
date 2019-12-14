@@ -1,0 +1,94 @@
+﻿<!-- 
+    超时流程
+     -->
+<!--  ng-init="
+     app.settings.asideFolded=false;
+     app.settings.asideDock=false;" -->
+<div class="hbox hbox-auto-xs hbox-auto-sm">
+    <!-- main -->
+    <div class="col">
+        <!-- main header -->
+        <div class="bg-light lter b-b wrapper-md">
+            <div class="row">
+                <div class="col-sm-6 col-xs-12 form-title-name">
+                    <span class="h3" ng-bind="menuData.DisplayName"></span>
+                </div>
+                <div class="col-sm-6 col-xs-12 form-search-box">
+                </div>
+            </div>
+        </div>
+
+        <!--表格部分Start-->
+        <div class="wrapper-md paddingbottomNone">
+            <div class="panel panel-default">
+                <div class="table-responsive">
+                    <div class="form-inline">
+                        <div class="input-group search-box  searchContainer">
+                            <div class="header-search-item">
+                            <span class="search-title-text">{{LanJson.ProcessName}}</span>
+                            <div class="form-group">
+                                <input ng-model="InstanceName" style="width:200px;" maxlength="32" class="input form-control" placeholder="{{LanJson.ProcessName}}" />
+                            </div>
+                            </div>
+
+                            <div class="header-search-item">
+                            <span class="search-title-text">{{LanJson.WorkFlow}}</span>
+                            <div class="form-group">
+                                <div ui-jq="SheetWorkflow" ui-options="WorkflowOptions" id="sheetWorkflow" style="width:270px;min-height: 32px !important;"></div>
+                            </div>
+                            </div>
+
+                            <div class="header-search-item">
+                            <span class="search-title-text">{{LanJson.Originator}}</span>
+                            <div class="form-group">
+                                <div ui-jq="SheetUser" ui-options="UserOptions" id="sheetUser"></div>
+                            </div>
+                            </div>
+
+                            <div class="header-search-item">
+                            <span class="search-title-text">{{LanJson.FinishTime}}</span>
+                            <div class="form-group search-time-box">
+                                <div class="input-group">
+                                    <input ng-model="StartTime" ui-jq="wdatePicker" id="StartTime"  autocomplete="off" style="width:110px;"
+                                           class="input form-control"
+                                           placeholder="{{LanJson.StartTime}}" />
+                                    <span class="input-group-addon" style="border-left:0;border-right:0;"
+                                          translate="QueryTableColumn.To"></span>
+                                    <input ng-model="EndTime" ui-jq="wdatePicker" id="EndTime"  autocomplete="off" style="width:110px;"
+                                           class="input form-control"
+                                           placeholder="{{LanJson.EndTime}}" />
+                                </div>
+                            </div>
+                            </div>
+                            <!--<div class="form-group">-->
+                                <!--<span class="input-group-btn">-->
+                                    <!--<button class="btn btn-sm btn-default" type="button" style="height:30px;"><i class="fa fa-search"></i></button>-->
+                                <!--</span>-->
+                            <!--</div>-->
+                            <button class="btn btn-primary search-box-btn" type="button">查询</button>
+                        </div>
+                    </div>
+                    <table ui-jq="dataTable" id="tabElapsedInstance"
+                           ui-options="tabElapsedInstance"
+                           class="table table-striped m-b-none" style="width:99.5%;">
+                        <thead>
+                            <tr>
+                                <th class="hide1024" style="width:40px;"><span translate="QueryTableColumn.Flag"></span></th>
+                                <th><span translate="QueryTableColumn.ProcessName"></span></th>
+                                <th><span translate="QueryTableColumn.WorkFlow"></span></th>
+                                <th class="hide1024"><span translate="QueryTableColumn.ActiveName"></span></th>
+                                <th class="hide1024"><span translate="QueryTableColumn.Approver"></span></th>
+                                <th class="hide414"><span translate="QueryTableColumn.ReceiveTime"></span></th>
+                                <th class="hide414"><span translate="QueryTableColumn.PlanTime"></span></th>
+                                <th class="hide414"><span translate="QueryTableColumn.Elapsed"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--表格部分End-->
+    </div>
+    <!-- / main -->
+</div>

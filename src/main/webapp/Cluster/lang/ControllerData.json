@@ -1,0 +1,22 @@
+﻿{
+    "Cluster":{
+        "Login":"Cluster/Login",
+        "GetIndexData":"Cluster/GetIndexData",
+        "LoginOut":"Cluster/LoginOut"
+    },
+    "Vessel":{
+        "GetVesselList":"Vessel/GetVesselList",
+        "DeleteVessel":"Vessel/DeleteVessel",
+        "SaveVessel":"Vessel/SaveVessel"
+    },
+    "Engine":{
+        "GetEngineList":"Engine/GetEngineList",
+        "DelEngine":"Engine/DelEngine",
+        "DoAction":"Engine/DoAction",
+        "SaveEngine":"Engine/SaveEngine"
+    },
+    "Setting":{
+        "GetSetting":"Setting/GetSetting",
+        "SaveSetting":"Setting/SaveSetting"
+    }
+}

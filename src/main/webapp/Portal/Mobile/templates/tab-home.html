@@ -1,0 +1,334 @@
+<ion-view view-title="{{languages.tabs.home}}" hide-nav-bar="true" class="tab-home">
+    <!--批量阅读-->
+    <i class="piliang f13" ng-click="batchReaded('{{batchReadedShow}}')" ng-if="unReadNum>0&&slectIndex==1">
+        <span ng-show="batchReadedShow">{{languages.tabHome.cancel}}</span>
+        <span ng-show="!batchReadedShow">{{languages.tabHome.batchRead}}</span>
+    </i>
+    <!--执行批量已阅-->
+    <div class="bottom-button" ng-show="batchReadedShow">
+        <div class="bb-center f16" style="">
+            <i class="usercheckbox  f13" ng-class="{true:'usercheckboxed icon-goug',false:'usercheckbox '}[allRead]"
+               ng-click="initReaded(allRead)" style="display: block;"></i>
+        </div>
+        <!--radio全选-->
+        <div class="bb-left f16 " ng-click="initReaded(allRead)"><span ng-show="allRead">{{languages.tabHome.cancel}}</span>{{languages.tabHome.all}}
+        </div>
+        <div class="f16 ng-binding bb-right" ng-click="httpreadItems()">{{languages.tabHome.confirm}}</div>
+    </div>
+
+    <div class="menu-tittle  {{$root.dingMobile.dingHeaderClass}}">
+        <div class="menu-tittle-left">
+            <span class="pr25 pl25" ng-click="gosetting()">
+                <img src="img/login/setting.svg" class="setting mr17">
+            </span>
+        </div>
+        <div class="menu-tittle-middle f17">
+            <img src="img/homeTabs/logo.svg" class="logo2"/>
+        </div>
+        <div class="menu-tittle-right f15">
+            <i class="icon-shaixuan f14 blue "></i>
+            <span ng-click="openPopover()" class="">{{languages.filter}}</span>
+        </div>
+    </div>
+    <!-- 回到顶部按钮 -->
+    <div id="toTop" style="position:fixed;bottom:60px;right:10px;z-index:2;display:none;" ng-click="toTop()"
+         ng-class="batchReadedShow==true?'top_position': ''">
+        <img src="img/top.png" style="width:40px;"/>
+    </div>
+        <div class="tab-bar">
+            <!--<div>-->
+            <div ng-repeat="d in tabNames" ng-click="activeSlide($index)"
+                 ng-class="slectIndex==$index?'tab_selected tab-bar-item':'tab-bar-item'">
+            <span class="f15 rel db">
+                <i ng-class="{true:'f11',false:''}[languages.isShow]">{{d}}</i>
+                <i class="circle f11" ng-if="unDoNum&&$index==0" ng-show="unDoNum<=99&&$index==0"> {{unDoNum}}</i>
+                <i class="circle f11" ng-if="unDoNum&&$index==0" ng-show="unDoNum>99&&$index==0">...</i>
+                <i class="circle f11" ng-if="unReadNum&&$index==1" ng-show="unReadNum<=99&&$index==1"> {{unReadNum}}</i>
+                <i class="circle f11" ng-if="unReadNum&&$index==1" ng-show="unReadNum>99&&$index==1">...</i>
+            </span>
+                <!--<div class="vertical-line"></div>-->
+                <!--</div>-->
+            </div>
+
+    </div>
+    <!--<div class="tab-bar">-->
+        <!--<div ng-repeat="d in tabNames" ng-click="activeSlide($index)"-->
+             <!--ng-class="slectIndex==$index?'tab_selected tab-bar-item':'tab-bar-item'">-->
+            <!--<span class="f15 rel db">-->
+                <!--<i ng-class="{true:'f11',false:''}[languages.isShow]">{{d}}</i>-->
+                <!--<i class="circle f11" ng-if="unDoNum&&$index==0" ng-show="unDoNum<=99&&$index==0"> {{unDoNum}}</i>-->
+                <!--<i class="circle f11" ng-if="unDoNum&&$index==0" ng-show="unDoNum>99&&$index==0">...</i>-->
+                <!--<i class="circle f11" ng-if="unReadNum&&$index==1" ng-show="unReadNum<=99&&$index==1"> {{unReadNum}}</i>-->
+                <!--<i class="circle f11" ng-if="unReadNum&&$index==1" ng-show="unReadNum>99&&$index==1">...</i>-->
+            <!--</span>-->
+            <!--<div class="vertical-line"></div>-->
+        <!--</div>-->
+    <!--</div>-->
+    <ion-content class="{{$root.dingMobile.dingContentClass}}" id="scrollc">
+        <!--下拉 -->
+        <ion-refresher on-refresh="refresh($event)" pulling-text="{{languages.pullingtext}}" refreshing-text="{{languages.refreshingtext}}" refreshing-icon="ion-loading-b">
+        </ion-refresher>
+
+        <!--待办 -->
+        <div ng-show="slectIndex==0">
+            <div class="list-showEmpty" ng-if="unfinishedWorkItems.length==0">
+                <img ng-show="!languages.isShow" src="img/empty.svg">
+                <img ng-show="languages.isShow" src="img/emptyEng.svg">
+            </div>
+            <div ng-if="unfinishedWorkItems.length!=0">
+                <div ng-repeat="unfinishedWorkItem in unfinishedWorkItems" ng-class="$last?'home-list bb0':'home-list'"
+                     ng-click="openWorkItem('{{unfinishedWorkItem.ObjectID}}')">
+                    <div class="home-list-left">
+                        <img ng-src="{{url+unfinishedWorkItem.OriginatorImageURL}}"
+                             ng-if="unfinishedWorkItem.OriginatorImageURL.length>0">
+                        <!--没有头像路径时，要默认名字 -->
+                        <!-- <i class="circle-name f13" ng-if="unfinishedWorkItem.OriginatorImageURL.length==0||unfinishedWorkItem.OriginatorImageURL==null"
+                           ng-class="{'user-a':$index%4==0,'user-b':$index%4==1,'user-c':$index%4==2,'user-d':$index%4==3}">
+                            <span>{{unfinishedWorkItem.OriginatorName|limitTo :-2}}</span>
+                        </i> -->
+                        <!-- update by ouyangsk 没有头像路径时，显示默认头像 -->
+                        <img src="img/userman.png"
+                             ng-if="unfinishedWorkItem.OriginatorImageURL.length==0||unfinishedWorkItem.OriginatorImageURL==null?unfinishedWorkItem.OriginatorGender==0||unfinishedWorkItem.OriginatorGender==1:false">
+                        <img src="img/userwoman.png"
+                             ng-if="unfinishedWorkItem.OriginatorImageURL.length==0||unfinishedWorkItem.OriginatorImageURL==null?unfinishedWorkItem.OriginatorGender==2:false">
+                    </div>
+                    <div class="home-list-right">
+                        <div class="right-header">
+                            <div class="right-header-left">
+                                <span class="f16">
+                                    {{unfinishedWorkItem.InstanceName | limitTo:20 }}
+                                </span>
+                                <span class="sample f12" ng-if="sampleData">{{languages.sampleData}}</span>
+                            </div>
+                            <!--<div class="right-header-right sample-date">{{unfinishedWorkItem.ReceiveTime}}</div>-->
+                        </div>
+                        <div class="right-content f13">
+                            <p ng-repeat="content in unfinishedWorkItem.Summary"
+                               ng-if="unfinishedWorkItem.Summary.length>0"><span>{{content.DisplayName}}：</span><span>{{content.Value}}</span>
+                            </p>
+                            <p><span>{{languages.receiveTime}}</span><span>{{unfinishedWorkItem.ReceiveTime}}</span></p>
+                            <p class="mt10">
+                                <i class="icon-emp f14 "></i><span
+                                    class="blue">{{unfinishedWorkItem.ActivityName}}</span>
+                            </p>
+                        </div>
+                        <img class="seal" src="img/homeTabs/jiaji.png"
+                             ng-if="unfinishedWorkItem.RemindStatus==1&&(H3.language=='zh_cn'||H3.language=='zh_CN'||H3.language=='null')">
+                        <img class="seal" src="img/homeTabs/cuiban.png"
+                             ng-if="unfinishedWorkItem.RemindStatus==2&&(H3.language=='zh_cn'||H3.language=='zh_CN'||H3.language=='null')">
+                        <img class="seal" src="img/homeTabs/jiaji2.svg"
+                             ng-if="unfinishedWorkItem.RemindStatus==1&&H3.language=='en_us'">
+                        <img class="seal" src="img/homeTabs/cuiban2.svg"
+                             ng-if="unfinishedWorkItem.RemindStatus==2&&H3.language=='en_us'">
+                    </div>
+                </div>
+                <div class="no-data f12" ng-if="unfinishedWorkLoadComplete"><span>{{languages.noMoreDatas}}</span></div>
+            </div>
+        </div>
+
+        <!--待阅 -->
+        <div ng-show="slectIndex==1">
+            <div class="list-showEmpty" ng-if="unreadedworkitems.length==0">
+                <img ng-show="!languages.isShow" src="img/empty.svg">
+                <img ng-show="languages.isShow" src="img/emptyEng.svg">
+            </div>
+            <div ng-if="unreadedworkitems.length!=0">
+                <ion-list>
+                    <ion-item ng-repeat="unreadworkitem in unreadedworkitems">
+                        <div ng-class="$last?'home-list bb0':'home-list'">
+                            <div class="home-list-left">
+                                <img ng-src="{{url+unreadworkitem.OriginatorImageURL}}"
+                                     ng-if="unreadworkitem.OriginatorImageURL.length>0" ng-show="!batchReadedShow">
+
+                                <!--没有头像路径时，要默认名字 -->
+                                <!-- <i class="circle-name f13" ng-if="unreadworkitem.OriginatorImageURL.length==0||unreadworkitem.OriginatorImageURL==null"
+                                   ng-class="{'user-a':$index%4==0,'user-b':$index%4==1,'user-c':$index%4==2,'user-d':$index%4==3}"  ng-show="!batchReadedShow">
+                                    <span>{{unreadworkitem.OriginatorName|limitTo :-2}}</span>
+                                </i> -->
+                                <!-- update by ouyangsk 没有头像路径时，显示默认头像 -->
+                                <img src="img/userman.png"
+                                     ng-if="unreadworkitem.OriginatorImageURL.length==0||unreadworkitem.OriginatorImageURL==null?unreadworkitem.OriginatorGender==0||unreadworkitem.OriginatorGender==1:false"
+                                     ng-show="!batchReadedShow">
+                                <img src="img/userwoman.png"
+                                     ng-if="unreadworkitem.OriginatorImageURL.length==0||unreadworkitem.OriginatorImageURL==null?unreadworkitem.OriginatorGender==2:false"
+                                     ng-show="!batchReadedShow">
+
+                                <!-- 批量 -->
+                                <i class="usercheckbox  f13"
+                                   ng-class="{true:'usercheckboxed icon-goug',false:'usercheckbox '}[unreadworkitem.IsChecked]"
+                                   ng-click="checkWorkItem(unreadworkitem)" style="display:block"
+                                   ng-show="batchReadedShow"></i>
+                            </div>
+                            <div class="home-list-right" ng-click="openWorkItem('{{unreadworkitem.ObjectID}}')">
+                                <div class="right-header">
+                                    <div class="right-header-left">
+                                        <span class="f16">
+                                            {{unreadworkitem.InstanceName | limitTo:20 }}
+                                        </span>
+                                        <span class="sample f12" ng-if="sampleData">{{languages.sampleData}}</span>
+                                    </div>
+
+                                </div>
+                                <div class="right-content f13">
+                                    <p ng-repeat="content in unreadworkitem.Summary"
+                                       ng-if="unreadworkitem.Summary.length>0">
+                                        <span>{{content.DisplayName}}：</span><span>{{content.Value}}</span></p>
+                                    <p><span>{{languages.receiveTime}}</span><span>{{unreadworkitem.ReceiveTime}}</span>
+                                    </p>
+                                    <p class="mt10">
+                                        <i class="icon-emp f14 "></i><span
+                                            class="blue">{{unreadworkitem.ActivityName}}</span>
+                                    </p>
+                                </div>
+                                <img class="seal" src="img/homeTabs/jiaji.png"
+                                     ng-if="unreadworkitem.RemindStatus==1&&(H3.language=='zh_cn'||H3.language=='zh_CN'||H3.language=='null')">
+                                <img class="seal" src="img/homeTabs/cuiban.png"
+                                     ng-if="unreadworkitem.RemindStatus==2&&(H3.language=='zh_cn'||H3.language=='zh_CN'||H3.language=='null')">
+                                <img class="seal" src="img/homeTabs/jiaji2.svg"
+                                     ng-if="unreadworkitem.RemindStatus==1&&H3.language=='en_us'">
+                                <img class="seal" src="img/homeTabs/cuiban2.svg"
+                                     ng-if="unreadworkitem.RemindStatus==2&&H3.language=='en_us'">
+                            </div>
+                        </div>
+                        <ion-option-button class="button-assertive button-unreadworkitems f16" ng-click="setReaded(unreadworkitem.ObjectID)">
+                            {{languages.readItem}}
+                        </ion-option-button>
+                    </ion-item>
+                </ion-list>
+                <div class="no-data f12" ng-if="unreadedworkLoadComplete"><span>{{languages.noMoreDatas}}</span></div>
+            </div>
+        </div>
+
+        <!--已办 -->
+        <div ng-show="slectIndex==2">
+            <div class="list-showEmpty" ng-if="finishedworkitems.length==0">
+                <img ng-show="!languages.isShow" src="img/empty.svg">
+                <img ng-show="languages.isShow" src="img/emptyEng.svg">
+            </div>
+            <div ng-if="finishedworkitems.length!=0">
+                <div ng-repeat="finishedworkitem in finishedworkitems" ng-class="$last?'home-list bb0':'home-list'"
+                     ng-click="openWorkItem('{{finishedworkitem.ObjectID}}')">
+                    <div class="home-list-left">
+                        <img ng-src="{{url+finishedworkitem.OriginatorImageURL}}"
+                             ng-if="finishedworkitem.OriginatorImageURL.length>0">
+                        <!--没有头像路径时，要默认名字 -->
+                        <!-- <i class="circle-name f13" ng-if="finishedworkitem.OriginatorImageURL.length==0||finishedworkitem.OriginatorImageURL==null"
+                           ng-class="{'user-a':$index%4==0,'user-b':$index%4==1,'user-c':$index%4==2,'user-d':$index%4==3}">
+                            <span>{{finishedworkitem.OriginatorName|limitTo :-2}}</span>
+                        </i> -->
+                        <!-- update by ouyangsk 没有头像路径时，显示默认头像 -->
+                        <img src="img/userman.png"
+                             ng-if="finishedworkitem.OriginatorImageURL.length==0||finishedworkitem.OriginatorImageURL==null?finishedworkitem.OriginatorGender==0||finishedworkitem.OriginatorGender==1:false">
+                        <img src="img/userwoman.png"
+                             ng-if="finishedworkitem.OriginatorImageURL.length==0||finishedworkitem.OriginatorImageURL==null?finishedworkitem.OriginatorGender==2:false">
+                    </div>
+                    <div class="home-list-right">
+                        <div class="right-header">
+                            <div class="right-header-left">
+                                <span class="f16">
+                                    {{finishedworkitem.InstanceName | limitTo:20 }}
+                                </span>
+                                <span class="sample f12" ng-if="sampleData">{{languages.sampleData}}</span>
+                            </div>
+
+                        </div>
+                        <div class="right-content f13">
+                            <p ng-repeat="content in finishedworkitem.Summary"
+                               ng-if="finishedworkitem.Summary.length>0"><span>{{content.DisplayName}}：</span><span>{{content.Value}}</span>
+                            </p>
+                            <p><span>{{languages.handleTime}}</span><span>{{finishedworkitem.FinishTime}}</span></p>
+                            <p class="mt10">
+                                <i class="icon-emp f14 "></i><span class="blue">{{finishedworkitem.ActivityName}}</span><i
+                                    ng-class="finishedworkitem.ApprovelStatus==1?'orange':'red'">({{finishedworkitem.ApprovelStatueName}})</i>
+                            </p>
+                        </div>
+                        <img class="seal" src="img/homeTabs/jiaji.png"
+                             ng-if="finishedworkitems.RemindStatus==1&&(H3.language=='zh_cn'||H3.language=='zh_CN'||H3.language=='null')">
+                        <img class="seal" src="img/homeTabs/cuiban.png"
+                             ng-if="finishedworkitems.RemindStatus==2&&(H3.language=='zh_cn'||H3.language=='zh_CN'||H3.language=='null')">
+                        <img class="seal" src="img/homeTabs/jiaji2.svg"
+                             ng-if="finishedworkitems.RemindStatus==1&&H3.language=='en_us'">
+                        <img class="seal" src="img/homeTabs/cuiban2.svg"
+                             ng-if="finishedworkitems.RemindStatus==2&&H3.language=='en_us'">
+                    </div>
+                </div>
+                <div class="no-data f12" ng-if="finishedWorkLoadComplete"><span>{{languages.noMoreDatas}}</span></div>
+            </div>
+        </div>
+
+        <!--已阅 -->
+        <div ng-show="slectIndex==3">
+            <div class="list-showEmpty" ng-if="readedworkitems.length==0">
+                <img ng-show="!languages.isShow" src="img/empty.svg">
+                <img ng-show="languages.isShow" src="img/emptyEng.svg">
+            </div>
+            <div ng-if="readedworkitems.length!=0">
+                <div ng-repeat="finishedworkitem in readedworkitems" ng-class="$last?'home-list bb0':'home-list'"
+                     ng-click="openWorkItem('{{finishedworkitem.ObjectID}}')">
+                    <div class="home-list-left">
+                        <img ng-src="{{url+finishedworkitem.OriginatorImageURL}}"
+                             ng-if="finishedworkitem.OriginatorImageURL.length>0">
+                        <!--没有头像路径时，要默认名字 -->
+                        <!-- <i class="circle-name f13" ng-if="finishedworkitem.OriginatorImageURL.length==0||finishedworkitem.OriginatorImageURL==null"
+                           ng-class="{'user-a':$index%4==0,'user-b':$index%4==1,'user-c':$index%4==2,'user-d':$index%4==3}">
+                            <span>{{finishedworkitem.OriginatorName|limitTo :-2}}</span>
+                        </i> -->
+                        <!-- update by ouyangsk 没有头像路径时，显示默认头像 -->
+                        <img src="img/userman.png"
+                             ng-if="finishedworkitem.OriginatorImageURL.length==0||finishedworkitem.OriginatorImageURL==null?finishedworkitem.OriginatorGender==0||finishedworkitem.OriginatorGender==1:false">
+                        <img src="img/userwoman.png"
+                             ng-if="finishedworkitem.OriginatorImageURL.length==0||finishedworkitem.OriginatorImageURL==null?finishedworkitem.OriginatorGender==2:false">
+
+                    </div>
+                    <div class="home-list-right">
+                        <div class="right-header">
+                            <div class="right-header-left">
+                                <span class="f16">
+                                    {{finishedworkitem.InstanceName | limitTo:20 }}
+                                </span>
+                                <span class="sample f12" ng-if="sampleData">{{languages.sampleData}}</span>
+                            </div>
+
+                        </div>
+                        <div class="right-content f13">
+                            <p ng-repeat="content in finishedworkitem.Summary"
+                               ng-if="finishedworkitem.Summary.length>0"><span>{{content.DisplayName}}：</span><span>{{content.Value}}</span>
+                            </p>
+                            <p><span>{{languages.handleTime}}</span><span>{{finishedworkitem.FinishTime}}</span></p>
+                            <p class="mt10">
+                                <i class="icon-emp f14 "></i><span class="blue">{{finishedworkitem.ActivityName}}</span>
+                            </p>
+                        </div>
+                        <img class="seal" src="img/homeTabs/jiaji.png"
+                             ng-if="readedworkitems.RemindStatus==1&&(H3.language=='zh_cn'||H3.language=='zh_CN'||H3.language=='null')">
+                        <img class="seal" src="img/homeTabs/cuiban.png"
+                             ng-if="readedworkitems.RemindStatus==2&&(H3.language=='zh_cn'||H3.language=='zh_CN'||H3.language=='null')">
+                        <img class="seal" src="img/homeTabs/jiaji2.svg"
+                             ng-if="readedworkitems.RemindStatus==1&&H3.language=='en_us'">
+                        <img class="seal" src="img/homeTabs/cuiban2.svg"
+                             ng-if="readedworkitems.RemindStatus==2&&H3.language=='en_us'">
+                    </div>
+                </div>
+                <div class="no-data f12" ng-if="readedworkLoadComplete"><span>{{languages.noMoreDatas}}</span></div>
+            </div>
+        </div>
+
+        <!--上拉  -->
+        <ion-infinite-scroll ng-if="slectIndex==0&&!unfinishedWorkLoadComplete"
+                             on-infinite="loadMore()"
+                             distance="10%">
+        </ion-infinite-scroll>
+        <ion-infinite-scroll ng-if="slectIndex==1&&!unreadedworkLoadComplete" on-infinite="loadMore()" distance="10%">
+        </ion-infinite-scroll>
+        <ion-infinite-scroll ng-if="slectIndex==2&&!finishedWorkLoadComplete"
+                             on-infinite="loadMore()"
+                             distance="10%">
+        </ion-infinite-scroll>
+        <ion-infinite-scroll ng-if="slectIndex==3&&!readedworkLoadComplete"
+                             on-infinite="loadMore()"
+                             distance="10%">
+        </ion-infinite-scroll>
+    </ion-content>
+
+
+</ion-view>

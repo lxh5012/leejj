@@ -1,0 +1,186 @@
+﻿<link rel="stylesheet" href="../css/upload.css">﻿
+<script src="../WFRes/_Scripts/jquery/ajaxfileupload.js"></script>
+<script>
+    var ImportAppParentID = getUrlParam("ParentID") || "";
+    $(function () {
+        $("#ImportAppTool").BuildPanel();
+    });
+
+    var UpLoadData = function () {
+    	//update by ouyangsk 处理校验不通过后弹出两次提示的问题
+    	if (!CheckFile()) {
+    		return;
+    	}
+        $.ajaxFileUpload({
+            url: $.Controller.Apps.UpLoadFile,
+            fileElementId: 'uploadfile',
+            type:"post",
+            dataType: 'json',
+            success: function (data) {
+                if (data.Success) {
+                    $.H3Dialog.Success({ content: $.Lang("msgGlobalString.ImportSucced") });
+                    var ImportAppPageData = data.Extend;
+                    //console.log(ImportAppPageData, 'ImportAppPageData')
+                    ImportAppPageData.LanData = $.Languages;
+                    $("#ImportAppDetails").show();
+                    $("#H3ToolBar").show();
+                    $("#ImportAppTool").hide();
+                    //$("#H3ToolBar").AspLinkToolBar();
+                    ImportAppModel(ImportAppPageData);
+                    $("#H3ToolBar").AspLinkToolBar();
+                    $(".H3Panel").BuildPanel();
+                }
+                else {
+                    if (data.Extend && data.Extend.length != 0) {
+                        var content = "";
+                        for (var i = 0; i < data.Extend.length; i++) {
+                            if (data.Extend[i].Seq != 0) {
+                                content += $.format($.Lang(data.Extend[i].Error), data.Extend[i].Seq);
+                            } else {
+                                content = $.Lang(data.Extend[i].Error);
+                            }
+                        }
+                        $.H3Dialog.Warn({ content: content });
+                    } else {
+                        $.H3Dialog.Warn({ content: $.Lang(data.Message) });
+                    }
+                }
+            }
+        })
+    };
+
+    var CheckFile = function () {
+        var fileVal = $("#uploadfile").val();
+        if (fileVal == null || fileVal === "") {
+            $.H3Dialog.Warn({ content: "请选择上传文件" });
+            return false;
+        }
+        if (fileVal.toLowerCase().indexOf(".xml") < 0) {
+            $.H3Dialog.Warn({ content: "上传文件必须为xml" });
+            return false;
+        }
+        return true
+    };
+
+    var ImportAppModel = function (ImportAppPageData) {
+        var model = new Vue({
+            el: "#content",
+            data: ImportAppPageData,
+            methods: {
+                saveData: function (event) {
+                    //console.log(ImportAppPageData, 'ImportAppPageData')
+                    this.$validate(true);//表单验证
+                    if (this.$formValidator.invalid) {
+                        return false
+                        // $.H3Dialog.Warn({ content: $.Lang("msgGlobalString.FormInvalid") });
+                    } else {
+                        saveData();
+                    }
+                }
+            }
+        });
+
+        function saveData() {
+            $.ajax({
+                url: $.Controller.Apps.ImportApp,
+                type: "post",
+                dataType: "json",
+                data: { appImportSettingsStr: JSON.stringify(ImportAppPageData.AppImportSettings) },
+                success: function (result) {
+                    if (result.Success) {
+                        $.H3Dialog.Success({ content: $.Lang("Apps.ImportSuccess") });
+                        top.ReloadNode(ImportAppParentID);
+                        parent.H3DialogManger.Close();
+                    } else {
+                        $.H3Dialog.Warn({ content: $.Lang(result.Message) });
+                    }
+                }
+            });
+        }
+    }
+    function Reload() {
+        window.location.reload();
+    }
+    // 上传文件
+    $("#uploadfile").change(function () {
+        if ($("#uploadfile").val()) {
+            $("#upload-text").html($("#uploadfile").val());
+        } else {
+            $("#upload-text").html($.Lang('Unselected'));
+        }
+    })
+</script>
+<validator name="formValidator">
+    <div id="H3ToolBar" hidden="hidden">
+        <a id="btnImport" v-on:click="saveData" data-icon="fa fa-upload" href="javascript:void(0)">导入</a>
+        <a id="btnReset" onclick="Reload()" data-icon="fa fa-refresh" href="javascript:void(0)">重新上传应用程序</a>
+    </div>
+    <div id="ImportAppTool">
+        <div class="H3Panel">
+            <table>
+                <tr>
+                    <td>
+                        <!--<input type="file" name="uploadfile" id="uploadfile" />-->
+                        <div id="upload-box">
+                            <p class="btn-box">
+                                <input type="button" id="btn" value="点我上传">
+                                <span>&nbsp;</span>
+                                <span id="upload-text" data-lang="msgGlobalString.SelectImportFile">请上传文件</span>
+                            </p>
+                            <input type="file" name="uploadfile" id="uploadfile" class="upload-file-input" title="" />
+                        </div>
+                        <a onclick="UpLoadData()" href="javascript:void(0)">上传文件</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="ImportAppDetails" hidden="hidden">
+        <div class="H3Panel">
+            <span>{{LanData.Apps.AppInfo}}</span>
+            <table>
+                <tr>
+                    <td>
+                        <label><input type="checkbox"  v-model="AppImportSettings.IsCover" style="margin-right:10px;" />{{LanData.Apps.IsCover}}</label>
+                    </td>
+                    <td>{{LanData.Apps.Msg2}}</td>
+                </tr>
+                <tr>
+                    <!--应用程序编码-->
+                    <td>{{LanData.Apps.AppCode}}</td>
+                    <td>
+                        <input type="text" v-model="AppImportSettings.AppCode" id="AppCode"  v-validate:app-code="['htmlEscape','required']"/>
+                        <span style="color:Red;" v-if="$formValidator.appCode.required" data-lang="msgGlobalString.EnumValueRequired"></span>
+                        <span style="color:Red;" v-if="$formValidator.appCode.htmlEscape">{{LanData.msgGlobalString.InvalidCode}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <!--应用程序名-->
+                    <td>{{LanData.Apps.AppName}}</td>
+                    <td>
+                        <input type="text" v-model="AppImportSettings.AppName" id="AppName" v-validate:display-name="['htmlEscape','required']"/>
+                        <span style="color:Red;" v-if="$formValidator.displayName.required" data-lang="msgGlobalString.EnumValueRequired"></span>
+                        <span style="color:Red;" v-if="$formValidator.displayName.htmlEscape">{{LanData.msgGlobalString.InvalidCode}}</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="H3Panel">
+            <span>{{LanData.Apps.AppMenuInfo}}</span>
+            <table>
+                <tr v-for="item in AppImportSettings.FunctionNodeList">
+                    <!--菜单编码-->
+                    <td>{{LanData.Apps.MenuCode}}</td>
+                    <td>
+                        <input type="text" v-model="item.Code" />
+                    </td>
+                    <!--菜单名称-->
+                    <td>{{LanData.Apps.MenuName}}</td>
+                    <td>
+                        <input type="text" v-model="item.DisplayName" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</validator>

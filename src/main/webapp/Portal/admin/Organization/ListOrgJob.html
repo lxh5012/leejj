@@ -1,0 +1,190 @@
+
+<script>
+    $(function () {
+          $("#H3ToolBar").AspLinkToolBar();
+          $(".H3Panel").BuildPanel({ excludeIDs: ["OrgJobList"] });
+          //��ʼ��ҳ��ִ�в�ѯ
+          QueryFun();
+          
+          bindReloadEvent();
+       });
+    
+    //��֯��ɫ��
+    function GetRoleViewColumns() {
+        var primaryKey=$.Lang("ListOrgJob.PrimaryKey");
+        var code=$.Lang("ListOrgJob.Code");
+        var displayName = $.Lang("ListOrgJob.DisplayName");
+        var userCount = $.Lang("ListOrgJob.UserCount");
+        var description = $.Lang("ListOrgJob.Description");
+        var roleLevel = $.Lang("ListOrgJob.RoleLevel");
+        var sortKey = $.Lang("EditOrgUnit.SortKey");
+        var parentPostName = $.Lang("ListOrgJob.ParentPostName");
+
+        var operation = $.Lang("ListOrgJob.Operation");
+        var edit = $.Lang("GlobalButton.Edit");
+        var userManager = $.Lang("ListOrgJob.UserManagerAction");
+        var setAcl = $.Lang("GlobalButton.SetAcl");
+        var del = $.Lang("GlobalButton.Delete");
+
+        return [
+            { display: primaryKey, name: "ObjectID", hide: true },
+            { display: code, name: "Code",width:"10%",isSort:false,
+            	render: function (row, rowindex, value) {
+            	    return window.parent.htmlEncode(value);
+            	}
+            },
+            { display: displayName, name: "DisplayName", width: "10%", isSort: false,
+            	render: function (row, rowindex, value) {
+            	    return window.parent.htmlEncode(value);
+            	}
+             },
+            { display: parentPostName, name: "ParentPostName", width: "10%", isSort: false },
+            { display: userCount, name: "UserCount", width: "6%", isSort: false },
+            { display: description, name: "Description", isSort: false ,
+            	render: function (row, rowindex, value) {
+            		value = value ?value:"";
+            	    return window.parent.htmlEncode(value);
+            	}
+            },
+            { display: roleLevel, name: "RoleLevel", width: "6%", isSort: false },
+            { display: sortKey, name: "Sortkey", width: "6%", isSort: false },
+            {
+                display: operation,name:'',render: function (row) {
+                    return  "<div style='float:left;'><a href='#' onclick='EditRole(\"" + row.ObjectID + "\")'>"+edit+"</div>"
+                        + "<div style='padding-left:5px;float:left;'><a href='#' onclick='UserManager(\"" + row.ObjectID + "\")'>"+userManager+"</div>" 
+                        + "<div style='padding-left:5px;float:left;'><a href='#' onclick='SetAcl(\"" + row.ObjectID + "\")'>" + setAcl + "</a></div>"
+                        + "<div style='padding-left:5px;float:left;'><a href='#' onclick='deleteOrgJob(\"" + row.ObjectID + "\")'>" + del + "</a></div>"
+                    }
+            }];
+    }
+    //update by ousihang
+	function bindReloadEvent(){
+		$(window).on("unload", function(){
+			var searchKeys = window.parent.$.orgSearchKeys;
+			if(!searchKeys.H3TabAutoReload){
+				searchKeys.roleCode = '';
+	    		searchKeys.roleName = '';
+			}
+		})
+	}
+    function QueryFun() {
+    	var roleCode;
+    	var roleName;
+    	var searchKeys = window.parent.$.orgSearchKeys;
+		//update by ousihang    	
+    	if(searchKeys.H3TabAutoReload){
+			var searchKeys = window.parent.$.orgSearchKeys;
+			roleCode = searchKeys.roleCode;
+    		roleName = searchKeys.roleName;
+    		//��ѯ����
+    		$("input[id=roleCode]").val(roleCode)
+    		$("input[id=roleName]").val(roleName)
+			searchKeys.H3TabAutoReload = false;
+		}else{
+    		roleCode = $("input[id=roleCode]").val();
+	        roleName = $("input[id=roleName]").val();
+	        searchKeys.roleCode = roleCode;
+	        searchKeys.roleName = roleName;
+		}
+    	
+        CreateLigerGrid(
+        	$("#OrgJobList"),
+        	GetRoleViewColumns(),
+        	$.Controller.ListOrgJob.GetRoleList,
+        	false, 
+        	"98%",
+       		null, 
+       		null, 
+       		null,
+         	{
+             	roleCode: roleCode,
+             	roleName: roleName
+         	}
+        );
+    }
+
+    //�༭��ɫ
+    function EditRole(objId) {
+        //;
+        var editOrgJob = $.Lang("ListOrgJob.EditRole");
+        
+        ShowDialog(editOrgJob, _PORTALROOT_GLOBAL + "/admin/TabMaster.html?url=Organization/EditOrgPost.html&ID=" + objId);
+    }
+
+    //�û�����ҳ��
+    function UserManager(objId)
+    {
+        var code = getUrlParam("Code");
+        var editOrgJob = $.Lang("ListOrgJob.RoleUserManager");
+
+        //�����±�ǩҳ
+        var tabUrl = "Organization/RoleUserList.html&id=" + objId + "&code=" + code;
+        top.f_addTab(
+            {
+                tabid: objId,
+                text: editOrgJob,
+                url: tabUrl
+            });
+    }
+
+    //����Ȩ��
+    function SetAcl(objId) {
+        var setAclName = $.Lang("msgGlobalString.UpdateAcl");
+        ShowDialog(setAclName, _PORTALROOT_GLOBAL+"/admin/TabMaster.html?url=Organization/FunctionAclByRole.html&unitid=" + objId);
+    }
+
+    //��ӽ�ɫ
+    function addOrgJob() {
+        var addOrgJob = $.Lang("ListOrgJob.AddRole");
+        ShowDialog(addOrgJob, _PORTALROOT_GLOBAL+"/admin/TabMaster.html?url=Organization/EditOrgPost.html");
+    }
+    //ɾ��
+    function deleteOrgJob(id) {
+        var ajaxUrl = $.Controller.ListOrgJob.DelRole;//Delete Action URL
+        var deleteConfirm = $.Lang("msgGlobalString.AppMenuList_Msg0");
+        $.ligerDialog.confirm(deleteConfirm, function (result) {
+            if (result) {
+                $.ajax({
+                    url: ajaxUrl,
+                    data: { id: id },
+                    success: function (result) {
+                        //top.workTab.reload(top.workTab.getSelectedTabItemID());
+                        var manager = $("#OrgJobList").ligerGetGridManager();
+                        manager.reload();
+                    }
+                });
+            }
+        });
+    }
+
+    function searchOrgJob()
+    {
+        QueryFun();
+    }
+  </script>
+<div id="H3ToolBar">
+    <a data-icon="fa fa-plus" href="javascript:addOrgJob();" onclick="" data-lang="GlobalButton.Add"></a>
+    <a data-icon="fa fa-search" href="javascript:searchOrgJob();" onclick="" data-lang="GlobalButton.Search"></a>
+</div>
+<div class="H3Panel">
+    <table class="tableList">
+        <tr>
+            <td  data-lang="ListOrgJob.Code">
+                ��ɫ����
+            </td>
+            <td>
+                <input name="roleCode" type="text" id="roleCode" >
+            </td>
+            <td   data-lang="ListOrgJob.DisplayName">
+                ��ɫ����
+            </td>
+            <td>
+                <input name="roleName" type="text" id="roleName" >
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="H3Panel">
+    <span data-lang="ListOrgJob.RoleList"></span>
+    <div id="OrgJobList"></div>
+</div>

@@ -1,0 +1,152 @@
+﻿<div class="hbox hbox-auto-xs hbox-auto-sm">
+    <div class="col">
+        <div class="bg-light lter b-b wrapper-md">
+            <div class="row" style=" padding-right: 15px; ">
+                <div class="col-sm-6 col-xs-12">
+                    <span class="h3" translate="PortalTemplates.ManagePage">页面管理</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="wrapper-md paddingbottomNone">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span ng-click="AddTemplate();" class="btn btn-default" style="cursor: pointer;" translate="EditGlobalData.Add">添加</span>
+                </div>
+                <div class="panel-body tab-content-padding">
+                    <div class="table-responsive">
+                        <table class="table table-condensed" style="width:99.7%;">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <span translate="FormulaEditor.No">
+                                            序号
+                                        </span>
+                                    </th>
+                                    <th>
+                                        <span translate="HomePage.Title">
+                                            标题
+                                        </span>
+                                    </th>
+                                    <th>
+                                        <span translate="PortalTemplates.Organization">
+                                            所属组织
+                                        </span>
+                                    </th>
+                                    <th>
+                                        <span translate="PortalTemplates.CreatBy">
+                                            创建者
+                                        </span>
+                                    </th>
+                                    <th>
+                                        <span translate="ScheduleInvoker.CreatedTime">
+                                            创建时间
+                                        </span>
+                                    </th>
+                                    <th>
+                                        <span translate="PortalTemplates.ModifiedTime">
+                                            更新时间
+                                        </span>
+                                    </th>
+                                    <th>
+                                        <span translate="PortalTemplates.Usetemplates">
+                                            使用模板
+                                        </span>
+                                    </th>
+                                    <th style="width:20%;">
+                                        <span translate="BizQuery.Action">
+                                            操作
+                                        </span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="SitPage in SitPages">
+                                    <td ng-bind="SitPage.RowNumber" title="{{SitPage.RowNumber}}"></td>
+                                    <td ng-bind="SitPage.Title" title="{{SitPage.Title}}"></td>
+                                    <td ng-bind="SitPage.OrgName" title="{{SitPage.OrgName}}"></td>
+                                    <td ng-bind="SitPage.CreatedName" title="{{SitPage.CreatedName}}"></td>
+                                    <td ng-bind="SitPage.CreatedTime" title="{{SitPage.CreatedTime}}"></td>
+                                    <td ng-bind="SitPage.LastModifiedTime" title="{{SitPage.LastModifiedTime}}"></td>
+                                    <td ng-bind="SitPage.TemplateName" title="{{SitPage.TemplateName}}"></td>
+                                    <td class="dodgerblue">
+                                        <a ng-click="EditPage('{{SitPage.ObjectID}}')">
+                                            <span translate="GlobalButton.Update">
+                                                修改
+                                            </span>
+                                        </a>
+                                        <a ng-click="Design('{{SitPage.ObjectID}}')">
+                                            <span translate="SheetDesigner.SheetDesigner_Design">
+                                                设计
+                                            </span>
+                                        </a>
+                                        <a ng-click="ManageWebParts('{{SitPage.ObjectID}}')">
+                                            <span translate="PortalTemplates.WebPart">
+                                                部件
+                                            </span>
+                                        </a>
+                                        <a ng-click="RemovePage('{{SitPage.ObjectID}}')">
+                                            <span translate="EditGlobalData.Delete">
+                                                删除
+                                            </span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑、添加 -->
+
+
+
+<!-- 部件管理 -->
+<script type="text/ng-template" id="ManageWebParts.html">
+    <div class="modal-header">
+        <button type="button" class="close"
+                data-dismiss="modal" aria-hidden="true" ng-click="cancel()">
+            ×
+        </button>
+        <h4 class="modal-title" id="myModalLabel">
+            <span translate="PortalTemplates.WebPartManage">部件管理</span>
+        </h4>
+    </div>
+    <div id="content-wrapper" style="padding-top: 18px; width: 100%;">
+        <form class="bs-example form-horizontal" name="form">
+            <div class="row">
+                <div class="col-sm-12 form-group">
+                    <div class="col-sm-3 control-label" style="width: 45%;">
+                        <span translate="PortalTemplates.WebPart">部件</span>
+                    </div>
+                    <div class="col-sm-6 control-label" style="width: 30%;">
+                        <span translate="BizQuery.Action">操作</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-repeat="WebPart in WebParts">
+                <div class="col-sm-3" style="text-align:right; width: 45%; padding-left: 70px;">
+                    <span style="word-break: break-all;" ng-bind="WebPart.WebPartTitle"></span>
+                </div>
+                <div class="col-sm-6 dodgerblue" style="text-align: right; width: 30%; padding-right: 40px;">
+                    <a ng-click="RemovePageWebPart('{{WebPart.WebPartId}}')">
+                        <span translate="EditGlobalData.Delete">删除</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row" style="height:20px;">
+            </div>
+            <div class="row" ng-show="NoWebParts">
+                <div class="col-sm-12 form-group" style="text-align:center;color:red;">
+                    <span translate="PortalTemplates.NoWebPart">该页面暂无部件</span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+    </div>
+</script>

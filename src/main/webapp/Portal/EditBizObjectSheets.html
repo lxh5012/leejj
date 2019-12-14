@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>流程数据</title>
+    <!-- jQuery -->
+    <script src="vendor/jquery/jquery.min.min.js"></script>
+    <script src="vendor/jquery/notify/jquery.notify.js"></script>
+    <script>
+        var params = [];
+        getUrlVars = function () {
+            var vars = {};
+            var hash;
+            var hashs = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < hashs.length; i++) {
+                hash = hashs[i].split('=');
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        }
+
+        window.onload=function () {
+            //获取URL参数
+            params = getUrlVars();
+
+            $.ajax({
+                url:"Organization/GetCurrentUser?" + new Date().getTime(),
+                type:"GET",
+                dataType:"JSON",
+                async:false,
+                params:{
+                    random: new Date().getTime()
+                },
+                success:function (result, header, config, status) {
+                    if (!result.Success) {
+                        //alert(window.location.href)
+                        window.top.location.href = "/Portal/#/platform/login";
+                    } else {
+                        $.ajax({
+                            type: "POST",
+                            async: false,
+                            url: "RunBizQuery/EditBizObjectSheet",
+                            data: {
+                                BizObjectID: params["BizObjectID"],
+                                SchemaCode: params["SchemaCode"],
+                                SheetCode: "",
+                                Mode: params["Mode"],
+                                IsMobile: false,
+                                EditInstanceData: "true"
+                            },
+                            dataType: "json",
+                            success: function (data) {
+                                if (data.Success) {
+                                    window.location.href = data.Message;
+                                } else {
+                                    var message;
+                                    alert(data.Message);
+                                    window.close();
+                                }
+                            }
+                        });
+                    }
+                },
+                error:function (a, b, c) {
+                    //$state.go("platform.login");
+                    alert("error");
+                    window.top.location.href = "/Portal/#/platform/login"
+                }
+            });
+        }
+        $(function () {
+        })
+    </script>
+</head>
+<body>
+</body>
+</html>

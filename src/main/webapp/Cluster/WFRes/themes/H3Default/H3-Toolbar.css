@@ -1,0 +1,35 @@
+﻿.l-toolbar {
+    height: 30px;
+    background: #f7f7f7;
+    border: none;
+}
+
+.l-panel-btn {
+    color: #177dbd;
+    font-weight: bold;
+}
+
+.l-toolbar-item {
+    width: 60px;
+    height: 30px;
+    line-height: 30px;
+}
+
+.l-bar-separator {
+    height: 26px;
+}
+
+.l-panel-btn-over {
+    background-image: none;
+    /*height: 26px;
+    margin-top: 2px;*/
+}
+
+.l-panel-btn-l, .l-panel-btn-r {
+    background-image: none;
+}
+
+.l-toolbar-item .l-icon {
+    left: 10px;
+    top: 6px;
+}

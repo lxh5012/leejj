@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ot_portal_lang language="en-US">
+	<resources key="UI_PAGE_EDITPAGE">Design Pattern</resources>
+	<resources key="UI_PAGE_CANCELEDITPAGE">Browser Pattern</resources>
+	<resources key="UI_PAGE_NEWPAGE">New</resources>
+	<resources key="UI_PAGE_CHANGETEMPLATE">Change Template</resources>
+	<resources key="UI_PAGE_PAGEMANAGE">System Management</resources>
+	<resources key="UI_PAGE_CURRENTTHEME">Current Theme</resources>
+	<resources key="UI_PAGE_ADDWEBPART">Add a webpart</resources>
+	<resources key="UI_PAGE_COLLAPSE">Collapse</resources>
+	<resources key="UI_PAGE_FOLD">Fold</resources>
+
+	<resources key="UI_PAGE_EDITWEBPART">Setting</resources>
+	<resources key="UI_PAGE_REMOVEWEBPART">Remove</resources>
+	<resources key="UI_PAGE_MOVEUPWEBPART">Move Up</resources>
+	<resources key="UI_PAGE_MOVEDOWNWEBPART">Move Down</resources>
+	<resources key="UI_PAGE_LOGOUTCONFIRM">Be sure to sign out?</resources>
+
+	<resources key="UI_DIALOGTITLE_SELECTTEMPLATE">Select Template</resources>
+	<resources key="UI_DIALOGTITLE_NEWPAGE">Create a page</resources>
+	<resources key="UI_DIALOGTITLE_MANAGEPAGE">Pages Management</resources>
+	<resources key="UI_DIALOGTITLE_SELECTWEBPART">Select a webpart</resources>
+	<resources key="UI_DIALOGTITLE_WEBPARTEDIT">Edit webpart</resources>
+
+	<resources key="SS_CONFIRM_DELETEWEBPART">Are you sure to delete the webpart from this
+		page?</resources>
+
+	<resources key="UI_TABTITLE_PUBLICATTR">Public Attribte</resources>
+	<resources key="UI_TABTITLE_PRIVATEATTR">Private Attribute</resources>
+
+	<resources key="UI_BUTTON_SAVE">Save</resources>
+	<resources key="UI_BUTTON_SEARCH">Search</resources>
+
+	<resources key="UI_PUBLICATTR_CSSNAME">CSS Name</resources>
+	<resources key="UI_PUBLICATTR_TITLE">Title</resources>
+	<resources key="UI_PUBLICATTR_TITLEVISIBLE">Title Visible</resources>
+	<resources key="UI_PUBLICATTR_TITLEICON">Title Icon</resources>
+	<resources key="UI_PUBLICATTR_TITLEICONVISIBLE">Title Icon Visible</resources>
+	<resources key="UI_PUBLICATTR_WIDTH">Width</resources>
+	<resources key="UI_PUBLICATTR_HEIGHT">Height</resources>
+
+	<resources key="UI_LOGIN_LOGINNAME">Login Name:</resources>
+	<resources key="UI_LOGIN_PASSWORD">Password:</resources>
+	<resources key="UI_LOGIN_REMEMBERME">Remember me</resources>
+	<resources key="UI_LOGIN_BTNLOGIN">Sign In</resources>
+
+	<resources key="UI_SERVICE_CREATEPAGE_TITLE">Title</resources>
+	<resources key="UI_SERVICE_CREATEPAGE_PAGETYPE">Type</resources>
+	<resources key="UI_SERVICE_CREATEPAGE_ORG">Department</resources>
+	<resources key="UI_SERVICE_CREATEPAGE_TEMPLATE">Template</resources>
+	<resources key="UI_SERVICE_CREATEPAGE_NEEDTITLE">Please input title</resources>
+	<resources key="UI_SERVICE_CREATEPAGE_NEEDORG">Please select department</resources>
+	<resources key="UI_SERVICE_CREATEPAGE_NEEDTEMPLATE">Please select template</resources>
+	<resources key="UI_SERVICE_CREATEPAGE_SAVEOK">Page saved successfully!</resources>
+
+	<resources key="UI_SERVICE_TEMPLATELIST_TITLE">Page Title：</resources>
+	<resources key="UI_SERVICE_TEMPLATELIST_NOPAGE">Page does not exist</resources>
+	<resources key="UI_SERVICE_TEMPLATELIST_NEEDTITLE">Please input page title</resources>
+	<resources key="UI_SERVICE_TEMPLATELIST_SAMETEMPLATE">The template has not been changed yet</resources>
+	<resources key="UI_SERVICE_TEMPLATELIST_NOCHANGE">Nothing has been changed</resources>
+	<resources key="UI_SERVICE_TEMPLATELIST_SAVEOK">Data is saved successfully, the page will
+		refresh soon</resources>
+
+	<resources key="UI_SERVICE_WEBPARTLIST_NAME">Plugin Name：</resources>
+	<resources key="UI_SERVICE_WEBPARTLIST_TYPE">Plugin Type：</resources>
+
+	<resources key="UI_SERVICE_PAGEMANAGE_ORG">Department：</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_PAGETYPE">Type：</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_BTNDELETE">Delete Selected Page</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_COLTITLE">Page Title</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_COLORGNAME">Department</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_COLPAGETYPE">Type</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_COLCREATOR">Author</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_COLCREATETIME">Create Time</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_COLUPDATETIME">Update Time</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_CONFIRMDELETE">Be sure to delete the page of selected row?</resources>
+</ot_portal_lang>

@@ -1,0 +1,22 @@
+<ion-popover-view>
+<style type="text/css">
+    .dropdown-menu {
+        pointer-events: auto;
+    }
+</style>
+    <div class="sideSlip">
+      <div class="menu-tittle">
+        <div class="menu-tittle-left pr25" ng-click="hideFilterReport()"><i class="ion-chevron-right f22 blue"></i></div>
+        <div class="menu-tittle-middle f15"><i class="icon-shaixuan f14 blue"></i><span>{{languages.filter}}</span></div>
+        <div class="menu-tittle-right"></div>
+      </div>
+
+        <ion-content id="ReportFiters" style=" background-color: white;" ng-class="{{reportCode}}">
+             
+        </ion-content>
+      <div class="bottom-button">
+        <div class="bb-left f16 {{reportCode}}" id="resetAllReport">{{languages.reset}}</div>
+        <div class="bb-right f16" ng-click="hideFilterReport()">{{languages.confirm}}</div>
+      </div>
+    </div>
+</ion-popover-view>

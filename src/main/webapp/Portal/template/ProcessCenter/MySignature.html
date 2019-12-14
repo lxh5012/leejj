@@ -1,0 +1,175 @@
+﻿<!--
+    签章设置
+     -->
+<!-- ng-init="
+     app.settings.asideFolded=false;
+     app.settings.asideDock=false;" -->
+<div class="hbox hbox-auto-xs hbox-auto-sm">
+    <!-- main -->
+    <div class="col">
+        <!-- main header -->
+        <div class="bg-light lter b-b wrapper-md">
+            <div class="row">
+                <div class="col-sm-6 col-xs-12 form-title-name">
+                    <span class="h3" ng-bind="menuData.DisplayName"></span>
+                </div>
+                <div class="col-sm-6 col-xs-12 form-search-box">
+                </div>
+            </div>
+        </div>
+        <div class="wrapper-md paddingbottomNone">
+            <div class="panel panel-default">
+                <div class="table-responsive">
+                    <div class="form-inline search-box">
+                        <div class="input-group searchContainer">
+                            <div class="form-group">
+                                <div class="btn-group" style="margin-bottom: 10px">
+                                    <a class="btn btn-default" ng-click="btn_addEditSignature()">
+                                        <i class="panel-title-icon icon aufontAll h-icon-all-plus-o" style="font-size: 14px;">
+                                            <span style="margin-left:3px;" translate="QueryTableColumn.Add"></span>
+                                        </i>
+                                    </a>
+                                    <button class="btn btn-default" ng-click="btn_removeSignature()">
+                                        <i class="panel-title-icon icon aufontAll h-icon-all-minus-o" style="font-size: 14px;">
+                                            <span style="margin-left:3px;" translate="QueryTableColumn.Remove"></span>
+                                        </i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <table ui-jq="dataTable" id="tabMySignature"
+                           ui-options="tabMySignature"
+                           class="table table-condensed" style="width:99.7%;">
+                        <thead>
+                        <tr>
+                            <!--<th style="width:4%;padding-left:15px;">-->
+                                <!--<input type="checkbox" ng-model="checkAll"/>-->
+                            <!--</th>-->
+                            <!--<th style="width:10px;padding-left:15px;">-->
+                                <!--<label class="checkbox-inline i-checks" style="padding-top:0;padding-left: 10px">-->
+                                    <!--<input type="checkbox" ng-model="checkAll" ng-click="checkAllSelect(true);">-->
+                                    <!--<i></i>-->
+                                <!--</label>-->
+                            <!--</th>-->
+                            <th style="width:30px;padding-top: 3px">
+                                    <span class="checkbox checkbox-primary checkbox-single" style="padding-left: 4px;padding-top: 4px">
+                                        <input type="checkbox" ng-model="checkAll" ng-click="checkAllSelect(true);" aria-label="Single checkbox Two">
+                                        <label></label>
+                                    </span>
+                            </th>
+                            <th style="width:15%;">
+                                <span translate="QueryTableColumn.Name"></span>
+                            </th>
+                            <th style="width: 15%;">
+                                <span translate="QueryTableColumn.Icon"></span>
+                            </th>
+                            <th style="width: 15%;">
+                                <span translate="QueryTableColumn.SortKey"></span>
+                            </th>
+                            <th style="width: 15%;">
+                                <span translate="QueryTableColumn.Default"></span>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- / main -->
+</div>
+
+<script type="text/ng-template" id="EditSignature.html">
+    <form name="form">
+        <div class="modal-header">
+            <button type="button" class="close"
+                    data-dismiss="modal" aria-hidden="true" ng-click="cancel()">
+                ×
+            </button>
+            <h4 class="modal-title" id="myModalLabel">
+                <span style="margin-left:3px;" translate="QueryTableColumn.NewSignature"></span>
+            </h4>
+        </div>
+        <div class="modal-body" style="padding-left:20px;padding-right:50px;">
+            <form class="bs-example form-horizontal">
+                <div class="row">
+                    <div class="col-md-10">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" translate="QueryTableColumn.Name">名称</label>
+                            <label class="col-md-10 control-label alignLeft">
+                                <input ng-model="Name" type="text" style="width:99%;" class="form-control" required/>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-10">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" translate="QueryTableColumn.Icon"></label>
+                            <label class="col-md-10 control-label alignLeft">
+                                <!--<div id="upload-box">-->
+                                    <!--<p class="btn-box">-->
+                                        <!--<input type="button" id="btn" value="点我上传">-->
+                                        <!--<span id="upload-text" data-lang="msgGlobalString.SelectImportFile">请上传文件</span>-->
+                                    <!--</p>-->
+                                    <!--<input type="file" name="pic" id="pic" ng-model="SignatureImage" title="" file-model="myFile" size="100" accept="image/*" style="width:99%;"/>-->
+                                <!--</div>-->
+                                <input type="file" name="pic" id="pic" ng-model="SignatureImage" title="" file-model="myFile" size="100" accept="image/*" style="width:99%;"/>
+                                <div class="col-md-12" id="localImag" ng-show="imgover==false">
+                                    <img id="preview" ng-src="{{imageSrc}}" style="max-width:40px;max-height:50px;"/>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <span ng-show="NoFile==true" style="color:red;" translate="Signature.NotNull">请选择签章</span>
+                        <span ng-show="ErrorFile==true" style="color:red;" translate="Signature.Format">文件格式不正确</span>
+                        <span ng-show="imgover==true" style="color:red;" translate="Signature.ImageSize">图片大小超过100kb</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-10">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" translate="QueryTableColumn.Description"></label>
+                            <label class="col-md-10 control-label alignLeft">
+                                <textarea ng-model="Description" style="width:99%;" rows="5"
+                                          class="form-control"></textarea>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-10">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" translate="QueryTableColumn.SortKey"></label>
+                            <label class="col-md-10 control-label alignLeft">
+								<!-- input框的type设置为number后，maxlength不生效，故此处改为使用如下方式限制位数 -->
+                                <input ng-model="SortKey" type="number" oninput="if(value.length>8)value=value.slice(0,8)" style="width:99%;"
+                                       class="form-control">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" ng-click="ok(SignatureImage)"
+                    ng-disabled="form.$invalid||imgover==true">
+                <span translate="QueryTableColumn.Button_Save"></span>
+            </button>
+            <button type="button" class="btn btn-primary" ng-click="cancel()">
+                <span translate="QueryTableColumn.Button_Cancel"></span>
+            </button>
+        </div>
+    </form>
+</script>

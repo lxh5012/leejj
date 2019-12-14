@@ -1,0 +1,395 @@
+﻿
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1">
+    <title>H3 BPM集群管理</title>
+    <link href="WFRes/_Content/themes/ligerUI/Aqua/css/ligerui-all.min.css" rel="stylesheet" type="text/css" />
+    <link href="WFRes/_Content/themes/ligerUI/ligerui-icons.css" rel="stylesheet" type="text/css" />
+    <link href="WFRes/_Content/themes/H3Default/H3-All.css" rel="stylesheet" type="text/css" />
+    <script src="WFRes/_Scripts/jquery/jquery.js?v=1.12.4"></script>
+    <script src="WFRes/_Scripts/jquery/jquery.lang.js"></script>
+    <script src="WFRes/_Scripts/ligerUI/ligerui.min.js"></script>
+    <!--<script src="WFRes/_Scripts/ligerUI/core/base.js"></script>-->
+    <!--<script src="WFRes/_Scripts/ligerUI/plugins/ligerGrid.js"></script>-->
+
+    <script src="WFRes/_Scripts/H3AdminPlugins.js" type="text/javascript"></script>
+    <script src="WFRes/_Scripts/H3TreeTools.js"></script>
+    <link href="WFRes/_Content/themes/H3Default/H3-HeadInfo.css" rel="stylesheet" type="text/css" />
+    <script>
+        var workTab = null;
+        var leftMenu = null;
+        var menuTree = null;
+        var tabData = {};
+        var tabCount = 0;
+
+        $(function () {
+            var _CLUSTERROOT_GLOBAL = "";
+            GetPageData();
+            $("#imgLoginInfo").hover(
+                function () {
+                    $(".divUserPanel").show();
+                },
+                function () {
+                    $(".divUserPanel").hide();
+                });
+
+            $(".divUserPanel").hover(
+                function () {
+                    $(".divUserPanel").show();
+                },
+                function () {
+                    $(".divUserPanel").hide();
+                });
+
+        });
+
+        // 获取页面初始化数据
+        function GetPageData() {
+            $.ajax({
+                url: "Cluster/GetIndexData",
+                type: "GET",
+                cache: false,
+                async: false,//同步执行
+                dataType: "JSON",
+                success: function (res) {
+                    if (res.Success) {
+                        _CLUSTERROOT_GLOBAL = res.Extend.ClusterRoot;
+                        $("#userName").text(res.Extend.UserName);
+                    } else {
+                    	window.location.href = "Login.html";
+                    }
+                },
+                error: function(a,b,c) {
+                	window.location.href = "Login.html";
+                }
+            });
+        }
+
+        function loginOut() {
+            var casEnable = window.localStorage.getItem("H3.casEnable");
+            if(casEnable == 'true'){
+                window.top.location.href = "/logout"
+            } else {
+                $.ajax({
+                    url: $.Controller.Cluster.LoginOut,
+                    type: "GET",
+                    cache: false,
+                    async: false,//同步执行
+                    dataType: "JSON",
+                    success: function (res) {
+                        if (res.Success) {
+                            $("body").html("");
+                            location.href = "Login.html";
+                        }
+                    }
+                });
+            }
+
+        }
+        $.ajaxSetup({
+            complete: function (XMLHttpRequest, textStatus) {
+                // 注册统一监听事件
+                if (XMLHttpRequest.responseText) {
+                    try {
+                        var result = JSON.parse(XMLHttpRequest.responseText);
+                        if (result && !result.Success && result.ExceptionCode == 1) {
+                            location.href = result.Extend + "/Login.html";
+                        }
+                    } catch (e) { }
+                }
+            }
+        });
+
+        function onAfterSelectTabItem(tablid) {
+        }
+
+        $(function () {
+            //布局
+            $("#div_Body").ligerLayout({ leftWidth: 200, height: '100%', space: 4, onHeightChanged: f_heightChanged });
+            //高度
+            var height = $(".l-layout-center").height();
+            //Tab
+            $("#div_WorkSpace").ligerTab({
+                height: height, dragToMove: true, onAfterSelectTabItem: function (tabId) {
+                    if (frames[tabId] != null && $.isFunction(frames[tabId].OnPageShown)) {
+                        frames[tabId].OnPageShown.call(this, tabId);
+                    }
+                }
+            });
+            //显示打开tab列表
+            $("#GetMoreTab").click(ShowTabPanel);
+
+            $("#menuTree").ligerTree();
+
+            $("#menuTree").ligerTree({
+                checkbox: false,
+                width: "100%",
+                btnClickToToggleOnly: true,
+                idFieldName: "ObjectID",
+                textFieldName: 'Text',
+                iconFieldName: "Icon",
+                isExpand: 2,
+                data: [
+                {
+                    Text: "H3集群管理中心", Icon: "", children: [
+                      { tabid: "Vessel", ObjectID: "Vessel", Text: "服务器管理", Icon: "", ShowPageUrl: "Vessel.html" },
+                      // { Text: "数据库连接池", Icon: "", ShowPageUrl: "DBServer.aspx" },
+                      { tabid: "Engine", ObjectID: "Engine", Text: "引擎实例管理", Icon: "", ShowPageUrl: "Engine.html" },
+                      { tabid: "EditSetting", ObjectID: "EditSetting", Text: "消息设置", Icon: "", ShowPageUrl: "EditSetting.html" }
+                    ]
+                }
+                ],
+                onSelect: f_NodeClick,
+                onCancelselect: f_NodeClick,
+                onMouseOver: function (node, e) {
+                    //鼠标移动上去的效果
+                    ItemOver(node, e);
+                },
+                onMouseOut: function (node, e) {
+                    //鼠标移动上去的效果
+                    ItemOut(node, e);
+                }
+            });
+
+            workTab = $("#div_WorkSpace").ligerGetTabManager();
+            menuTree = $("#menuTree").ligerGetTreeManager();
+            workTab.setTabButton = setTabButton;
+            workTab.removeTabItem = removeTabItem;
+            workTab.removeAll = removeAll;
+            workTab.removeOther = removeOther;
+            $("#pageloading").hide();
+            $("#treeToolbar").hide();
+            $("#historyDiv").hide();
+        });
+        //节点点击
+        function f_NodeClick(node) {
+            if (node == null) return;
+            if (node.data == null) return;
+            //选中后，添加工具栏
+            // CreateToolBar(node.data, node.target);
+            if (!node.data.ShowPageUrl) return;
+            var tabid = $(node.target).attr("tabid");
+            var parentID = node.data.ParentID;
+            var text = node.data.Text;
+            if (parentID != null) {
+                var parentData = top.menuTree.getDataByID(parentID);
+                text = parentData == null ? text : parentData.Text + "." + text;
+            }
+            if (!tabid) {
+                tabid = node.data.ObjectID;//new Date().getTime();
+                $(node.target).attr("tabid", tabid)
+            }
+            f_addTab(
+                {
+                    tabid: tabid,
+                    text: text,
+                    url: node.data.ShowPageUrl
+                });
+        }
+        //添加Tab页
+        function f_addTab(options) {
+            options.url = "TabMaster.html?url=" + options.url ;
+            if (!tabData.hasOwnProperty(options.tabid)) {
+                tabData[options.tabid] = options;
+                tabCount++;
+            }
+            workTab.addTabItem(options);
+        }
+        //重写setTabButton事件，原来是设置左右的按钮，现在改为设置tab数量
+        function setTabButton() {
+            var g = this, p = this.options;
+            var sumwidth = 0;
+            $("li", g.tab.links.ul).each(function () {
+                sumwidth += $(this).width() + 2;
+            });
+            //减去头部按钮宽度
+            var mainwidth = g.tab.width() - $("#headerButton").width() - 100;
+            if (sumwidth > mainwidth) {
+                var removeTabId = "";
+                var contexts = $(".l-tab-content-item", g.tab.content);
+                for (var i = 0, j = contexts.length - 1; i < j; i++) {
+                    if ($("iframe", contexts[i])[0].src.toLowerCase().indexOf("/designer.aspx") < 0
+                        && $("iframe", contexts[i])[0].src.toLowerCase().indexOf("/sheetdesigner.aspx") < 0) {
+                        removeTabId = $(contexts[i]).attr("tabid");
+                        break;
+                    }
+                }
+                if (removeTabId == "") {
+                    $.H3Dialog.Warn({ content: "页签显示宽度有限！需要保存并手工关闭设计器页面！" });
+                    g.removeTabItem($("li:last", g.tab.links.ul).attr("tabid"));
+                }
+                else
+                    g.removeTabItem(removeTabId, true);//$("li:first", g.tab.links.ul).attr("tabid"), true);
+                return true;
+            } else {
+                g.tab.links.ul.animate({ left: 0 });
+                $(".l-tab-links-left,.l-tab-links-right", g.tab.links).remove();
+                return false;
+            }
+        }
+        //重写移除tab项
+        function removeTabItem(tabid, notRemoveData) {
+            var g = this, p = this.options;
+            if (g.trigger('beforeRemoveTabItem', [tabid]) == false)
+                return false;
+            var currentIsSelected = $("li[tabid=" + tabid + "]", g.tab.links.ul).hasClass("l-selected");
+            if (currentIsSelected) {
+                $(".l-tab-content-item[tabid=" + tabid + "]", g.tab.content).prev().show();
+                $("li[tabid=" + tabid + "]", g.tab.links.ul).prev().addClass("l-selected").siblings().removeClass("l-selected");
+            }
+            var contentItem = $(".l-tab-content-item[tabid=" + tabid + "]", g.tab.content);
+            var jframe = $('iframe', contentItem);
+            if (jframe.length) {
+                var frame = jframe[0];
+                frame.src = "about:blank";
+                frame.contentWindow.document.write('');
+                frame.contentWindow.close();//chc
+                $.browser.msie && CollectGarbage();
+                jframe.remove();
+            }
+            contentItem.remove();
+            $("li[tabid=" + tabid + "]", g.tab.links.ul).remove();
+            g.setTabButton();
+            g.trigger('afterRemoveTabItem', [tabid]);
+
+            if (notRemoveData == null || notRemoveData == false) {
+                if (tabData.hasOwnProperty(tabid)) {
+                    delete tabData[tabid];
+                    tabCount--;
+                }
+            }
+        }
+        //重写移除所有tab
+        function removeAll(compel) {
+            tabCount = 0;
+            tabData = {};
+            var g = this, p = this.options;
+            var tabidlist = g.getTabidList(null, true);
+            $(tabidlist).each(function () {
+                g.removeTabItem(this);
+            });
+        }
+        //重写移除其他所有tab
+        function removeOther(tabid, compel) {
+            for (var tabkey in tabData) {
+                if (tabkey != tabid) {
+                    delete tabData[tabkey];
+                }
+            }
+            tabCount = 1;
+            var g = this, p = this.options;
+            var tabidlist = g.getTabidList(tabid, true);
+            $(tabidlist).each(function () {
+                g.removeTabItem(this);
+            });
+        }
+
+        //高度控制
+        function f_heightChanged(options) {
+            if (workTab)
+                workTab.addHeight(options.diff);
+            //if (leftMenu && options.middleHeight - 24 > 0)
+            //    leftMenu.setHeight(options.middleHeight - 24);
+        }
+
+        //$.fn.H3UIToolBar = function (options) {
+        //    return $.ligerui.run.call(this, "ligerButton", arguments);
+        //}
+        //刷新当前tab页对应的上级节点
+        function ReloadNode(parentID) {
+            if (!parentID) {
+                var tabID = workTab.getSelectedTabItemID();
+                var curentNode = tabID == null ? menuTree.getSelected().data : menuTree.getDataByID(tabID);
+
+                parentID = curentNode.ParentID;
+            }
+            var nodeData = menuTree.getDataByID(parentID);
+            var nodeTarget = menuTree.getNodeDom(nodeData);
+            $(nodeTarget).find(".l-children").remove();
+            $(nodeTarget).find(".l-expandable-close").addClass("l-expandable-open").removeClass("l-expandable-close");
+            top.menuTree.loadData(nodeTarget, nodeData.LoadDataUrl);
+        }
+        //显示已经打开的tab列表
+        function ShowTabPanel() {
+            if (tabCount < 1) {
+                return;
+            }
+            var ulObj = $("#tabDataList");
+            ulObj.html("");
+            for (var tab in tabData) {
+                var liObj = $("<li tabDataID='" + tab + "'>" + tabData[tab].text + "</li>");
+                liObj.hover(function () { $(this).addClass("hoveli"); }, function () { $(this).removeClass("hoveli"); });
+                liObj.click(function () {
+                    f_addTab(tabData[$(this).attr("tabDataID")]);
+                });
+                ulObj.append(liObj);
+            }
+            ulObj.css("position", "absolute");
+            ulObj.css("top", $("#headerButton").offset().top + $("#headerButton").height());
+            ulObj.css("left", $("#headerButton").offset().left - ulObj.width() - 2);
+            ulObj.css("z-index", 999);
+            ulObj.show();
+            ulObj.hover(function () { $("#tabDataList").show(); }, RemoveTabPanel);
+        }
+        //隐藏tab列表
+        function RemoveTabPanel() {
+            $("#tabDataList").hide();
+        }
+    </script>
+    <style>
+        header {
+            background-color: rgb(65, 65, 65) !important;
+        }
+
+        .l-tree .l-body span {
+            float: none;
+        }
+        
+        .index-title {
+		    font-size: 32px;
+		    width: 100%;
+		    font-family: initial;
+		    text-align: center;
+		    padding-top: 200px;
+        }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div id="pageloading" class="pageloading"></div>
+        <div id="treeToolbar"></div>
+        <div id="historyDiv"></div>
+        <ul id='tabDataList' class="List_ulCss"></ul>
+        <!--版头-->
+        <header>
+            <div id="headerButton" class="header">
+                <div>
+                    <div id="GetMoreTab">>></div>
+                    <span style="float: left" id="userName"></span>
+                    <div class="l-bar-separator"></div>
+                    <input type="image" name="btnExist" id="btnExist" class="imgCss" src="WFRes/_Content/themes/H3Default/Images/LoginOut.png" style="border-width:0px;" onclick="loginOut()">
+                </div>
+            </div>
+        </header>
+        <!--主控台-->
+        <div id="div_Body" style="width: 99.2%; margin: 0 auto;">
+            <!--左侧菜单-->
+            <div position="left" title="H3集群管理中心" id="div_leftMenu">
+                <ul id="menuTree" style="margin-top: 3px; width: 100%;"></ul>
+            </div>
+            <!--右侧内容-->
+            <div position="center" id="div_WorkSpace">
+                
+            </div>
+        </div>
+    </form>
+</body>
+
+<script type="text/javascript">
+	$(function(){
+		$(".l-tab-content").css("background-color", "#F5F5F5");
+		$(".l-tab-content").append("<div class='index-title'>欢迎使用H3 BPM集群管理</div>");
+	})
+</script>
+
+</html>

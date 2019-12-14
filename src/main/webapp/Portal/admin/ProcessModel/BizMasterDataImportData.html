@@ -1,0 +1,91 @@
+﻿<link rel="stylesheet" href="../css/upload.css">
+<script src="../WFRes/_Scripts/jquery/ajaxfileupload.js"></script>
+<script>
+    var schemaCode = getUrlParam("SchemaCode") || "";
+    $(function () {
+        $("#btn").val($.Lang('BizServiceHandler.Upload')); // 上传文件
+        $("#H3ToolBar").AspLinkToolBar();
+        $("#H3Panel").BuildPanel();
+        $.ajax({
+            url: $.Controller.BizObjectSchema.GetImportTemplete,
+            type: 'get',
+            dataType: "json",
+            data: { schemaCode: schemaCode },
+            async: false,//同步执行
+            success: function (result) {
+                // console.log(result)
+                if (result.Success) {
+                    $("#template").attr("href", result.Extend);
+                } else {
+                    $.H3Dialog.Warn({ content: $.Lang(result.Message) });
+                }
+            },
+            error: function () {
+                $.H3Dialog.Warn({ content: $.Lang('UploadError') });
+            }
+        });
+    });
+    function submit() {
+    	$("#importData").removeAttr("onclick");
+        $.ajaxFileUpload({
+            url: $.Controller.BizObjectSchema.UploadMasterDataFile + "?schemaCode=" + schemaCode,
+            fileElementId: 'uploadfile',
+            dataType: 'json',
+            data: { schemaCode: schemaCode },
+            success: function (data, status) {
+                if (data.Success) {
+                    parent.$.H3Dialog.Success({ content: $.Lang(data.Message) });
+                    parent.H3DialogManger.Cancel();
+                }
+                else {
+                	$("#importData").attr("onclick","submit();");
+                    if (data.Extend && typeof (data.Extend) === "string") {
+                        $.H3Dialog.Warn({ content: $.Lang(data.Message) });
+                        // $.H3Dialog.Warn({ content: $.Lang(data.Message)+" "+data.Extend });
+                    }
+                    else if (data.Extend && data.Extend.length !== 0) {
+                        var content = "";
+                        for (var i = 0; i < data.Extend.length; i++) {
+                            content+= data.Extend[i]+"、";
+                        }
+                        content = content.substring(0,content.length-1);
+                        content += $.Lang(data.Message);
+                        $.H3Dialog.Warn({ content: content });
+                    } else {
+                        $.H3Dialog.Warn({ content: $.Lang(data.Message) });
+                    }
+                }
+            }
+        });
+    }
+// 上传文件
+    $("#uploadfile").change(function () {
+        if ($("#uploadfile").val()) {
+            $("#upload-text").html($("#uploadfile").val());
+        } else {
+            $("#upload-text").html($.Lang('Unselected'));
+        }
+    })
+</script>
+<div id="H3ToolBar">
+    <a id="template" href="" data-icon="fa fa-download" data-lang="msgGlobalString.DownloadTemplete">下载模板</a>
+    <a id="importData" onclick="submit();" data-icon="fa fa-upload" href="javascript:void(0)" data-lang="msgGlobalString.ImportData">导入数据</a>
+</div>
+
+
+<div id="H3Panel">
+    <span data-lang="msgGlobalString.SelectImportFile">选择文件</span>
+    <table>
+        <tr>
+            <td>
+                <div id="upload-box">
+                        <p class="btn-box">
+                            <input type="button" id="btn" value="点我上传">
+                            <span id="upload-text" data-lang="msgGlobalString.SelectImportFile">请上传文件</span>
+                        </p>
+                        <input type="file" name="uploadfile" id="uploadfile" class="upload-file-input" title="" />
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,13 @@
+﻿<ion-view view-title="{{names.State}}" hide-nav-bar="{{$root.dingMobile.isDingMobile}}" class="instanceState">
+    <ion-nav-bar class="bar">
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear ion-ios-arrow-left" ng-click="closePage()">{{names.Back}}</button>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+    <ion-content>
+         <!--<ion-scroll ng-style="scrollHeight" style="height: 400px;overflow-x: scroll">-->
+             <!--<div class="workspace" id="workspace"></div>-->
+         <!--</ion-scroll>-->
+        <div class="workspace" id="workspace" ></div>
+    </ion-content>
+</ion-view>

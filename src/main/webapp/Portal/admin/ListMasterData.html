@@ -1,0 +1,142 @@
+﻿<script type="text/javascript" src="../js/H3Report/NiceScrollBar/jquery.nicescroll.min.js"></script>
+<script src="../WFRes/_Scripts/bizquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+    var CustomColumns = [];
+    // 若要添加自定义的列,请参考以下示例
+    // CustomColumns.push({
+    //    display: "自定义列标题1",//列标题
+    //    width: "360px",//宽度
+    //    //显示逻辑
+    //    render: function (rowData, rowIndex) {
+    //        return "<div>行号:" + rowIndex + "; 字段[ObjectID]值为:" + rowData.ObjectID + "</div>";
+    //    }
+    // });
+    var SchemaCode = getUrlParam("SchemaCode") || "";//数据模型编码
+    var QueryCode = getUrlParam("QueryCode") || "";//查询列表编码
+    var outputPropertyMappings = getUrlParam("OutputParams") || "";
+    var inputMappings = getUrlParam("InputParam");
+    var CtrlID = getUrlParam("CtrlID") || "";
+    var OpenType = getUrlParam("OpenType") || "";
+    var IsPopup = getUrlParam("IsPopup") || "";
+    
+    var popupDivId = getUrlParam("popupDivId") || "";
+
+    var isFrame = OpenType == "1";
+    var p = isFrame ? window.parent : window.opener;
+    var isReturn = "True" == "True";
+    var sourceObj = p == null ? null : (p.$ == null ? null : p.$.find("#" + CtrlID));
+    var ActionVisible = "false";
+    var Param_BizObjectID = "BizObjectID";
+    var Param_SchemaCode = "SchemaCode";
+    var LoginUrl = _PORTALROOT_GLOBAL + '/index.html#/platform/login';
+    var EditBizObjectUrl = $.Controller.RunBizQuery.EditBizObject;
+    var BizObjectHandlerUrl = $.Controller.RunBizQuery.InvokeMethod;
+    var GridParam = { schemaCode: SchemaCode, queryCode: QueryCode };//表格数据请求参数
+    var Controller = $.Controller.RunBizQuery.GetGridData;//表格数据请求地址
+    var FilterData = [];//查询条件数组
+    var DisplayFormats = [];//显示格式
+    var GirdColumns = [];//表格显示列
+    $(function () {
+        initPage();
+        BuildFilter(isFrame);
+        BuildPage();
+        GridParam = GetGridParam();
+        LoadData();
+        $("#H3ToolBar").AspLinkToolBar();
+    });
+
+    //初始化页面数据
+    function initPage() {
+        if (SchemaCode && QueryCode) {
+            $.ajax({
+                url: $.Controller.RunBizQuery.GetRunBizQueryData,
+                type: 'get',
+                dataType: "json",
+                data: { schemaCode: SchemaCode, queryCode: QueryCode },
+                async: false,//同步执行
+                success: function (result) {
+                    if (result.Success) {
+                        GirdColumns = result.Extend.GirdColumns;
+                        DisplayFormats = result.Extend.DisplayFormats;
+                        FilterData = result.Extend.FilterData;
+                    } else {
+                        parent.$.H3Dialog.Warn({ content: $.Lang(result.Message) });
+                    }
+                }
+            });
+        }
+        
+        //update by ousihang
+        if (IsPopup) {
+        	$("#btnSelect").hide();
+        }
+    };
+    function btnSearchClick() {
+        GridParam = GetGridParam();
+        DocumentReady();
+        LoadData();
+        //if (masterDataGridManager) {
+        //    $("#hfPageSize").val(masterDataGridManager.options.pageSize);
+        //}
+    }
+    
+    //add by luwei : 输出映射
+    function selectRow() {
+
+    	var rowData = {};
+    	var selectedRows = $("input[name=selectRow][type=radio]").filter(function () { return $(this).prop("checked"); }).parents("tr:first");
+
+        if (selectedRows.length > 0) {
+        	selectedRows.find("td").each(function(index, element){
+        		if (index == 0) {
+        			return true;
+        		}
+        		var key = selectedRows.closest(".l-grid2").find(".l-grid-header-inner").find("td").eq(index).find("span").text();
+        		var value = $(element).find("div").text();
+        		if(value) {
+        			value = value.trim();
+        		}
+        		rowData[key] = value;
+        	})
+        } else {
+        	$.H3Dialog.Warn({ content: $.Lang("msgGlobalString.PleaseSelectRow") });
+        	return;
+        }
+        
+    	masterDataGridManager.trigger("dblclickrow", rowData);
+    }
+    //加确定按钮
+	function ConfirmClick(){
+		var selectedRows = $("input[name=selectRow][type=radio]").filter(function () { return $(this).prop("checked"); }).parents("tr:first");
+		selectedRows.dblclick();
+	}
+</script>
+<body>
+    <form id="form1">
+        <div>
+            <div id="H3ToolBar">
+                <a onclick="btnSearchClick();" id="btnSearch" data-icon="l-icon fa fa-search" title="query" href="javascript:void(0)" data-lang="GlobalButton.Search">查询</a>
+                <a onclick="ConfirmClick();" id="Confirm" data-icon="l-icon fa fa-save" href="javascript:void(0)" data-lang="GlobalButton.Confirm">确认</a>
+                <a onclick="selectRow();" id="btnSelect" data-icon="l-icon fa fa-save" title="save" href="javascript:void(0)" data-lang="GlobalButton.Save">选择</a>
+            </div>
+            <div id="panelSearch">
+                <div class="H3Panel">
+                    <table id="tableSearch" border="0"></table>
+                </div>
+            </div>
+            <div class="H3Panel">
+                <div id="excludePanel">
+                    <div id="masterDataGrid"></div>
+                    <input type="hidden" name="hfPageSize" id="hfPageSize" value="20" />
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
+<style>
+	div#panelSearch{
+		max-height:130px;
+		overflow-y:scroll;
+	}
+</style>

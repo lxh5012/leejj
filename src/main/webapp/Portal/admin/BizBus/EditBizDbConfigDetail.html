@@ -1,0 +1,249 @@
+﻿<!--<link href="../../WFRes/css/PortalStyle0.css" rel="stylesheet" type="text/css" />-->
+<script src="../js/xss/he.min.js"></script>
+<script>
+
+    $(function () {
+        var pageData = {
+            DbConfig: {DbType: 1},
+            dbReq: false,
+            LanData: $.Languages
+        };
+
+        //初始化页面
+        InitPageData();
+
+        var model = new Vue({
+            el: "#content",
+            data: pageData,
+            methods: {
+                saveData: function (event) {
+                    this.$validate(true);//表单验证
+                    var validateCondition;
+                    if (!pageData.DbConfig.DBName && pageData.DbConfig.DbType != 2) {
+                        pageData.dbReq = true
+                        return
+                    } else {
+                        pageData.dbReq = false
+                    }
+                    if (this.$formValidator.invalid) {
+                        // $.H3Dialog.Warn({content: $.Lang("msgGlobalString.FormInvalid")});
+                        return
+                    } else {
+                        SaveData();
+                    }
+                    // if (pageData.DbConfig.DbType !== 2) {
+                    //     validateCondition = this.$formValidator.invalid;DBName
+                    // } else {
+                    //     validateCondition = this.$formValidator.System.invalid;
+                    // }
+                    // console.log(validateCondition, 'validateCondition')
+                    // if (validateCondition || (/[>|<]/g).test($("#txtDisplayName").val())) {
+                    //     $.H3Dialog.Warn({content: $.Lang("msgGlobalString.FormInvalid")});
+                    // } else {
+                    //     SaveData();
+                    // }
+                }
+            }
+        });
+
+        $("#ToolBar").AspLinkToolBar();
+        $(".H3Pannel").BuildPanel();
+        CheckDbType();
+
+// 保存
+        function SaveData() {
+            var actionUrl = $.Controller.BizDbConfig.SaveDbConfig;
+            console.log(pageData.DbConfig, 'pageData.DbConfig')
+            $.ajax({
+                url: actionUrl,
+                type: "post",
+                dataType: "json",
+                data: pageData.DbConfig,
+                beforeSend: function() {
+                    // $.H3Dialog.Waitting('正在请求中,请稍候...');
+                    $.ligerDialog.waitting('正在请求中,请稍候...');
+                },
+                complete: function(){
+                    // $.H3Dialog.closeWaitting()
+                    $.ligerDialog.closeWaitting()
+                },
+                success: function (result) {
+                    if (result.Success) {
+                        parent.H3DialogManger.Close();
+                    } else {
+                        $.H3Dialog.Warn({content: $.Lang(result.Message)});
+                    }
+                },
+                error: function (err) {
+                    $.H3Dialog.Warn({content: $.Lang('BizDbConnectionConfig.Failed')});
+                }
+            });
+        }
+
+        //根据传递的参数获取对应的数据，Vue绑定数据使用
+        function InitPageData() {
+            var id = getUrlParam("code");
+            if (id && id !== "") {
+                $.ajax({
+                    url: $.Controller.BizDbConfig.GetDbConfig,
+                    type: 'get',
+                    dataType: "json",
+                    data: {code: id},
+                    async: false,//同步执行
+                    success: function (result) {
+                        pageData.DbConfig = result;
+                    }
+                });
+            }
+        }
+    });
+
+
+    function CheckDbType() {
+        $("input[name$='lstDbType']").click(function () {
+            var val = $(this).val();
+            if (val.toLowerCase() == "2") {//oracle
+                $("#trServer").hide();
+            }
+            else {
+                $("#trServer").show();
+            }
+        });
+    }
+
+</script>
+
+<validator name="formValidator" v-bind:groups="['Custom','System']">
+    <div id="ToolBar">
+        <a id="" v-on:click="saveData" data-icon="fa fa-save" data-lang="GlobalButton.Save"></a>
+    </div>
+
+    <div class="H3Pannel">
+        <span>{{LanData.BizDbConnectionConfig.BasicProperty}}</span>
+        <table class="tableList">
+            <!--编码-->
+            <tr>
+                <td class="tableLeft">
+                    {{LanData.BizDbConnectionConfig.Code}}
+                </td>
+                <td>
+                    <input type="text" group="System" id="txtCode" v-model="DbConfig.Code" maxlength="16"
+                           v-bind:disabled="DbConfig.ObjectID"
+                           detect-change="on" detect-blur="on"
+                           initial="off" v-validate:item-code="['htmlEscape','required']"/>
+                    <span style="color:Red;" v-if="$formValidator.itemCode.required">{{LanData.BizDbConnectionConfig.CodeNotNull}}</span>
+                    <span style="color:Red;" v-if="$formValidator.itemCode.htmlEscape">{{LanData.msgGlobalString.InvalidCode}}</span>
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+            </tr>
+            <!--显示名称-->
+            <tr>
+                <td class="tableLeft">
+                    {{LanData.BizDbConnectionConfig.DisplayName}}
+                </td>
+                <td>
+                    <input type="text" id="txtDisplayName" maxlength="16" v-model="DbConfig.DisplayName"
+                           v-validate:item-name="['htmlEscape']"/>
+                    <span style="color:Red;" v-if="$formValidator.itemName.htmlEscape">{{LanData.msgGlobalString.InvalidCode}}</span>
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="H3Pannel">
+        <span>{{LanData.BizDbConnectionConfig.DatabaseConn}}</span>
+        <table class="tableList">
+            <!--类型-->
+            <tr>
+                <td class="tableLeft">
+                    {{LanData.BizDbConnectionConfig.DbType}}
+                </td>
+                <td class="tableNoCss">
+                    <input type="radio" value="1" id="lstDbType1" name="lstDbType" v-model="DbConfig.DbType"/><label
+                        for="lstDbType1">SqlServer</label>
+                    <input type="radio" value="2" id="lstDbType2" name="lstDbType" v-model="DbConfig.DbType"/><label
+                        for="lstDbType2">Oracle</label>
+                    <input type="radio" value="3" id="lstDbType3" name="lstDbType" v-model="DbConfig.DbType"/><label
+                        for="lstDbType3">MySql</label>
+                    <input type="radio" value="4" id="lstDbType4" name="lstDbType" v-model="DbConfig.DbType"/><label
+                        for="lstDbType4">PostgreSQL</label>
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+            </tr>
+            <!--服务器名称-->
+            <tr>
+                <td class="tableLeft">
+                    {{LanData.BizDbConnectionConfig.ServerName}}
+
+                </td>
+                <td>
+                    <input type="text" group="System" id="txtServer" v-model="DbConfig.ServerName" detect-change="on" maxlength="32" detect-blur="on" initial="off" v-validate:server-name="['htmlEscape','required']"/>
+                    <span style="color:Red;" v-if="$formValidator.serverName.required">{{LanData.BizDbConnectionConfig.ServerNameNotNull}}</span>
+                    <span style="color:Red;" v-if="$formValidator.serverName.htmlEscape">{{LanData.msgGlobalString.InvalidCode}}</span>
+                </td>
+                <td></td>
+            </tr>
+            <!--数据库名称-->
+            <tr id="trServer" v-show="DbConfig.DbType==1 || DbConfig.DbType==3 || DbConfig.DbType==4">
+                <td class="tableLeft">
+                    {{LanData.BizDbConnectionConfig.DBName}}
+                </td>
+                <td>
+                    <input type="text" group="Custom" id="txtDataBase" v-model="DbConfig.DBName" detect-change="on" maxlength="32" detect-blur="on" initial="off" />
+                    <span style="color:Red;" v-if="dbReq">{{LanData.BizDbConnectionConfig.DBNameNotNull}}</span>
+                    <!--<span style="color:Red;" v-if="DbConfig.DbType!=2 && $formValidator.dbName.required">{{LanData.BizDbConnectionConfig.DBNameNotNull}}</span>-->
+                </td>
+                <td></td>
+            </tr>
+            <!--用户名-->
+            <tr>
+                <td class="tableLeft">
+                    {{LanData.BizDbConnectionConfig.UserName}}
+                </td>
+                <td>
+                    <input type="text" group="System" id="txtUser" v-model="DbConfig.UserName" detect-change="on" maxlength="32"
+                           detect-blur="on" initial="off" v-validate:user-name="['htmlEscape','required']"/>
+                    <span style="color:Red;" v-if="$formValidator.userName.required">{{LanData.BizDbConnectionConfig.UserNameNotNull}}</span>
+                    <span style="color:Red;" v-if="$formValidator.userName.htmlEscape">{{LanData.msgGlobalString.InvalidCode}}</span>
+                </td>
+                <td></td>
+            </tr>
+            <!--密码-->
+            <tr>
+                <td class="tableLeft">
+                    {{LanData.BizDbConnectionConfig.Password}}
+                </td>
+                <td>
+                    <input type="password" id="txtPwd" maxlength="16" v-model="DbConfig.Password" detect-blur="on" initial="off"  v-validate:pass-word="['htmlEscape','required']"/>
+                    <span style="color:Red;" v-if="$formValidator.passWord.htmlEscape">{{LanData.msgGlobalString.InvalidCode}}</span>
+                    <span style="color:Red;" v-if="$formValidator.passWord.required">{{LanData.BizDbConnectionConfig.PasswordNotNull}}</span>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+    <div class="H3Pannel">
+        <span> {{LanData.BizDbConnectionConfig.Description}}</span>
+        <table class="tableList">
+            <!--描述-->
+            <tr>
+                <td class="tableLeft">
+                    {{LanData.BizDbConnectionConfig.Description}}
+                </td>
+                <td>
+                    <textarea id="txtDescription" maxlength="200" v-model="DbConfig.Description" v-validate:description="['htmlEscape']"/>
+                    <span style="color:Red;" v-if="$formValidator.description.htmlEscape">{{LanData.msgGlobalString.InvalidCode}}</span>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+    <input type="hidden" id="hfSelectedId"/>
+</validator>
+

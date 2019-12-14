@@ -1,0 +1,294 @@
+﻿<script>
+    var pageData = {
+        MethodList: {},
+        TestBizService: { ServiceCode: "", RunMethod: "", InParams: {} },
+        ReturnResults: {}
+    }
+	var valid = false
+    
+    $(function () {
+        InitPageData();
+        //Vue
+        var model = new Vue({
+            el: "#content",
+            data: pageData,
+            methods: {
+                runMethod: function (event) {
+                	valid = false;
+                    this.$validate(true);//表单验证
+                    $(".runText").each(function(){
+                    	if( (/[>|<]/g).test($(this).val()) ){
+                    		valid = true;
+                    	}
+                    })
+                    if (this.$formValidator.invalid || valid) {
+                        $.H3Dialog.Warn({ content: $.Lang("msgGlobalString.FormInvalid") });
+                    } else {
+                        Run();
+                    }
+                },
+                dateToString: function (str) {
+                    return str;
+                   //return DateToString(str);
+                },
+                replace: function (str) {
+                    //后台吧ItemName中的.替换成--，显示时转换下
+                    if (str) { return str.replace("--", ".") }
+                    return str;
+                }
+            }
+        });
+
+        $("#H3ToolBar").AspLinkToolBar();
+        $(".H3Panel").BuildPanel({ excludeIDs: ["divParamGrid", "divReturnGrid"] });
+    });
+
+    //运行方法
+    function Run() {
+    	if(!canRun) {
+    		canRun = true;
+    		return;
+    	}
+    	
+        SaveParamsValue();
+        var formData = JSON.stringify(pageData.TestBizService);
+        $.ajax({
+            url: $.Controller.BizService.GetMethodReturnList,
+            type: "post",
+            dataType: "json",
+            data: { formData: formData },
+            success: function (result) {
+                if (result.Success) {
+                	// //debugger;
+                	for(x in result.Extend) {
+                		var temp = result.Extend[x];
+                		if (temp.ItemValue == null || temp.ItemValue == "") {
+                			result.Extend[x].ItemValue = "null";
+                		}
+                	}
+                    pageData.ReturnResults = result.Extend;
+                    if (result.Message.length > 0)
+                    {
+                        $.H3Dialog.Warn({ content: $.Lang(result.Message) });
+                    }
+                } else {
+                    $.H3Dialog.Warn({ content: $.Lang(result.Message)});
+                }
+            }
+        });
+    }
+
+    ///获取参数的值
+    function SaveParamsValue()
+    {
+        $.each(pageData.TestBizService.InParams, function (n, param) {
+            var pvalue;
+            if (param.LogicTypeString == "DateTime") {
+                pvalue = $("#" + param.ItemName).val();
+
+            } else if (param.LogicTypeString == "SingleParticipant") {
+                pvalue = $("#" + param.ItemName).SheetUIManager().GetValue();
+            
+            } else if (param.LogicTypeString == "MultiParticipant") {
+                pvalue = $("#" + param.ItemName).SheetUIManager().GetValue();
+            }
+            else if (param.LogicTypeString == "BizStructureArray" || param.LogicTypeString == "BizStructure" || param.LogicTypeString == "BizObjectArray" || param.LogicTypeString == "BizObject") {
+                pvalue = encodeURIComponent($("textarea[name=" + param.ItemName + "]").val());
+            }
+            else {
+                pvalue = $("input[name=" + param.ItemName + "]").val();
+            }
+            param.ItemValue = pvalue;
+        });
+        
+    }
+
+    //初始化数据，方法列表
+    function InitPageData(){
+        var serviceCode = getUrlParam("ServiceCode");
+        if (serviceCode && serviceCode != "") {
+            pageData.TestBizService.ServiceCode = serviceCode;
+            $.ajax({
+                url: $.Controller.BizService.GetMethodList,
+                type: 'get',
+                dataType: "json",
+                data: { serviceCode: serviceCode },
+                async: false,//同步执行
+                success: function (result) {
+                    if (result.Success) {
+                        //debugger;
+                        pageData.MethodList = result.Extend;
+                        if (!pageData.TestBizService.RunMethod && pageData.MethodList.length>0) {
+                            pageData.TestBizService.RunMethod = pageData.MethodList[0].Value;
+                        }
+                    }
+                    else {
+                        $.H3Dialog.Warn({ content: $.Lang(result.Message) });
+                    }                   
+                }
+            });
+            if (pageData.TestBizService.RunMethod) {
+                lstMethod_SelectedIndexChanged(pageData.TestBizService.RunMethod);
+            }
+        }
+    }
+
+    //方法切换
+    function lstMethod_SelectedIndexChanged(methodName) {
+        //获取方法参数
+        $.ajax({
+            url: $.Controller.BizService.GetMethodParamList,
+            type: 'get',
+            dataType: "json",
+            data: { serviceCode: pageData.TestBizService.ServiceCode, methodName: methodName },
+            async: false,//同步执行
+            success: function (result) {
+                if (result.Success && result.Extend) {
+                    pageData.TestBizService.InParams = result.Extend;
+                    //update by luwei : 清空上次其他方法的返回值
+                    pageData.ReturnResults = {};
+                }
+                else {
+                    $.H3Dialog.Warn({ content: $.Lang(result.Message) });
+                }
+            }
+        });
+    }
+</script>
+
+<validator name="formValidator">
+    <div id="H3ToolBar">
+        <a id="btnRun" v-on:click="runMethod" data-icon="icon-yunxing" data-lang="GlobalButton.Run"> </a>
+    </div>
+
+    <div class="H3Panel">
+        <span data-lang="BizService.ListMethods"></span>
+        <table>
+            <tr>
+                <td data-lang="BizService.RunMethod"></td>
+                <td>
+                    <select id="lstMethod" onchange="lstMethod_SelectedIndexChanged(this.value)" v-model="TestBizService.RunMethod">
+                        <option v-for="option in MethodList" v-bind:value="option.Value">
+                            {{option.Text}}
+                        </option>
+                    </select>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="H3Panel">
+        <span data-lang="BizService.InParams"></span>
+        <div id="divParamGrid">
+            <table class="mywork_list_table" cellspacing="0" rules="all" border="0" border="1" id="ParamGrid" style="width:100%;border-collapse:collapse">
+                <tr>
+                    <td class="left25" style="width:28%">ItemName</td>
+                    <td class="left25" align="left" style="width:120px">LogicType</td>
+                    <td class="left25" align="center" style="height:25px;">Value</td>
+                </tr>
+                <template v-for="item in TestBizService.InParams">
+                    <tr>
+                        <td class="tableLeft">{{replace(item.ItemName)}}</td>
+                        <td>{{item.LogicTypeString}}</td>
+                        <td v-if="item.LogicTypeString=='DateTime'">
+                            <input type="text" id="{{item.ItemName}}" name="{{item.ItemName}}" value="{{dateToString(item.ItemValue)}}" onclick="InitWdatePicker(this)" style="width:80%;" onblur="checkValue({{item.LogicType}}, this);"/>
+                        </td>
+                        <td v-if="item.LogicTypeString=='SingleParticipant'">
+                            <!--单人参与者-->
+                            <div id="{{item.ItemName}}" class="SingleParticipant" name="{{item.ItemName}}" value="{{item.ItemValue}}" style="width:80%"></div>
+                        </td>
+                        <td v-if="item.LogicTypeString=='MultiParticipant'">
+                            <!--多人参与者-->
+                            <div id="{{item.ItemName}}" class="MultiParticipant" name="{{item.ItemName}}" value="{{item.ItemValue}}" style="width:80%"></div>
+                        </td>
+                        <td v-if="item.LogicTypeString=='BizObject' || item.LogicTypeString=='BizObjectArray' || item.LogicTypeString=='BizStructureArray' || item.LogicTypeString=='BizStructure'">
+                            <textarea name="{{item.ItemName}}" value="{{item.Value}}" style="width:80%" onblur="checkValue({{item.LogicType}}, this);"></textarea>
+                        </td>
+                        <!--item.LogicType!='DateTime' && item.LogicType!='SingleParticipant' && item.LogicType!='MultiParticipant'-->
+                        <td v-if="item.LogicTypeString!='DateTime' && item.LogicTypeString!='SingleParticipant' && item.LogicTypeString!='MultiParticipant' && item.LogicTypeString!='BizObject' && item.LogicTypeString!='BizObjectArray' &&  item.LogicTypeString!='BizStructureArray' && item.LogicTypeString!='BizStructure'">
+                            <input class="runText" type="text" name="{{item.ItemName}}" value="{{item.LogicTypeString == 'Bool' && item.ItemValue != null ? item.ItemValue + '' : item.ItemValue}}" style="width:80%" onblur="checkValue({{item.LogicType}}, this);"/>
+                        </td>
+                    </tr>
+                </template>
+            </table>
+        </div>
+    </div>
+
+    <div class="H3Panel">
+        <span data-lang="BizService.Return"></span>
+        <div id="divReturnGrid">
+            <!--ReturnGrid-->
+            <table class="mywork_list_table" cellspacing="0" rules="all" border="0" border="1" id="ReturnGrid" style="width:100%;border-collapse:collapse">
+                <tr>
+                    <td class="left25" style="width:28%">ItemName</td>
+                    <td class="left25" align="left" style="width:120px">LogicType</td>
+                    <td class="left25" align="center">ItemValue</td>
+                </tr>
+                <template v-for="item in ReturnResults">
+                    <tr>
+
+                        <td class="tableLeft">{{item.ItemName}}</td>
+                        <td>{{item.LogicTypeString}}</td>
+                        <td v-if="item.LogicTypeString=='BizObject' || item.LogicTypeString=='BizObjectArray'  || item.LogicTypeString=='BizStructure'  || item.LogicTypeString=='BizStructureArray'">
+                            <table class="tableList" cellspacing="0" rules="all" border="0" border="1" style="width:100%;border-collapse:collapse;">
+                                <tr v-for="row in item.ItemValue">
+                                    <td v-for="cellvalue in row">{{cellvalue}}</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <!--item.LogicTypeString!='DateTime' && item.LogicTypeString!='SingleParticipant' && item.LogicType!='MultiParticipant'-->
+                        <td v-else>
+                            {{item.LogicTypeString=='Bool' ? item.ItemValue == true ? 'true' : 'false' : item.ItemValue}}
+                        </td>
+                    </tr>
+                </template>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        $(function () {
+            //初始化选人控件
+            $.each($("div.SingleParticipant"),function(){
+                $(this).SheetUser({ Editable: true, UserVisible: true, OrgUnitVisible: false, Visiable: true, GroupVisible:true, OrgUnitVisible:true });
+                $(this).SheetUIManager().SetValue($(this).attr("value"));
+            });
+
+            $.each($("div.MultiParticipant"), function () {
+                $(this).SheetUser({ Editable: true, Visiable: true, UserVisible: true, OrgUnitVisible: true, IsMultiple: true, GroupVisible:true, OrgUnitVisible:true });
+                var mvalue = $(this).attr("value");
+            });
+           
+        });
+        
+        var canRun = true;
+        /**
+        	add by luwei
+        	检查输入的参数是否与类型匹配
+        **/
+        function checkValue(logicType, obj) {
+        	var value = $(obj).val();
+        	$.ajax({
+                url: $.Controller.BizRuleDataElement.checkValue,
+                type: 'get',
+                dataType: "json",
+                async:false,
+                data: { logicTypeCode: logicType, value: value },
+                success: function (result) {
+                    if (result.Success) {
+                    	canRun = true;
+                    } else {
+                    	value = $("<div/>").text(value).html();
+                        $.H3Dialog.Warn({ content: $.format($.Lang(result.Message), value) });
+                        $(obj).val("");
+                        canRun = false;
+                    }
+                },
+                error : function(a, b, c) {
+                	//to handle
+                }
+            });
+        }
+    </script>
+</validator>

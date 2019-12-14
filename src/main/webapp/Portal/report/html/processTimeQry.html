@@ -1,0 +1,115 @@
+<!--
+    查询流程实例
+     -->
+    
+<script src="vendor/jquery/jquery.table2excel.js">
+</script>
+<div class="hbox hbox-auto-xs hbox-auto-sm">
+    <div class="col">
+        <div class="bg-light lter b-b wrapper-md">
+            <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                    <span class="h3" ng-bind="menuData.DisplayName"></span>
+                </div>
+            </div>
+        </div>
+        <!--表格部分Start-->
+        <div class="wrapper-md paddingbottomNone">
+            <div class="panel panel-default">
+                <div class="table-responsive">
+                    <!-- 搜索 -->
+                    <form class="form-inline" role="form">
+                        <div class="form-group" >
+                        	<label>流程范围</label>
+                            <select class="form-control" id="allOrPart" ng-model="allOrPart" ng-init="allOrPart='2'" ng-change="allOrPartChange()">
+                                <option  value="1" selected="selected">全部流程</option>
+                                <option value="2">部分流程</option>
+                            </select>
+                        </div>
+                       <div class="forHide" style="display:none;"></div>
+                       <div class="form-group" ui-jq="SheetWorkflowPCQ" ui-options="WorkflowOptions" id="sheetWorkflow" style="width:280px;min-height: 27.6px !important;">
+                       </div> 
+                        <div class="form-group">
+                        	<label>创建日期</label>
+                            <div class="input-group">
+                            	
+                                <input ui-jq="wdatePicker" id="StartTime"
+                                       class="form-control"
+                                       placeholder="开始日期" />
+                                <span class="input-group-addon" style="border-left:0px;border-right:0px;" translate="QueryTableColumn.To"></span>
+                                <input ui-jq="wdatePicker" id="EndTime"
+                                       class="form-control"
+                                       placeholder="结束日期" />
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                        	<label>结束日期</label>
+                            <div class="input-group">
+                            	
+                                <input  ui-jq="wdatePicker" id="FinishStartTime"
+                                       class="form-control"
+                                       placeholder="开始日期" />
+                                <span class="input-group-addon" style="border-left:0px;border-right:0px;" translate="QueryTableColumn.To"></span>
+                                <input  ui-jq="wdatePicker" id="FinishEndTime"
+                                       class="form-control"
+                                       placeholder="结束日期" />
+                            </div>
+                        </div>
+                        
+                        </br></br>
+                        
+                        <div class="form-group" style="float:right;">
+                            <button  ng-click="exportByCase()" class="btn btn-default" type="submit" style="height:30px;">
+                               	  导出报表
+                            </button>
+                        </div>
+                        
+                        <div class="form-group" style="float:right;">
+                            <input ng-model="searchKey" type="text" class="input-sm form-control" style="width:200px;display:none;" placeholder="搜索...">
+                            <button class="btn btn-default" type="submit" style="height:30px;" ng-click="qryWorkItemVariety()">
+                               	查询
+                            </button>
+                        </div>
+                    </form>
+
+                    <table  id="tabInfoList" 
+                           ui-options="tabQueryInstance"
+                           class="table table-hover ng-scope" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="width:50px">
+                                    <span>流程节点</span>
+                                </th>
+                                <th style="width:50px">
+                                    <span>平均耗时</span>
+                                </th>
+                                <th style="width:50px">
+                                    <span>时间占比</span>
+                                </th>
+
+                            </tr>
+                        </thead>
+                        <tbody ng-repeat="(key,value) in data">
+                            <tr  style="background-color:#edf1f2;">
+                                <td >{{key}}</td>
+                                <td>{{value.totalTm}}</td>
+                                <td></td>
+                            </tr>
+                            <tr ng-repeat="v in value">
+
+                                <td>{{v.displayname}}</td>
+                                <td><span>{{v.usedtime}}</span></td>
+                                <td><div class="progress-bar" role="progressbar"  aria-valuemin="0" aria-valuemax="100" style="width: {{v.percent}};  background-color:rgba(18, 153, 196, 1)"><span style="color:rgb(0,0,0)">{{v.percent}}</span></div></td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                </div>
+            </div>
+        </div>
+        <!--表格部分End-->
+    </div>
+    <!-- / main -->
+</div>

@@ -1,0 +1,188 @@
+﻿<link rel="stylesheet" href="../css/upload.css">﻿
+<script src="../WFRes/_Scripts/jquery/ajaxfileupload.js"></script>
+<script>
+    $("#btn").val($.Lang('BizServiceHandler.Upload')); // 上传文件
+    var BizMasterDataImport = {};
+
+    DocumentReady = function () {
+        $("#H3ToolBar").AspLinkToolBar();
+        $(".H3Panel").BuildPanel();
+    };
+    $(function () {
+        DocumentReady();
+    });
+
+    CheckFile = function () {
+        var fileVal = $("#btnFileUpload").val();
+        if (fileVal == "") {
+            $.H3Dialog.Warn({content: $.Lang("WorkflowPackageImport.MasterData_Mssg10")});
+            return false;
+        }
+        if (fileVal.toLowerCase().indexOf(".xml") < 0) {
+            $.H3Dialog.Warn({content: $.Lang("WorkflowPackageImport.MasterData_Mssg2")});
+            return false;
+        }
+        return true
+    }
+
+    BeforeImort = function () {
+        var valStr = "";
+
+        $("#CodeInfo").val();
+        $("input[txtType='CodeInfo']").each(function () {
+            valStr = $(this).val();
+        });
+        BizMasterDataImport.MasterDataCode = valStr;
+        BizMasterDataImport.IsCover = $("span[txtType='ckIsCover']").find("input[type='checkbox']")[0].checked;
+    }
+
+    btnUpLoad_Click = function () {
+        if (CheckFile()) {
+            var uploadUrl = $.Controller.BizMasterDataImport.Upload;
+            $.ajaxFileUpload({
+                url: uploadUrl,
+                fileElementId: "btnFileUpload",
+                dataType: "json",
+                success: function (data) {
+                    console.log(data, 'upfile')
+                    if (data.Success) {
+                        console.log(data, 'upfile')
+                        console.log($("#btnImport"), '$("#btnImport")')
+                        //设置按钮可用
+                        $("#btnImport").removeClass('btnImport');
+                        $("#btnImport").removeAttr("disabled");
+                        $("#btnImport").children().removeClass("l-toolbar-item-disable");
+
+                        $("#btnReset").removeAttr("disabled");
+                        $("#btnReset").children(":first").removeClass("l-toolbar-item-disable");
+                        BizMasterDataImport = data.Extend;
+                        var ParentID = getUrlParam("ParentID");
+                        var ParentCode = getUrlParam("ParentCode");
+                        BizMasterDataImport.ParentID = ParentID;
+                        BizMasterDataImport.ParentCode = ParentCode;
+
+                        //显示服务编码标签,上传标签隐藏
+                        $("#CodeInfoPanel").show();
+                        $("#UploadPanel").hide();
+
+                        //给服务编码中的控件赋值
+                        $("input[txtType=CodeInfo]").val(BizMasterDataImport.MasterDataCode);
+                        $("input[txtType=CodeInfo]").attr("CodeInfo", BizMasterDataImport.CodeInfo);
+                        $("input[txtType=CodeInfo]").attr("Code", BizMasterDataImport.MasterDataCode);
+                        var display = $.format($.Lang("EditMasterData.MasterDataDisplay"), BizMasterDataImport.MasterDataName);
+                        $("#codeDisplay").html(display);
+                    } else {
+                        if (data.Message) {
+                            return $.H3Dialog.Warn({content: $.Lang(data.Message)});
+                        }
+                        $.H3Dialog.Warn({content: $.Lang('msgGlobalString.ImportFail')});
+                    }
+                },
+                error: function () {
+                    $.H3Dialog.Warn({content: $.Lang('msgGlobalString.ImportFail')});
+                }
+            });
+        }
+    }
+
+    Import = function () {
+        if (!CheckFile()) {
+            return false;
+        }
+        BeforeImort();
+
+        var importUrl = $.Controller.BizMasterDataImport.Import;
+        $.ajax({
+            url: importUrl,
+            type: 'post',
+            dataType: "json",
+            data: BizMasterDataImport,
+            async: false,//同步执行
+            success: function (result) {
+                if (result.Success) {
+                    $.H3Dialog.Success({content: $.Lang(result.Message)});
+                    top.ReloadNode(BizMasterDataImport.ParentID);
+                    parent.H3DialogManger.Close(); //关闭当前对话框
+                } else {
+                    $.H3Dialog.Warn({content: $.Lang(result.Message)});
+                }
+            },
+            error: function (err) {
+                $.H3Dialog.Warn({content: $.Lang('msgGlobalString.ImportFail')});
+            }
+        });
+    }
+
+    Reset = function () {
+        window.location.href = window.location.href;
+    }
+    // 上传文件
+    $("#btnFileUpload").change(function () {
+        if ($("#btnFileUpload").val()) {
+            $("#upload-text").html($("#btnFileUpload").val());
+        } else {
+            $("#upload-text").html($.Lang('Unselected'));
+        }
+    })
+</script>
+<style>
+    .btnImport {
+        pointer-events: none;
+    }
+</style>
+<div id="H3ToolBar">
+    <a id="btnImport" disabled="true" class="btnImport" href="javascript:Import()" data-icon="fa fa-upload"
+       data-lang="GlobalButton.Import"></a>
+    <a id="btnReset" href="javascript:Reset()" data-icon="fa fa-minus" data-lang="EditMasterData.Reload"></a>
+</div>
+<input type="hidden" id="CodeInfo"/>
+<input type="hidden" id="fileName"/>
+<input type="hidden" id="ckIsCover"/>
+
+<div id="UploadPanel">
+    <div class="H3Panel">
+        <table>
+            <tr>
+                <td>
+                    <div id="upload-box">
+                        <p class="btn-box">
+                            <input type="button" id="btn" value="点我上传">
+                            <span>&nbsp;</span>
+                            <span id="upload-text" data-lang="msgGlobalString.SelectImportFile">请上传文件</span>
+                        </p>
+                        <input type="file" name="btnFileUpload" id="btnFileUpload" class="upload-file-input" title="" />
+                    </div>
+                    <!--<input type="file" id="btnFileUpload" name="btnFileUpload"/>-->
+                    <a id="btnUpLoad" href="#" onclick="btnUpLoad_Click(); return false;"
+                       data-lang="BizServiceHandler.Upload"></a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div id="CodeInfoPanel" style="display:none">
+    <div class="H3Panel">
+        <span data-lang="EditMasterData.MasterData_Mssg4"></span>
+
+        <table id="CodeTable">
+            <tr>
+                <td data-lang="msgGlobalString.IsCover"></td>
+                <td>
+                    <span txttype="ckIsCover">
+                        <input id="IsCover" type="checkbox"/>
+                        <label for="IsCover" data-lang="msgGlobalString.IsCover"></label>
+                    </span>
+                </td>
+                <td data-lang="msgGlobalString.CoverMsg"></td>
+            </tr>
+            <tr>
+                <td id="codeDisplay" style="width:200px"></td>
+                <td style="width:300px">
+                    <input type="text" txttype="CodeInfo" codeinfo="" code=""/>
+                </td>
+                <td style="color:Red">*</td>
+            </tr>
+        </table>
+    </div>
+</div>

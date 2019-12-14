@@ -1,0 +1,79 @@
+.default-box{
+    background: #fff;
+}
+#content-wrapper {
+    /*min-height: 400px;*/
+    padding: 18px 18px 18px;
+}
+
+.edit-model .part {
+    min-height: 40px;
+    border: dashed 1px #ccc;
+    display: block;
+}
+
+.drag-proxy {
+    position: absolute;
+    z-index: 200;
+    border: 2px dotted #666;
+    background-color: #72adea;
+}
+
+.panel {
+    border-color: #e4e4e4;
+}
+
+.tool-button {
+    margin-top: 0px;
+    padding-top: 5px;
+    height: 30px;
+}
+
+.tool-button.drag-handler:hover {
+    background-color: #ccc;
+    cursor: move;
+}
+
+.edit-button {
+    /*float: left;*/
+    padding-left: 10px;
+    margin-left: 10px;
+    text-decoration: none;
+}
+
+.delete-button {
+    padding-left: 10px;
+    margin-left: 10px;
+    text-decoration: none;
+    /*float: left;*/
+}
+
+.fa-gear {
+    margin-right: 5px;
+}
+
+.fa-remove {
+    margin-right: 6px;
+}
+#report .l-text.l-text-combobox{
+    width: 360px;
+    height: 30px;
+    line-height: 26px;
+    margin: 0 auto;
+}
+::-webkit-scrollbar-track {
+    /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
+    border-radius: 5px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);*/
+    background-color: rgba(0, 0, 0, 0.5);
+}

@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<!--[if IE 8]>         <html class="ie8"> <![endif]-->
+<!--[if IE 9]>         <html class="ie9 gt-ie8"> <![endif]-->
+<!--[if gt IE 9]><!-->
+<html class="gt-ie8 gt-ie9 not-ie">
+<!--<![endif]-->
+<head id="Head1">
+    <meta charset="utf-8">
+    <title>H3 BPM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link href="assets/stylesheets/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/stylesheets/pixel-admin.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/stylesheets/pages.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/stylesheets/rtl.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/stylesheets/themes.min.css" rel="stylesheet" type="text/css">
+    <!--[if lt IE 9]>
+        <script src="assets/javascripts/ie.min.js"></script>
+    <![endif]-->
+
+    <style type="text/css">
+        .page-signup .form-actions .signup-btn {
+            border-radius: 5px;
+        }
+
+            .page-signup .form-actions .signup-btn:hover {
+                background: #1d89cf !important;
+            }
+    </style>
+</head>
+<body class="theme-default page-signup" style="position: relative; background: rgb(235, 235, 235) !important">
+    <div class="signup-container" style="left: 0px">
+        <!-- Header -->
+        <div class="signup-header">
+            <img src="WFRes/_Content/Login/images/LOGO_W.png" style="width: 260px" />
+        </div>
+        <div class="signup-form">
+            <div class="signup-text">
+                <span>集群管理</span>
+            </div>
+            <div class="form-group w-icon">
+                <input name="txtServerIP" type="text" id="txtServerIP" class="form-control input-lg" size="20" placeholder="服务器"/>
+                <span class="fa fa-desktop signup-form-icon"></span>
+            </div>
+            <div class="form-group w-icon">
+                <input name="txtPort" type="text" id="txtPort" class="form-control input-lg" size="20" placeholder="端口号"/>
+                <span class="fa fa-magnet signup-form-icon"></span>
+            </div>
+            <div class="form-group w-icon">
+                <input name="txtUser" type="text" id="txtUser" class="form-control input-lg" size="20" placeholder="账号"/>
+                <span class="fa fa-user signup-form-icon"></span>
+            </div>
+            <div class="form-group w-icon">
+                <input name="txtPassword" type="password" id="txtPassword" class="form-control input-lg" size="20" placeholder="密码"/>
+                <span class="fa fa-lock signup-form-icon"></span>
+            </div>
+
+            <div class="form-actions">
+                <button name="btnLogin" value="登录" onclick="return Login();" id="btnLogin" class="signup-btn bg-primary">登录</button>
+            </div>
+        </div>
+    </div>
+    <script src="WFRes/_Scripts/jquery/jquery.js?v=1.12.4"></script>
+    <script src="WFRes/_Scripts/jquery/jquery.lang.js"></script>
+    <script>
+        $(function () {
+            document.onkeydown = function (e) {
+                if (e.which == 13) {
+                    Login();
+                }
+            }
+
+        });
+        function Login() {
+            var userName = $("#txtUser").val();
+            var password = $("#txtPassword").val();
+            var address = $("#txtServerIP").val();
+            var txtPort = $("#txtPort").val();
+            var userInfo = {
+                userName: userName,
+                password: password,
+                ServerAddress: address,
+                Port: txtPort
+            }
+            if (userName == "" || password == "") {
+                ShakeWin();
+                return false;
+            }
+
+            $.ajax({
+                url: "Cluster/Login",
+                type: 'get',
+                dataType: "json",
+                async: false,//同步执行
+                data: userInfo,
+                success: function (result) {
+                    if (result.Success) {
+                        window.localStorage.setItem("H3.ClusterRoot", result.Extend);
+                        location.href = result.Extend + "/index.html";
+                    } else {
+                        ShakeWin();
+                    }
+                }
+            });
+        }
+
+        function ShakeWin() {
+            var signupContainer = $(".signup-container");
+            var marginLeft = parseInt(signupContainer.css("margin-left").replace("px", ""));
+            var oLeft = ($("body").width() - signupContainer.width()) / 2;// $("#loginwin").position().left;
+
+            var i = 0, j = 3;
+            var _shake = function () {
+                if (i > j) return;
+                signupContainer.animate({ left: oLeft - 10 * (j - i) - marginLeft }, 50, undefined, function () {
+                    signupContainer.animate({ left: oLeft + 20 * (j - i) - marginLeft }, 50, undefined,
+                        function () {
+                            i++;
+                            _shake();
+                        });
+                })
+            }
+            _shake();
+
+            if ($("#txtUser").val().trim() == "") {
+                $("#txtUser").focus();
+            }
+            else {
+                $("#txtPassword").focus();
+            }
+        }
+    </script>
+</body>
+</html>

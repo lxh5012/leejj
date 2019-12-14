@@ -1,0 +1,71 @@
+server:
+  #  address: 127.0.0.1
+  address: 0.0.0.0
+  port: 8083
+  compression:
+    enabled: true
+
+spring:
+  application:
+    name: portal-web
+
+  profiles:
+    active: local
+
+  cache:
+    type: redis
+
+  redis:
+    host: 127.0.0.1
+    database: 1
+    password: 123456
+  #    password: foobared
+
+  mvc:
+    locale: zh_CN
+    date-format: yyyy-MM-dd HH:mm:ss
+
+  thymeleaf:
+    cache: false
+    check-template: false
+
+  mobile:
+    devicedelegatingviewresolver:
+      enabled: true
+      mobile-prefix: mobile/
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    org.springframework.boot: info
+    org.springframework.security: info
+    OThinker: debug
+    com.h3bpm: debug
+
+h3:
+  cas:
+    enabled: false
+    server_url: http://127.0.0.1:8089
+    localhost: http://127.0.0.1:8081
+    success_target_url: /Portal/#/app/Workflow/MyUnfinishedWorkItem
+    failure_targer_url: /Portal/#/app/Workflow/MyUnfinishedWorkItem
+  #    新版移动端
+  #scanBasePackages: OThinker.H3.Controller.*,com.h3bpm.mobile.controller,com.h3bpm.base.controller.handler
+  #  旧版移动端
+  scanBasePackages : OThinker.H3.Controller.*,OThinker.H3.Mobile.Controller,com.h3bpm.base.controller.handler,zkkg.*
+#中科OA轮询推送失败记录定时器，每一小时轮询一次
+OaWorkflowPushCron: 0 0 0/1 * * ? 
+#中科OA接口地址
+OAPushWorkAddress: http://192.168.2.57:83//services/OfsTodoDataWebService
+#中科OA待办分配的系统标识符
+OaSystemCode: H3
+#中科特殊主流程标识符
+specialIdentifier: special
+#中科组织架构同步时间，每天凌晨1点执行同步
+orgunitcron : 0 0 1 * * ?
+#中科组织架构数据源配置
+datasource:
+  driver: com.mysql.jdbc.Driver
+  url: jdbc:mysql://localhost:3306/h3bpm
+  user: root
+  password: 123456

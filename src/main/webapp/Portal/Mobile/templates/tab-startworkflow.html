@@ -1,0 +1,107 @@
+<ion-view view-title="{{languages.tabs.InitiateProcess}}" align-title="center" hide-nav-bar="true" class="tab-startwf">
+    <div class="menu-tittle {{$root.dingMobile.dingHeaderClass}} ">
+        <div class="menu-tittle-left"></div>
+        <div class="menu-tittle-middle f17">{{languages.tabs.InitiateProcess}}</div>
+    </div>
+    <div class="tab-startwf-head">
+        <div class="tab-bar tab-search">
+            <label class="item-input-wrapper startwfSearch" ng-class="{'placeholder-icon-focus':focus,'placeholder-icon-unfocus':!focus}">
+                <i class="icon-search f13"></i>
+                <input type="search" placeholder="{{languages.tabMyInstances.searchProcessname}}"
+                       class="input-placeholder f14"
+                       ng-model="searchKey" ng-change="doSearch()"
+                       ng-focus="focus=true" ng-blur="searchKey==''?focus=false:focus=true" style="background: transparent;">
+                <i class="icon ion-close-circled placeholder-icon  f16" style="vertical-align: middle;"
+                   on-tap="CancelSearch()" ng-if="searchKey.length"></i>
+            </label>
+        </div>
+
+        <!--<div class="tab-bar">-->
+            <!--<div ng-repeat="d in tabNames" ng-click="activeSlide($index)" ng-class="slectIndex==$index?'tab_selected tab-bar-item':'tab-bar-item'">-->
+                <!--<span class="f15 rel db">-->
+                    <!--<i>{{d}}</i>-->
+                <!--</span>-->
+                <!--<div class="vertical-line"></div>-->
+            <!--</div>-->
+        <!--</div>-->
+
+
+        <div class="tab-bar">
+
+                <div ng-repeat="d in tabNames" ng-click="activeSlide($index)" ng-class="slectIndex==$index?'tab_selected tab-bar-item':'tab-bar-item'">
+                  <span class="f15 rel db">
+                      <i>{{d}}</i>
+                  </span>
+                    <!--<div class="vertical-line"></div>-->
+                </div>
+        </div>
+    </div>
+
+    <ion-content class="{{$root.dingMobile.dingContentClass}}">
+        <!--下拉 -->
+        <ion-refresher on-refresh="doRefresh()" pulling-text="{{languages.pullingtext}}" refreshing-text="{{languages.refreshingtext}}" refreshing-icon="ion-loading-b">
+        </ion-refresher>
+        <!--常用流程  -->
+        <div ng-show="slectIndex==0">
+            <div ng-repeat="category in categories" class="category">
+                <div ng-repeat="workflow in category.Workflows | filter:{'IsFavorite':true}" class="flow-list-item" ng-show = "!isRefresh">
+                    <div class="flow-li-left" ng-click="changeFavorite('{{workflow.WorkflowCode}}')">
+                        <i ng-class="{true: ' icon-star f16', false: ' icon-shoucaang_2  f16'}[workflow.IsFavorite]"></i>
+                    </div>
+                    <div class="flow-li-right" ng-click="startWorkflow('{{workflow.WorkflowCode}}')">
+                        <div>
+                            <!--<img class="flow-type" ng-src="{{url+workflow.WorkflowImage}}" />-->
+                            <span class="f16">
+                                {{ workflow.DisplayName | limitTo:16 }}
+                                {{ workflow.DisplayName.length > 16 ? '...' : '' }}
+                            </span>
+                            <span class="sample f12" ng-if="sampleData">{{languages.sampleData}}</span>
+                        </div>
+                        <i class="ion-chevron-right f12"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="list-showEmpty" ng-show="!exception&&FavoriteNum==0&&slectIndex==0">
+                <img ng-show="{{!languages.isShow}}" src="img/empty.svg">
+                <img ng-show="{{languages.isShow}}" src="img/emptyEng.svg">
+            </div>
+
+        </div>
+        <!--全部流程  -->
+        <div ng-show="!slectIndex==0">
+            <div ng-repeat="category in categories" class="category">
+                <!--全部流程   流程组名 -->
+                <div class="vertical-border">
+                    <div class="vertical-line"></div>
+                    <span class="vertical-title f14 ng-binding"> {{category.DisplayName}}</span>
+                </div>
+                <div data-title="全部" ng-repeat="workflow in category.Workflows" class="flow-list-item" ng-show = "!isRefresh">
+                    <div class="flow-li-left" ng-click="changeFavorite('{{workflow.WorkflowCode}}','{{category.DisplayName}}')">
+                        <i ng-class="{true: ' icon-star f16', false: ' icon-shoucaang_2  f16'}[workflow.IsFavorite]"></i>
+                    </div>
+                    <div class="flow-li-right" ng-click="startWorkflow('{{workflow.WorkflowCode}}')">
+                        <div>
+                            <!--<img class="flow-type" ng-src="{{url+workflow.WorkflowImage}}" />-->
+                            <span class="f16">
+                                {{ workflow.DisplayName | limitTo:16 }}
+                                {{ workflow.DisplayName.length > 16 ? '...' : '' }}
+                            </span>
+                            <span class="sample f12" ng-if="sampleData">{{languages.sampleData}}</span>
+                        </div>
+                        <i class="ion-chevron-right f12"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="list-showEmpty" ng-show="!exception&&categories.length==0&&!slectIndex==0">
+                <img ng-show="{{!languages.isShow}}" src="img/empty.svg">
+                <img ng-show="{{languages.isShow}}" src="img/emptyEng.svg">
+            </div>
+        </div>
+        <!--无数据处理  -->
+        <ion-list>
+
+
+        </ion-list>
+    </ion-content>
+
+</ion-view>

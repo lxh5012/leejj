@@ -1,0 +1,235 @@
+<div class="mt"></div>
+
+<div class="menu-bar progress-picture hasBorderBottom" ng-click="openFlowChart($event)">
+    <div class="menu-bar-left">
+        <img src="Mobile/img/details/progress.svg" class="progress mr10">
+        <span class="f16">{{names.WorkflowCharts}}</span>
+    </div>
+    <div class="menu-bar-right">
+        <i class="icon ion-ios-arrow-right" style="color: #ccc;font-size: 20px; margin-right:10px;"></i>
+    </div>
+</div>
+
+<div ng-if="instanceInfo">
+    <div class="details-header menu-bar">
+        <div class="menu-bar-left" style="width:307px">
+            <img ng-src="{{instanceInfo.BaseInfo.ParticipantImageURL}}"
+                 ng-if="instanceInfo.BaseInfo.ParticipantImageURL">
+            <!-- update by ouyangsk 没有头像路径时，显示默认头像 -->
+            <img src="Mobile/img/userman.png"
+                 ng-if="!instanceInfo.BaseInfo.ParticipantImageURL?instanceInfo.BaseInfo.ParticipantGender==0||instanceInfo.BaseInfo.ParticipantGender==1:false">
+            <img src="Mobile/img/userwoman.png"
+                 ng-if="!instanceInfo.BaseInfo.ParticipantImageURL?instanceInfo.BaseInfo.ParticipantGender==2:false">
+
+            <!-- <div ng-if="!instanceInfo.BaseInfo.ParticipantImageURL"
+                 ng-class="{'user-a':randomNumbers[0]===0,'user-b':randomNumbers[0]===1,'user-c':randomNumbers[0]===2,'user-d':randomNumbers[0]===3,'circle-name':true}">
+                <span>{{instanceInfo.BaseInfo.OriginatorName.trim()|limitTo:-2}}</span>
+            </div> -->
+            <div class="menu-bar-lr">
+                <p class="f17">{{instanceInfo.BaseInfo.OriginatorName.trim() | limitTo :
+                    5}}{{instanceInfo.BaseInfo.OriginatorName.trim().length > 5 ? "..." : ""}}</p>
+                <span class="f13 blue" style="width:230px;" ng-if="instanceInfo.BaseInfo.Approvers!=''">{{names.Waiting}}{{instanceInfo.BaseInfo.Approvers | limitTo : 9}}{{instanceInfo.BaseInfo.Approvers.length > 9 ? "..." : ""}}{{names.Approve}}</span>
+            </div>
+        </div>
+        <div class="menu-bar-right" ng-click="showHide()">
+            <span class="blue f13" ng-if="!showMoreInfo">{{names.Spread}}</span>
+            <span class="blue f13" ng-if="showMoreInfo">{{names.Retract}}</span>
+            <img src="Mobile/img/details/up.svg" class="up" ng-if="showMoreInfo"
+                 style="width: 10px; vertical-align: 5%;"/>
+            <img src="Mobile/img/details/down.svg" class="down" ng-if="!showMoreInfo"
+                 style="width: 10px; vertical-align:5%;"/>
+        </div>
+    </div>
+
+    <div class="progress-map" ng-if="showMoreInfo">
+        <!--  流程日志。net代码 -->
+        <div class="progress-map-item" ng-repeat="proItem in instanceInfo.InstanceLogInfo track by $index">
+            <img src="Mobile/img/details/choose.svg" class="choose" ng-if="proItem.ApprovalName=='通过'">
+            <img src="Mobile/img/details/unchoose2.svg" class="unchoose2"
+                 ng-if="proItem.ApprovalName=='拒绝' || proItem.ApprovalName=='已取消'"><!--拒绝-->
+            <img src="Mobile/img/details/unchoose.svg" class="unchoose"
+                 ng-if="proItem.ApprovalName!='通过'&&proItem.ApprovalName!='拒绝'&&proItem.ApprovalName!='已取消'">
+
+            <div class="tooltip">
+                <div class="angle">
+                    <div class="anglein"></div>
+                </div>
+                <div class="p-item-content">
+                    <div class="pic-top">
+                        <div class="pic-top-title">
+                            <span class="f16"> {{proItem.ActivityName}}-</span>
+                            <span ng-if="proItem.ApprovalName=='通过'"
+                                  class="agree orange f16">{{proItem.ApprovalName}}</span>
+                            <span ng-if="proItem.ApprovalName=='进行中'"
+                                  class="run blue f16">{{proItem.ApprovalName}}</span>
+                            <span ng-if="proItem.ApprovalName!='通过'&&proItem.ApprovalName!='进行中'"
+                                  class="noAgree red f16">{{proItem.ApprovalName}}</span>
+                        </div>
+                        <!-- 协转 -->
+                        <div class="details-header menu-bar" ng-repeat="Item in proItem.children track by $index"
+                             style="margin-top:0.3rem;">
+                            <div class="menu-bar-left">
+                                <img ng-src="{{Item.ParticipantImageURL}}"
+                                     ng-if="Item.ParticipantImageURL">
+                                <img src="Mobile/img/userman.png"
+                                     ng-if="!Item.ParticipantImageURL?Item.ParticipantGender==0||Item.ParticipantGender==1:false">
+                                <img src="Mobile/img/userwoman.png"
+                                     ng-if="!Item.ParticipantImageURL?Item.ParticipantGender==2:false">
+
+                            </div>
+                            <div class="menu-bar-right">
+                                <div class="menu-bar-rt">
+                                    <p class="f13" ng-if="Item.itemType!=5&&Item.itemType!=1&&Item.itemType!=118">
+                                        {{Item.ParticipantName}}<span class="f13" ng-if="Item.ParticipantOuName">-{{Item.ParticipantOuName|limitTo:16}}</span>
+                                    </p>
+                                    <!-- 数据显示"**发起5-协办、1-征询" -->
+                                    <p class="f13" ng-if="Item.itemType==5&&Item.isSend!=1">
+                                        {{Item.ParticipantName}}<span class="f13" ng-if="Item.ParticipantOuName">-{{Item.ParticipantOuName|limitTo:12}}</span>
+                                    </p>
+                                    <p class="f13" ng-if="Item.itemType==5&&Item.isSend==1">
+                                        {{Item.ParticipantName}}<span class="f13">{{names.States.Assist}}</span></p>
+
+                                    <p class="f13" ng-if="Item.itemType==1&&Item.isSend!=1">
+                                        {{Item.ParticipantName}}<span class="f13" ng-if="Item.ParticipantOuName">-{{Item.ParticipantOuName|limitTo:12}}</span>
+                                    </p>
+                                    <p class="f13" ng-if="Item.itemType==1&&Item.isSend==1">
+                                        {{Item.ParticipantName}}<span class="f13">{{names.States.Consult}}</span></p>
+
+                                    <p class="f13" ng-if="Item.itemType==118&&Item.isSend!=1">
+                                        {{Item.ParticipantName}}<span class="f13" ng-if="Item.ParticipantOuName">-{{Item.ParticipantOuName|limitTo:12}}</span>
+                                    </p>
+                                    <p class="f13" ng-if="Item.itemType==118&&Item.isSend==1">
+                                        {{Item.ParticipantName}}<span class="f13">{{names.States.Forward}}</span></p>
+
+                                    <span class="f13" ng-if="Item.Approval!=-1" style="color:#b2b2b2;">{{Item.FinishedTime}}</span>
+
+                                    <span class="f13" ng-if="Item.Approval==-1" style="color:#b2b2b2;">{{Item.CreatedTime}}</span>
+
+                                    <img ng-if="Item.SignatureId" class="SignatureImg"
+                                         ng-src="{{portalroot+'/TempImages/'+Item.SignatureId+'.jpg'}}"/>
+                                </div>
+                                <div class="menu-bar-rb">
+                                    <span style="float:left;"
+                                          ng-class="{'orange':Item.Approval==1&&Item.Status==2,'red':(Item.Approval!=1&&Item.Status==2)||(Item.Status!=2),'f13':true}">{{Item.ApprovalName}}</span>
+                                    <span class="f13 grey" style=" float: left;margin-left:0.5rem;">{{Item.CreatorName|limitTo:12}}{{Item.CreatorName.length>4?"...":""}}</span>
+                                    <!-- 数据显示【系统发出的5-协办、118-转办，1-征询】 -->
+                                    <span class="f13 grey" ng-if="Item.itemType==5&&Item.isSend!=1"
+                                          style=" float: left;">{{names.States.SystomAssist}}</span>
+                                    <span class="f13 grey" ng-if="Item.itemType==1&&Item.isSend!=1"
+                                          style=" float: left;">{{names.States.SystomConsult}}</span>
+                                    <span class="f13 grey" ng-if="Item.itemType==118&&Item.isSend!=1"
+                                          style=" float: left;">{{names.States.SystomForward}}</span>
+
+                                </div>
+                                <div class="pic-bottom" ng-if="Item.Comments">
+                                    {{Item.Comments}}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 传阅数据 -->
+                        <div style="margin-left: 1.5rem;margin-top:0.3rem;"
+                             ng-if="proItem.circulateList.length||proItem.circulateFinishedList.length">
+                            <div class="pic-top-title">
+                                <span class="f17">{{names.States.Circulate}}</span>
+                                <span class="menu-bar-right" ng-click="showCirculateHide()"
+                                      style=" float: right;line-height: 24px;">
+                                    <span class="blue f13" ng-if="!showCirculate">{{names.Spread}}</span>
+                                    <span class="blue f13" ng-if="showCirculate">{{names.Retract}}</span>
+                                    <i class="icon ion-ios-arrow-down" ng-if="!showCirculate"
+                                       style="color: #ccc;font-size: 20px; margin-right:10px;"></i>
+                                    <i class="icon ion-ios-arrow-up " ng-if="showCirculate"
+                                       style="color: #ccc;font-size: 20px; margin-right:10px;"></i>
+                                </span>
+                            </div>
+                            <!--已阅-->
+                            <div class="details-header menu-bar" ng-if="showCirculate" style="line-height: 24px;width: 100%">
+                                <div class="menu-bar-left grey" style="min-width:50px;">{{names.States.Finishedread}}
+                                </div>
+                                <div class="menu-bar-right">
+                                    <div class="menu-bar-rt" style=" justify-content: flex-start;">
+                                        <div class="f14" style=" margin-right: 5px;"
+                                             ng-repeat="CirculateInfo in proItem.circulateFinishedList track by $index">
+                                            <span>
+                                                {{CirculateInfo.name}}
+                                                <span class="grey f13" ng-if="CirculateInfo.ouName">-{{CirculateInfo.ouName|limitTo:12}}</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--传阅-->
+                            <div class="details-header menu-bar" ng-if="showCirculate">
+                                <div class="menu-bar-left grey" style="min-width:50px"> {{names.States.Toread}}</div>
+                                <div class="menu-bar-right">
+                                    <div class="menu-bar-rt" style=" justify-content: flex-start;">
+                                        <div class="f14" style=" margin-right: 5px;"
+                                             ng-repeat="CirculateInfo in proItem.circulateList track by $index">
+                                            <span>
+                                                {{CirculateInfo.name}}
+                                                <span class="grey f13" ng-if="CirculateInfo.ouName">-{{CirculateInfo.ouName|limitTo:12}}</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="progress-map-item" ng-repeat="proItem in instanceInfo.InstanceLogInfo track by $index">
+            <img src="./Mobile/img/details/choose.svg" class="choose" ng-if="proItem.Approval==='1'||proItem.Approval===''">
+            <img src="./Mobile/img/details/unchoose2.svg" class="unchoose2" ng-if="proItem.Status==='3'||(proItem.Status==='2'&&proItem.Approval!=='1')">�ܾ�
+            <img src="./Mobile/img/details/unchoose.svg" class="unchoose" ng-if="proItem.Status==='0'||proItem.Status==='1'">
+            <div class="tooltip">
+                <div class="angle"><div class="anglein"></div></div>
+                <div class="p-item-content">
+                    <div class="pic-top">
+                        <div class="details-header menu-bar">
+                            <div class="menu-bar-left">
+                                <img ng-src="{{proItem.ParticipantImageURL}}"
+                                     ng-if="proItem.ParticipantImageURL">
+                                <div ng-if="!proItem.ParticipantImageURL"
+                                     ng-class="{'user-a':$index%4==0,'user-b':$index%4==1,'user-c':$index%4==2,'user-d':$index%4==3,'circle-name':true}">
+                                    <span>{{proItem.ParticipantName.trim()|limitTo:-2}}</span>
+                                </div>          
+                                update by ouyangsk 没有头像路径时，显示默认头像
+								<img src="./Mobile/img/userman.png" ng-if="!proItem.ParticipantImageURL?proItem.ParticipantGender==0||proItem.ParticipantGender==1:false">
+								<img src="./Mobile/img/userwoman.png" ng-if="!proItem.ParticipantImageURL?proItem.ParticipantGender==2:false">
+                                   
+                            </div>
+                            <div class="menu-bar-right">
+                                <div class="menu-bar-rt">
+                                    <p class="f16">{{proItem.ParticipantName | limitTo : 5}}{{proItem.ParticipantName.length > 5 ? "..." : ""}}
+                                    	<span class="grey f13" ng-if="proItem.ParticipantOuName">
+                                    		-{{proItem.ParticipantOuName.trim() | limitTo: 6 }}{{proItem.ParticipantOuName.trim().length > 6 ? "..." : ""}}
+                                    	</span>
+                                    </p>
+                                    <span class="f13" ng-if="proItem.Approval!=-1" style="color:#b2b2b2;">{{proItem.FinishedTime}}</span>
+                                    <span class="f13" ng-if="proItem.Approval==-1" style="color:#b2b2b2;">{{proItem.CreatedTime}}</span>
+                                </div>
+                                <div class="menu-bar-rb">
+                                	update by ousihang 防止活动节点名称超长
+                                    <span class="f13 grey" ng-if="proItem.ActivityName.trim().length > 6">{{proItem.ActivityName.trim() | limitTo : 6}}...</span>
+                                    <span class="f13 grey" ng-if="proItem.ActivityName.trim().length <= 6 ">{{proItem.ActivityName.trim()}}</span>
+                                   <span style="color:#979797;" ng-if="proItem.ApprovalName">|</span>
+                                    
+                                    <span ng-class="{'orange':proItem.Approval==1&&proItem.Status==2,'red':(proItem.Approval!=1&&proItem.Status==2)||(proItem.Status!=2),'f13':true}">{{proItem.ApprovalName}}</span>
+                                   	<img ng-if="proItem.SignatureId" class="SignatureImg" ng-src="{{portalroot+'/TempImages/'+proItem.SignatureId+'.jpg'}}" />
+                                    <sapn class="f13 grey" ng-show="proItem.typeComment != null">({{proItem.typeComment}})</sapn>
+                                    <span class="f13 grey" style="display:block;">{{proItem.CreatorName}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pic-bottom" ng-if="proItem.Comments">
+                        {{proItem.Comments}}
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+
+
+</div>

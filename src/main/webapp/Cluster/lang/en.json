@@ -1,0 +1,11 @@
+﻿{
+	"engine":{
+		"needLogin" : "please relogin",
+		"codesRequired" : "not select any rows",
+		"canNotDoActionOnCurrentEngine":"can't do action on current engine [{0}]"
+	},
+	"vessel":{
+		"codesRequired":"not select any rows",
+		"canNotRemoveCurrentVessel":"can't remove current vessel [{0}]"
+	}
+}

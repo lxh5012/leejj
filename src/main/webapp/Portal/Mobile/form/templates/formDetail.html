@@ -1,0 +1,26 @@
+<ion-view cache-view="true" title="{{InstanceTitle}}" hide-nav-bar="{{$root.dingMobile.hideHeader}}">
+<!--<ion-view cache-view="true" title="{{InstanceTitle}}">-->
+    <ion-nav-bar class="bar">
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear ion-ios-arrow-left" ng-click="ClosePage()">{{names.Back}}
+            </button>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+
+    <!--<ion-content class="scroll-content ionic-scroll {{$root.dingMobile.dingHeaderClass}} has-footer" id="mobile-content" delegate-handle="mainScroll" [on-scroll="scrollEvent"]>-->
+    <ion-content class="scroll-content ionic-scroll {{$root.dingMobile.dingHeaderClass}} has-footer" id="mobile-content" delegate-handle="mainScroll">
+
+        <!--<div ng-include="'Mobile/form/templates/flowStatus.html?v=201803302026'" class="flowDetails">-->
+        <!--</div>-->
+        <div class="flow-comment"></div>
+
+        <!--<div ng-include="'Mobile/form/templates/flowStatus.html?v=201808302026'" class="flowDetails" id="flowDetails"></div>-->
+        <div data-ng-include="'Mobile/form/templates/flowStatus.html?v=201808302026'" class="flowDetails" id="flowDetails" data-ng-init="includeInit()"></div>
+
+    </ion-content>
+    <ion-footer-bar align-title="left" class="bar" keyboard-attach>
+        <ul style="display: none!important" class="nav navbar-nav SheetToolBar" id="Ul1" runat="server"></ul>
+        <div class="button-bar button-full" id="dvmButtons">
+        </div>
+    </ion-footer-bar>
+</ion-view>

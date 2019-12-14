@@ -1,0 +1,169 @@
+﻿<!--
+    查询列表
+     -->
+<script>
+    var searchText = $.Lang("GlobalButton.Search");
+    $('#BizQueryViewSearch').text(searchText);
+</script>
+<div class="hbox hbox-auto-xs hbox-auto-sm" ng-init="
+     app.settings.asideFolded=false;
+     app.settings.asideDock=false;">
+    <!-- main -->
+    <div class="col">
+        <!-- main header -->
+        <div class="bg-light lter b-b wrapper-md">
+            <div class="row" style=" padding-right: 15px; ">
+                <div class="col-sm-6 col-xs-12">
+                    <span class="h3" title-name function-view-models="user.FunctionViewModels"></span>
+                </div>
+            </div>
+        </div>
+
+        <!--表格部分Start-->
+        <div class="wrapper-md paddingbottomNone">
+            <div class="panel panel-default">
+                <div class="table-responsive">
+                    <div class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                        <div class="row" style="margin:10px 5px;">
+                            <div class="form-group col-md-12">
+                                <div class="btn-group btn-default searchBtn">
+                                    <a href="javascript:void(0);" class="btn btn-default fa fa-search" id="BizQueryViewSearch">
+                                    </a>
+                                </div>
+                                <div ng-repeat="QueryAction in BizQueryActions"
+                                     class="btn-group btn-default" style="margin-left:5px;">
+                                    <!-- 执行动作 -->
+                                    <a href="javascript:void(0);" class="btn btn-default fa {{QueryAction.Icon}}"
+                                       ng-if="QueryAction.ActionType==0"
+                                       ng-click="{{QueryAction.url}}">
+                                        {{QueryAction.DisplayName}}
+                                    </a>
+                                    <!-- 打开表单 -->
+                                    <a href="javascript:void(0);" class="btn btn-default fa {{QueryAction.Icon}}"
+                                       ng-if="QueryAction.ActionType==1"
+                                       ng-click="{{QueryAction.url}}">
+                                        {{QueryAction.DisplayName}}
+                                    </a>
+                                    <!-- 打开链接 -->
+                                    <a href="javascript:void(0);" class="btn btn-default fa {{QueryAction.Icon}}"
+                                       ng-if="QueryAction.ActionType==2"
+                                       ng-click="{{QueryAction.url}}">
+                                        {{QueryAction.DisplayName}}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin:5px 5px;">
+                            <div ng-repeat="Filter in FilterData" class="col-md-6" style="margin-top:10px; width: 100%"
+                                 ui-finshed-render="FinishedFunc">
+                                <div class="input-group" style="width: 100%;">
+                                    <span class="input-group-addon" style="width:20%">
+                                        {{Filter.PropertyName}}
+                                    </span>
+                                    
+                                    <!-- 文本框 -->
+                                    <input class="form-control" id="{{Filter.PropertyCode}}" style="height:30px;"
+                                           ng-if="Filter.DisplayType==0&& Filter.FilterType!=2
+                                           &&(Filter.LogicType=='ShortString'||Filter.LogicType=='String')" />
+
+                                    <input class="form-control" id="{{Filter.PropertyCode}}" style="height:30px;"
+                                           ng-if="Filter.DisplayType==0&& Filter.FilterType!=2
+                                           &&(Filter.LogicType=='Int'||Filter.LogicType=='Long'||Filter.LogicType=='Double')" oninput="this.value=this.value.replace(/[^\-?\d.]/g,'')" />
+                                    
+                                    <!-- 文本框 范围查询 -->
+                                    <div class="input-group" ng-if="Filter.DisplayType==0&& Filter.FilterType==2
+                                           &&(Filter.LogicType=='ShortString'||Filter.LogicType=='String')" style="width:100%; height:30px;">
+                                        <input class="form-control" id="{{Filter.PropertyCode}}" />
+                                        <label class="input-group-addon" style="border-left:0px;border-right:0px;">
+                                            —
+                                        </label>
+                                        <input class="form-control" id="{{Filter.PropertyCode+1}}" />
+                                    </div>
+
+                                    <div class="input-group" ng-if="Filter.DisplayType==0&& Filter.FilterType==2
+                                           &&(Filter.LogicType=='Int'||Filter.LogicType=='Long'||Filter.LogicType=='Double')"
+                                         style="width:100%; height:30px;">
+                                        <input class="form-control" id="{{Filter.PropertyCode}}" oninput="this.value=this.value.replace(/[^\-?\d.]/g,'')" />
+                                        <label class="input-group-addon" style="border-left:0px;border-right:0px;">
+                                            —
+                                        </label>
+                                        <input class="form-control" id="{{Filter.PropertyCode+1}}" oninput="this.value=this.value.replace(/[^\-?\d.]/g,'')" />
+                                    </div>
+                                    
+                                    <!-- 时间控件 -->
+                                    <input ui-jq="wdatePicker" onchange="" class="input-sm form-control"
+                                           id="{{Filter.PropertyCode}}"
+                                           ng-if="Filter.DisplayType==0 && Filter.LogicType=='DateTime'
+                                           && Filter.FilterType!=2" style="height:30px;"/>
+                                    
+                                    <!-- 时间控件 范围查询-->
+                                    <div class="input-group" ng-if="Filter.DisplayType==0 && Filter.LogicType=='DateTime'
+                                           && Filter.FilterType==2" style="width:100%; height:30px;">
+                                        <input ui-jq="wdatePicker" onchange=""
+                                               id="{{Filter.PropertyCode}}" class="input-sm form-control" />
+                                        <span class="input-group-addon" style="border-left:0px;border-right:0px;">
+                                            —
+                                        </span>
+                                        <input ui-jq="wdatePicker" onchange=""
+                                               id="{{Filter.PropertyCode+1}}" class="input-sm form-control" />
+                                    </div>
+
+                                    <!-- 下拉框 -->
+                                    <select class="form-control" id="{{Filter.PropertyCode}}" style="height:30px;"
+                                            ng-if="Filter.DisplayType==1">
+                                        <option ng-repeat="option in Filter.SelectedValues"
+                                                value="{{option.Value}}">
+                                            {{option.Text}}
+                                        </option>
+                                    </select>
+
+                                    <!-- 单选按钮 -->
+                                    <div ng-if="Filter.DisplayType==2" style="padding-left: 10px; border: 1px solid #ccc;">
+                                        <label style=" margin-right: 15px;">
+                                            <input type="radio" name="{{Filter.PropertyCode}}" value="" style="margin-top:10px;" />全部
+                                        </label>
+                                        <label ng-repeat="option in Filter.SelectedValues" style=" margin-right: 15px;">
+                                            <input type="radio" name="{{Filter.PropertyCode}}"
+                                                   value="{{option.Value}}" />
+                                            {{option.Text}}
+                                        </label>
+                                    </div>
+                                    
+                                    <!-- 复选按钮 -->
+                                    <div ng-if="Filter.DisplayType==3" style="padding-left: 10px; border: 1px solid #ccc;">
+                                        <label ng-repeat="option in Filter.SelectedValues" style="margin-top:10px; margin-right: 15px;">
+                                            <input type="checkbox"
+                                                   name="{{Filter.PropertyCode}}" value="{{option.Value}}" />
+                                            {{option.Text}}
+                                        </label>
+                                    </div>
+                                    <!-- 选人控件 -->
+                                    <div ng-if="Filter.DisplayType==5" style="height:30px;">
+                                        <div ui-jq="SheetUser" ui-options="UserOptions"
+                                             id="{{Filter.PropertyCode}}" style="display:block;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="" style="min-height:350px;">
+                            <table ui-jq="dataTable" id="BizViewTable" ui-options="BizViewOptions()" class="table table-striped m-b-none" style="width:99%;">
+                                <thead>
+                                    <tr>
+                                        <th ng-repeat="Column in GirdColumns">
+                                            <span ng-bind="Column.display"></span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--表格部分End-->
+    </div>
+    <!-- / main -->
+</div>

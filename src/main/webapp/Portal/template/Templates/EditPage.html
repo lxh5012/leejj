@@ -1,0 +1,51 @@
+﻿<div class="modal-header">
+    <button type="button" class="close"
+            data-dismiss="modal" aria-hidden="true" ng-click="cancel()">
+        ×
+    </button>
+    <h4 class="modal-title" id="myModalLabel">
+        <span translate="EditMasterData.Edit">编辑</span>
+    </h4>
+</div>
+<div id="content-wrapper" style="padding-top: 18px; width: 100%;">
+    <form class="bs-example form-horizontal" name="form">
+        <div class="row">
+            <div class="col-sm-12 form-group">
+                <label class="col-sm-3 control-label" translate="PortalTemplates.PageTitle">页面标题</label>
+                <div class="col-sm-6 input-group">
+                    <input id="txt_tempname" ng-model="Page.PageTitle" style="width: 200px" maxlength="32"
+                           class="form-control" required>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="height:10px;"></div>
+        <div class="row">
+            <div class="col-sm-12 form-group">
+                <label class="col-sm-3 control-label" translate="PortalTemplates.Organization">所属组织</label>
+                <div class="col-sm-9 input-group">
+                    <div ui-jq="SheetUser" ui-options="UserOptions" ui-refresh="iChange"
+                         id="sheetUser" class="from-control" style="width: 200px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 form-group">
+                <label class="col-sm-3 control-label" translate="PortalTemplates.Usetemplates">模板</label>
+                <div class="col-sm-6 input-group">
+                    <select class="form-control" style="width: 200px;"
+                            ng-model="Page.TempId" ng-change="TempChange()"
+                            ng-options="t.TemplateId as t.TemplateName for t in Templates"
+                            required></select>
+                </div>
+            </div>
+        </div>
+        <div ng-show="invalid" style="text-align: center;color:red;">
+            <span>以上三项必填</span>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-info" ng-click="ok()" ng-disabled="form.$invalid">
+        <label translate="QueryTableColumn.Button_Save">保存</label>
+    </button>
+</div>

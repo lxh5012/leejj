@@ -1,0 +1,148 @@
+/*按钮*/
+.select-btn-left{
+    width: 50px;
+}
+.select-btn-left, .select-btn-right{
+    box-sizing: border-box;
+    border-top: 0!important;
+    font-size: 100%;
+    color: #77BCFA;
+    letter-spacing: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.select-checkbox{
+    display: inline-block;
+    height: 28px;
+    width: 28px;
+    border-radius: 51%;
+    background: #3C8CEA;
+    border: none;
+    color: #FFFFFF;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 16px;
+    line-height: 28px;
+}
+.select-text{
+    padding-left: 5px;
+}
+/*按钮*/
+.select-wrapper{
+    width: 100%;
+}
+.select-item,.part-item{
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 0.5px solid #d8d8d8;
+    padding: 10px;
+}
+.select-check{
+    width: 40px;
+    height: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #77BCFA;
+    padding: 0 5px;
+}
+.select-check i{
+    font-size: 32px;
+    line-height: 40px;
+}
+.select-right{
+    flex: 1 0 auto;
+    position: relative;
+}
+.select-right-box{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    display: flex;
+    line-height: 40px;
+    color: #797f89;
+}
+.select-user-img{
+    padding: 0 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content:center;
+}
+.select-user-img img{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+/*搜索*/
+.org-wrapper{
+    padding: 10px;
+}
+.org-wrapper p{
+   display: flex;
+    justify-content: space-between;
+}
+.org-icon{
+    color: #77BCFA;
+    font-size: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.org-left{
+    display: flex;
+}
+.org-name{
+    font-size: 16px;
+    line-height: 32px;
+    padding: 0 4px;
+}
+.org-right{
+    font-size:18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.department{
+    display: flex;
+    line-height: 40px;
+    background: #f0f7ff;
+    padding: 0 10px;
+    position: relative;
+}
+.vertical-line{
+    width: 3px;
+    height: 14px;
+    left: 10px;
+    top: 14px;
+    background: #3c8cea;
+    position: absolute
+}
+.text{
+    padding-left: 6px;
+    font-size: 14px;
+    color:#999;
+}
+/*组织机构*/
+.part-item{
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    line-height: 30px;
+}
+.part-text{
+    color:#797f89;
+}
+.part-right{
+    display: flex;
+}
+.part-text-icon{
+    padding-left: 5px;
+    font-size: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

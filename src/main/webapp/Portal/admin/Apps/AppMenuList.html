@@ -1,0 +1,152 @@
+﻿<script>
+    var AppCode = getUrlParam("AppCode") || "";
+
+    $(function () {
+        $("#H3ToolBar").AspLinkToolBar();
+
+        $("#AppMenuList").ligerGrid({
+            columns: GetCategoryColumns(),
+            width: '100%',
+            height: '97%',
+            data: GetAppMenuTree(),
+            tree: {columnName: 'DisplayName'},
+            checkbox: false
+        });
+    });
+
+    function GetAppMenuTree() {
+        var appCode = getUrlParam("AppCode") || "";
+        var data = null;
+        $.ajax({
+            url: $.Controller.Apps.GetAppMenuTree,
+            type: 'post',
+            dataType: "json",
+            data: {appCode: appCode},
+            async: false,
+            success: function (result) {
+                if (result.Success) {
+                    data = result.Extend;
+                }
+            }
+        });
+        return data;
+    }
+
+    function GetCategoryColumns() {
+        var Name = $.Lang("AppMenuList.Name");
+        var Code = $.Lang("AppMenuList.Code");
+        var SortKey = $.Lang("AppMenuList.SortKey");
+        var Image = $.Lang("AppMenuList.Image");
+        var LinkUrl = $.Lang("AppMenuList.LinkUrl");
+        var Operate = $.Lang("AppMenuList.Operate");
+        var Open = $.Lang("AppMenuList.Open");
+        var Add = $.Lang("AppMenuList.Add");
+        var Edit = $.Lang("AppMenuList.Edit");
+
+        return [
+            //add by hxc@Future
+            {
+                display: Name, name: 'DisplayName', width: '10%', align: 'left',
+                render: function (row, rowindex, value) {
+                    return window.parent.htmlEncode(value);
+                }
+            },
+            {
+                display: Code, name: 'Code', width: '12%', align: 'left',
+                render: function (row, rowindex, value) {
+                    return window.parent.htmlEncode(value);
+                }
+            },
+            //{ display: '描述', name: 'Description', width: '10%', align: 'left' },
+            {display: SortKey, name: 'SortKey', width: '5%', align: 'left'},
+            {
+                display: Image, name: '', align: 'center', width: '5%', render: function (row) {
+                    if (row.IconUrl == null || row.IconUrl == "") return "";
+                    return "<i class='" + window.parent.htmlEncode(row.IconUrl) + "' style='width:16px;hegith:16px;'/>";
+                }
+            },
+            {
+                display: LinkUrl, name: 'Url', width: '25%', align: 'left',
+                render: function (row, rowindex, value) {
+                    return window.parent.htmlEncode(value);
+                }
+            },
+            {
+                display: Operate, width: '12%', name: '', render: function (row) {
+                    return "<div style='float:left;'><a href='#' onclick='EditAppMenu(\"" + row.ObjectID + "\")'>"+Open+"</a></div>"
+                        + (row.Level == 1 ? "<div style='padding-left:5px;float:left;'><a href='#' onclick='AddAppMenu(\"" + window.parent.htmlEncode(row.Code) + "\")'>"+Add+"</a></div>" : "")
+                        + "<div style='padding-left:5px;float:left;'><a href='#' onclick='EditFunction(\"" + window.parent.htmlEncode(row.Code) + "\")'>"+Edit+"</a></div>";
+                }
+            }
+        ];
+    };
+
+    var RemoveAppMenu = function (obj) {
+        if (ConfirmDel(obj)) {
+            var _Ids = "";
+            $($("#AppMenuList").ligerGetGridManager().getSelectedRows()).each(function (row) {
+                _Ids += this.ObjectID + ";";
+            });
+
+            if (!_Ids) {
+                $.H3Dialog.Warn({content: $.Lang("msgGlobalString.SelectItem")});
+                return;
+            }
+
+            $.ajax({
+                url: $.Controller.Apps.DelAppMenuTree,
+                data: {ids: _Ids, appCode: AppCode},
+                type: "post",
+                success: function (data) {
+                    if (data.Success) {
+                        $.H3Dialog.Success({content: $.Lang("msgGlobalString.DeleteSucced")});
+                        ReloadGridData();
+                    }
+                },
+                error: function () {
+                    $.H3Dialog.Warn({content: $.Lang("msgGlobalString.DeleteFailed")});
+                }
+            });
+        }
+    }
+
+    function EditFunction(code) {
+        ShowDialog("权限编辑", _PORTALROOT_GLOBAL + '/admin/TabMaster.html?url=Apps/FunctionAcl.html&Code=' + code + '&AppCode=' + AppCode
+            , 630, 700);
+    }
+
+    function AddAppMenu(_ParentCode) {
+        if (!_ParentCode && typeof (AppCode) != "undefined" && AppCode) {
+            _ParentCode = AppCode;
+        }
+        if (_ParentCode) {
+            ShowDialog("菜单编辑", _PORTALROOT_GLOBAL + '/admin/TabMaster.html?url=Apps/EditFunction.html&CategoryCode=' + _ParentCode
+                + '&AppCode=' + AppCode
+                , 630, 700);
+            return;
+        }
+    }
+
+    function EditAppMenu(_Id) {
+        ShowDialog("菜单编辑", _PORTALROOT_GLOBAL + '/admin/TabMaster.html?url=Apps/EditFunction.html&Id=' + _Id
+            + "&AppCode=" + AppCode, 630, 700);
+    }
+
+    function ReloadGridData() {
+        var manager = $("#AppMenuList").ligerGetGridManager();
+        var treeData = GetAppMenuTree();
+        manager.set({data: treeData});
+        manager.reload();
+    }
+</script>
+
+<style type="text/css">
+    .l-dialog-content{overflow: hidden;}
+</style>
+<div id="H3ToolBar">
+    <a data-icon="fa fa-plus" href="#" onclick="AddAppMenu()" data-lang="GlobalButton.Add"></a>
+    <a data-icon="fa fa-minus" href="#" onclick="RemoveAppMenu(this)" data-lang="GlobalButton.Delete"></a>
+</div>
+<div id="H3Panel">
+    <div id="AppMenuList"></div>
+</div>

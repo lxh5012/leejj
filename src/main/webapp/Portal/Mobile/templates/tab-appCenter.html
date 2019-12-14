@@ -1,0 +1,44 @@
+﻿﻿<ion-view view-title="应用" hide-nav-bar="true" class="tab-appCenter">
+
+    <div class="menu-tittle" ng-show="{{!$root.dingMobile.isDingMobile}}">
+        <div class="menu-tittle-left">
+        </div>
+        <div class="menu-tittle-middle f17">
+            应用
+        </div>
+        <div class="menu-tittle-right">
+        </div>
+    </div>
+
+	<ion-content class="appCenterIC" style="top:{{topStyle}}">
+		<div class="appCenterList" ng-if="AllApps.length>0">
+	        <div class="acItem" ng-repeat="item in AllApps" ng-click="openAppCenterItem(item.AppCode,item.DisplayName)">
+	            <img ng-if="item.IconUrl" ng-src="{{setting.upHttpUrl}}/{{item.IconUrl}}" class="acItemIcon" />
+	            <i ng-if="!item.IconUrl" ng-class="{'defaultIcon':true,'acItemIcon':true,'user-a':$index%4==0,'user-d':$index%4==3,'user-b':$index%4==1,'user-c':$index%4==2}"></i>
+	            <p class="f12 icon-text">{{item.DisplayName}}</p>
+	        </div>
+	    </div>
+	    <div class="appCenterListEmpty" ng-if="AllApps.length==0">
+	        <img ng-src="{{setting.upHttpUrl}}/Mobile/img/emptyAppCenter.png" />
+	        <p>暂无应用</p>
+	    </div>
+	</ion-content>
+
+<style>
+	.appCenterIC{
+	    bottom: 1.30667rem!important;
+	}
+	.icon-text{
+		text-overflow: -o-ellipsis-lastline;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
+	}
+</style>
+</ion-view>
+
+
+  

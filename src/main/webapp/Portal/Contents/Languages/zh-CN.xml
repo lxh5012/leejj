@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ot_portal_lang language="zh-CN">
+	<resources key="UI_PAGE_EDITPAGE">设计模式</resources>
+	<resources key="UI_PAGE_CANCELEDITPAGE">浏览模式</resources>
+	<resources key="UI_PAGE_NEWPAGE">新建</resources>
+	<resources key="UI_PAGE_CHANGETEMPLATE">切换模板</resources>
+	<resources key="UI_PAGE_PAGEMANAGE">系统管理</resources>
+	<resources key="UI_PAGE_CURRENTTHEME">当前主题</resources>
+	<resources key="UI_PAGE_ADDWEBPART">添加部件</resources>
+	<resources key="UI_PAGE_COLLAPSE">展开</resources>
+	<resources key="UI_PAGE_FOLD">折叠</resources>
+	<resources key="UI_PAGE_EDITWEBPART">设置</resources>
+	<resources key="UI_PAGE_REMOVEWEBPART">移除</resources>
+	<resources key="UI_PAGE_MOVEUPWEBPART">上移</resources>
+	<resources key="UI_PAGE_MOVEDOWNWEBPART">下移</resources>
+	<resources key="UI_PAGE_LOGOUTCONFIRM">确认要退出系统吗?</resources>
+
+	<resources key="UI_DIALOGTITLE_SELECTTEMPLATE">选择模板</resources>
+	<resources key="UI_DIALOGTITLE_NEWPAGE">新建一个页面</resources>
+	<resources key="UI_DIALOGTITLE_MANAGEPAGE">管理页面</resources>
+	<resources key="UI_DIALOGTITLE_SELECTWEBPART">选择部件</resources>
+	<resources key="UI_DIALOGTITLE_WEBPARTEDIT">编辑部件</resources>
+
+	<resources key="SS_CONFIRM_DELETEWEBPART">确定要从页面删除该部件吗?</resources>
+
+	<resources key="UI_TABTITLE_PUBLICATTR">公共属性</resources>
+	<resources key="UI_TABTITLE_PRIVATEATTR">部件属性</resources>
+
+	<resources key="UI_BUTTON_SAVE">保存</resources>
+	<resources key="UI_BUTTON_SEARCH">查询</resources>
+
+	<resources key="UI_PUBLICATTR_CSSNAME">CSS样式</resources>
+	<resources key="UI_PUBLICATTR_TITLE">标题</resources>
+	<resources key="UI_PUBLICATTR_TITLEVISIBLE">显示标题栏</resources>
+	<resources key="UI_PUBLICATTR_TITLEICON">标题图标</resources>
+	<resources key="UI_PUBLICATTR_TITLEICONVISIBLE">显示标题图标</resources>
+	<resources key="UI_PUBLICATTR_WIDTH">宽度</resources>
+	<resources key="UI_PUBLICATTR_HEIGHT">高度</resources>
+
+	<resources key="UI_LOGIN_LOGINNAME">用户名：</resources>
+	<resources key="UI_LOGIN_PASSWORD">密码：</resources>
+	<resources key="UI_LOGIN_REMEMBERME">记住我</resources>
+	<resources key="UI_LOGIN_BTNLOGIN">登录</resources>
+
+	<resources key="UI_SERVICE_CREATEPAGE_TITLE">标题</resources>
+	<resources key="UI_SERVICE_CREATEPAGE_PAGETYPE">类型</resources>
+	<resources key="UI_SERVICE_CREATEPAGE_ORG">所属组织</resources>
+	<resources key="UI_SERVICE_CREATEPAGE_TEMPLATE">模板</resources>
+	<resources key="UI_SERVICE_CREATEPAGE_NEEDTITLE">请填写标题</resources>
+	<resources key="UI_SERVICE_CREATEPAGE_NEEDORG">请选择部门</resources>
+	<resources key="UI_SERVICE_CREATEPAGE_NEEDTEMPLATE">请选择模板</resources>
+	<resources key="UI_SERVICE_CREATEPAGE_SAVEOK">页面保存成功</resources>
+
+	<resources key="UI_SERVICE_TEMPLATELIST_TITLE">页面标题：</resources>
+	<resources key="UI_SERVICE_TEMPLATELIST_NOPAGE">页面不存在</resources>
+	<resources key="UI_SERVICE_TEMPLATELIST_NEEDTITLE">页面标题不能为空</resources>
+	<resources key="UI_SERVICE_TEMPLATELIST_SAMETEMPLATE">模板未变动</resources>
+	<resources key="UI_SERVICE_TEMPLATELIST_NOCHANGE">尚未做任何更改</resources>
+	<resources key="UI_SERVICE_TEMPLATELIST_SAVEOK">页面数据保存成功, 将立即刷新该页面</resources>
+
+	<resources key="UI_SERVICE_WEBPARTLIST_NAME">插件名称：</resources>
+	<resources key="UI_SERVICE_WEBPARTLIST_TYPE">部件类型：</resources>
+
+	<resources key="UI_SERVICE_PAGEMANAGE_ORG">部门：</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_PAGETYPE">类型：</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_BTNDELETE">删除选中的Page</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_COLTITLE">页面名称</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_COLORGNAME">所属组织</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_COLPAGETYPE">类型</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_COLCREATOR">创建者</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_COLCREATETIME">创建时间</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_COLUPDATETIME">更新时间</resources>
+	<resources key="UI_SERVICE_PAGEMANAGE_CONFIRMDELETE">确认要删除选中行的Page?</resources>
+</ot_portal_lang>

@@ -1,0 +1,29 @@
+
+<div class="H3Panel">
+    <div>
+        <div id="usedGrid" style="margin-top:20px;"></div>
+    </div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		var bizRuleCode = getUrlParam("bizRuleCode");
+		CreateLigerGrid($("#usedGrid"), getColums(), "/Portal/BizRule/getUsedBy",
+	                false, "98%", null, null, null,  { ruleCode: bizRuleCode }, false)
+		
+	})
+
+	function getColums() {
+        var workflowDisplayName = $.Lang("BizRule.workflowDisplayName");
+        var bizMethodDisplayName = $.Lang("BizRule.bizMethodDisplayName");
+        var bizRuleDisplayName = $.Lang("BizRule.bizRuleDisplayName");
+        var bizRuleMatrixDisplayName = $.Lang("BizRule.bizRuleMatrixDisplayName");
+
+
+        return [
+                { display: workflowDisplayName, name: "workflowName" },
+                { display: bizMethodDisplayName, name: "bizMethodName" },
+                { display: bizRuleDisplayName, name: "bizRule" },
+                { display: bizRuleMatrixDisplayName, name: "matrix" },
+               ];
+    }
+</script>

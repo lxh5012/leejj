@@ -1,0 +1,36 @@
+﻿<ion-view  class="bpm-filedownload" title="附件预览" hide-nav-bar="{{$root.dingMobile.hideHeader}}">
+    <ion-nav-bar class="bar">
+        <ion-nav-buttons side="left">
+            <button class="button button-icon button-clear ion-ios-arrow-left" ng-click="$ionicGoBack()">返回</button>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+    <ion-content class="has-header" ng-class="{'imgclass':isImg,'txtclass':isTxt,'mp3class':isMp3}">
+
+        <ion-scroll direction="xy" zooming="true" min-zoom="0.1">
+            <img ng-if="isImg" ng-src="{{url}}" style="user-select: none; max-width: 3600px;overflow:scroll;" />
+        </ion-scroll>
+
+        <ion-item style="overflow-x:auto;">
+            <audio controls ng-if="isMp3">
+                <source ng-src="{{url}}">
+            </audio>
+        </ion-item>
+
+            <ion-item ng-if="isTxt" style="height:100%;overflow:auto;">
+                    <iframe src="{{url}}" style="-webkit-overflow-scrolling: touch;overflow-y: scroll;width:100%;height:1000px;"
+                            frameborder="0" scrolling="no"></iframe>
+            </ion-item>
+    </ion-content>
+    <style>
+        .bpm-filedownload .txtclass div.scroll {
+            height: 100%;
+        }
+        .bpm-filedownload .imgclass div.scroll {
+            height: 100%;
+        }
+        .bpm-filedownload .imgclass div.scroll ion-scroll {
+            height: 100%;
+        }
+    </style>
+</ion-view>
+

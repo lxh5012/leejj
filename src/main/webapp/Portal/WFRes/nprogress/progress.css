@@ -1,0 +1,19 @@
+.progressbar-text {
+    width: 24px;
+    height: 24px;
+    box-sizing: border-box;
+    border: solid 2px transparent;
+    border-top-color: #5291ff;
+    border-left-color: #5291ff;
+    border-radius: 50%;
+    -webkit-animation: nprogress-spinner 400ms linear infinite;
+    animation: nprogress-spinner 400ms linear infinite;
+}
+@-webkit-keyframes nprogress-spinner {
+    0%   { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+@keyframes nprogress-spinner {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

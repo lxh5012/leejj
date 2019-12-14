@@ -1,0 +1,90 @@
+﻿<script type="text/javascript" src="../js/H3Report/NiceScrollBar/jquery.nicescroll.min.js"></script>
+<script>
+    //资源文件
+    $(function () {
+        $("#ToolBar").AspLinkToolBar();
+        $(".H3Panel").BuildPanel({excludeIDs: ["instanceOperationLogList"]});
+        QueryFun();
+
+        $("#instanceOperationLogList .l-grid-body.l-grid-body2.l-scroll").niceScroll({ cursorcolor: "#37ABFD", cursoropacitymax: 0.8, autohidemode:false,cursorwidth:"5px" }).resize();
+    });
+
+    function QueryFun() {
+        var startTime = $("#startTime").val();
+        var endTime = $("#endTime").val();
+        var instanceName = $("#instanceName").val();
+
+        if (startTime && endTime && (startTime > endTime)) {
+            $.H3Dialog.Warn({content: $.Lang("msgGlobalString.Portal_TimeMsg")});
+        } else {
+            CreateLigerGrid(
+                $("#instanceOperationLogList"),
+                GetCategoryColumns(),
+                $.Controller.instanceOperationLog.getList,
+                false, "98%",
+                null, null, null,
+                {
+                    startTime: startTime,
+                    endTime: endTime,
+                    instanceName: instanceName
+                }
+            );
+        }
+    }
+
+    function GetCategoryColumns() {
+        var userNameDisplay = $.Lang("InstanceOperationLog.userName");
+        var operationTimeDisplay = $.Lang("InstanceOperationLog.operationTime");
+        var operationDisplay = $.Lang("InstanceOperationLog.operation");
+        var instanceNameDisplay = $.Lang("InstanceOperationLog.instanceName");
+        return [
+            {display: 'ObjectID', name: 'ObjectID', hide: true},
+            {display: userNameDisplay, name: 'userName'},
+            {display: operationTimeDisplay, name: 'operationTime'},
+            {display: operationDisplay, name: 'operation'},
+            {display: instanceNameDisplay, name: 'instanceName'}
+        ];
+    }
+</script>
+
+<div id="ToolBar">
+    <a href="#" id="lnkQuery" onclick="QueryFun()" data-icon="fa fa-search" data-lang="LoginLog.Button_Q">
+    </a>
+</div>
+<div class="H3Panel">
+    <table class="tableList">
+        <tr>
+            <td data-lang="InstanceOperationLog.date"></td>
+            <td>
+                <div class="tableNoCss">
+                    <table>
+                        <tr>
+                            <td class="tableNoCss" style="width:25px" data-lang="ExceptionLog.From">
+                                从
+                            </td>
+                            <td class="tableNoCss">
+                                <input name="startTime" type="text" id="startTime" onclick="InitWdatePicker(this)"
+                                       style="width:95px;" data-datetime="start">
+                            </td>
+                            <td class="tableNoCss" style="width: 21px; padding-left: 10px" data-lang="ExceptionLog.To">
+                                到
+                            </td>
+                            <td class="tableNoCss">
+                                <input name="endTime" type="text" id="endTime" onclick="InitWdatePicker(this)"
+                                       style="width:95px;" data-datetime="end">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+            <td class="tableNoCss" data-lang="InstanceOperationLog.instanceName"></td>
+            <td>
+                <input id="instanceName" type="text"/>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="H3Panel">
+    <span data-lang="InstanceOperationLog.listName"></span>
+    <div id="instanceOperationLogList"></div>
+</div>

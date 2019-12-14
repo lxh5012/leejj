@@ -1,0 +1,58 @@
+<!--
+Create tabs with an icon and label, using the tabs-positive style.
+Each tab's child <ion-nav-view> directive will have its own
+navigation history that also transitions its views in and out.
+-->
+<ion-tabs class="tabs-icon-top tabs-color-active-positive">
+
+    <!-- Dashboard Tab 首页-->
+    <ion-tab title="{{languages.tabs.home}}" icon-off="icon-shouyenew" icon-on="icon-shouyeopen" href="#/tab/home" class="f11 ">
+    <!--		<ion-subheader>	SEWDEW</ion-subheader>-->
+    <ion-nav-view name="tab-home"></ion-nav-view>
+    </ion-tab>
+    <!--<ion-tab title="{{languages.tabs.home}}"-->
+             <!--icon-off="icon iconfont icontab-shouye"-->
+             <!--icon-on="icon iconfont icontab-shouye" href="#/tab/home" class="f11 ">-->
+        <!--&lt;!&ndash;		<ion-subheader>	SEWDEW</ion-subheader>&ndash;&gt;-->
+        <!--<ion-nav-view name="tab-home"></ion-nav-view>-->
+    <!--</ion-tab>-->
+
+    <!-- Chats Tab 发起流程-->
+    <ion-tab title="{{languages.tabs.InitiateProcess}}" icon-off="icon-faqinew" icon-on="icon-faqiopen" href="#/tab/startworkflow" class="f11 ">
+    <ion-nav-view name="tab-startworkflow"></ion-nav-view>
+    </ion-tab>
+    <!--<ion-tab title="{{languages.tabs.InitiateProcess}}"-->
+             <!--icon-off="icon iconfont icontab-faqiliucheng1"-->
+             <!--icon-on="icon iconfont icontab-faqiliucheng1"-->
+             <!--href="#/tab/startworkflow" class="f11 ">-->
+        <!--<ion-nav-view name="tab-startworkflow"></ion-nav-view>-->
+    <!--</ion-tab>-->
+    <!-- Account Tab 常用报表-->
+    <!-- <ion-tab title="常用报表" icon-off="icon-baobaio tabs-icon" icon-on="index-baobiao " href="#/tab/account">
+      <ion-nav-view name="tab-account"></ion-nav-view>
+    </ion-tab> -->
+
+     <!--Account Tab 我的流程-->
+    <ion-tab title="{{languages.tabs.myProcess}}" icon-off="icon-liuchengnew" icon-on="icon-liuchengopen " href="#/tab/myInstances" class="f11 ">
+    <ion-nav-view name="tab-myInstances"></ion-nav-view>
+    </ion-tab>
+    <!--<ion-tab title="{{languages.tabs.myProcess}}"-->
+             <!--icon-off="icon iconfont icontab-wodeliucheng"-->
+             <!--icon-on="icon iconfont icontab-wodeliucheng"-->
+             <!--href="#/tab/myInstances" class="f11 ">-->
+        <!--<ion-nav-view name="tab-myInstances"></ion-nav-view>-->
+    <!--</ion-tab>-->
+
+    <!-- Account Tab 应用 -->
+    <ion-tab title="{{languages.tabs.apps}}"icon-off="icon-yingyongweixuanzhong font-yingyong" icon-on="icon-yingyongxuanzhong font-yingyong" href="#/tab/appCenter">
+    <ion-nav-view name="tab-appCenter"></ion-nav-view>
+    </ion-tab>
+
+    <!--<ion-tab title="{{languages.tabs.apps}}"-->
+             <!--icon-off="icon iconfont tabs-icon icontubiao-tongyongtubiao"-->
+             <!--icon-on="icon iconfont icontubiao-tongyongtubiao"-->
+             <!--href="#/tab/appCenter">-->
+        <!--<ion-nav-view name="tab-appCenter"></ion-nav-view>-->
+    <!--</ion-tab>-->
+
+</ion-tabs>

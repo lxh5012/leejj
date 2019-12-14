@@ -1,0 +1,35 @@
+<ion-view hide-nav-bar='true' class="settings">
+    <!--<div class="menu-tittle f17  {{$root.dingMobile.dingHeaderClass}}" ng-show="$root.dingMobile.hideHeader">-->
+    <div class="menu-tittle f17  {{$root.dingMobile.dingHeaderClass}}">
+        <div class="menu-tittle-left pr25" style="cursor: pointer;padding: 0 10px;" ng-click="goback()">
+            <!--<img src="../img/settings/left.svg" class="left">-->
+            <a class="f17 ion-chevron-left blue"></a>
+        </div>
+        <div class="menu-tittle-middle">{{languages.setting.systemSetting}}</div>
+        <div class="menu-tittle-right f14" ng-click="setIP()">{{languages.confirm}}</div>
+    </div>
+
+  <div class="menu-bar f16" style="border-top: 1px solid #D3D8DC;">
+    <div class="menu-bar-left">{{languages.setting.currentVersion}}</div>
+    <div class="menu-bar-right">{{clientInfo.AppVersion||'v10.7.2'}}</div>
+  </div>
+
+  <div class="line-bottom"></div>
+
+  <!--<div class="menu-bar f16 ipconfig">-->
+    <!--<div class="menu-bar-left">{{languages.setting.IP}}</div>-->
+    <!--&lt;!&ndash;<div class="menu-bar-right"><input type="text" class="f16" ng-model="settingIP" ng-blur = "changeIp()"/></div>&ndash;&gt;-->
+    <!--<div class="menu-bar-right"><input type="text" class="f16" ng-model="settingIP" readonly/></div>-->
+  <!--</div>-->
+
+  <div class="line-bottom"></div>
+
+  <div class="menu-bar f16" ng-click="goLanguage()">
+    <div class="menu-bar-left">{{languages.setting.languageSetting}}</div>
+    <div class="menu-bar-right" >
+      <span class="mr10">{{H3.language=='en_us'?'English':'中文'}}</span>
+      <i class="icon ion-chevron-right f17"></i>
+    </div>
+  </div>
+    <div class="menu-button f16 " ng-show="dingMobile.hideOther" ng-click="logout()">{{languages.loginOut}}</div>
+</ion-view>

@@ -1,0 +1,154 @@
+<script type="text/javascript" src="../WFRes/_Scripts/designer/misc.js"></script>
+<script type="text/javascript" src="../WFRes/_Scripts/designer/FormulaEditable.js?20150422"></script>
+<script type="text/javascript">
+    var pageData = {
+        BizRuleDecisionMatrixColumn: {},//��
+        LanData: $.Languages
+    }
+
+    $(function () {
+        var RuleCode = getUrlParam("RuleCode");
+        var DecisionMatrixCode = getUrlParam("DecisionMatrixCode");
+        var Index = getUrlParam("Index");
+        var ParentIndexes = getUrlParam("ParentIndexes");
+        pageData.BizRuleDecisionMatrixColumn.SortKey = 0;//Sortkey��Ĭ��ֵ
+
+        //�����в��������
+        if (Index > -1) {
+
+            //��������Ϣ
+            $.ajax({
+                url: $.Controller.BizRuleDecisionMatrixColumn.Load,
+                type: "get",
+                data: { ruleCode: RuleCode, matrixCode: DecisionMatrixCode, columnIndex: Index, parentIndexes: ParentIndexes },
+                async: false,
+                success: function (data) {
+                    pageData.BizRuleDecisionMatrixColumn = data;
+                }
+            });
+        }
+      
+        pageData.BizRuleDecisionMatrixColumn.RuleCode = RuleCode;
+        pageData.BizRuleDecisionMatrixColumn.MatrixCode = DecisionMatrixCode;
+        pageData.BizRuleDecisionMatrixColumn.Index = Index;
+        pageData.BizRuleDecisionMatrixColumn.ParentStrIndexs = ParentIndexes;
+        
+        var model = new Vue({
+            el: "#content",
+            data: pageData,
+            methods: {
+                saveData: function (event) {
+                    //;
+                    // console.log(111, 'event');
+                    this.$validate(true);//�?��֤
+                    if (this.$formValidator.invalid) {
+                        $.H3Dialog.Warn({ content: $.Lang("msgGlobalString.FormInvalid") });
+                    } else {
+                        SaveData(false);
+                    }
+                },
+                saveDataAndAdd: function (event) {
+                    //;
+                    this.$validate(true);//�?��֤
+                    if (this.$formValidator.invalid) {
+                        $.H3Dialog.Warn({ content: $.Lang("msgGlobalString.FormInvalid") });
+                    } else {
+                        SaveData(true);
+                    }
+                }
+            }
+        });
+
+        $("#H3Toolbar").AspLinkToolBar();
+        $(".H3Panel").BuildPanel();
+
+        var _text = $("input[type=text][id*=txtEffectiveCondition]");
+        var textWidth = _text.width();
+        _text.FormulaEditable("line-height: 24px;border: 1px solid #a8a8a8;min-height: 24px;margin-left: 1px;");
+        FormulaEditableStack.GetDisplayControl(_text).width(textWidth);
+    });
+
+    function SaveData(isContinueAdd)
+    {
+        $.ajax({
+            url: $.Controller.BizRuleDecisionMatrixColumn.Save,
+            type: "post",
+            data: pageData.BizRuleDecisionMatrixColumn,
+            async: false,
+            success: function (data) {
+                if (data && data.Success) {
+                    //�ж��Ƿ�������
+                    if (isContinueAdd) {
+                        pageData.BizRuleDecisionMatrixColumn.ObjectID = "";
+                        pageData.BizRuleDecisionMatrixColumn.DisplayName = "";
+                        pageData.BizRuleDecisionMatrixColumn.IsDefault = false;
+                        pageData.BizRuleDecisionMatrixColumn.EffectiveCondition = "";
+                        pageData.BizRuleDecisionMatrixColumn.Description = "";
+                        pageData.BizRuleDecisionMatrixColumn.SortKey = pageData.BizRuleDecisionMatrixColumn.SortKey + 1;
+                        FormulaEditableStack.Clear("#txtEffectiveCondition");
+                        parent.ReloadColumnGridData();
+                    } else {
+                        parent.H3DialogManger.Close();
+                    }
+                } else {
+                    $.H3Dialog.Warn({ content: $.Lang(data.Message) });
+                }
+            }
+        });
+    }
+</script>
+<validator name="formValidator">
+    <div id="H3Toolbar">
+        <a id="btnSave" v-on:click="saveData" data-icon="fa fa-save" data-lang="GlobalButton.Save"></a>
+        <a id="btnSaveAndAdd" v-on:click="saveDataAndAdd" data-icon="icon-baocunbingjixutianjia" data-lang="GlobalButton.SaveAndAdd"></a>
+    </div>
+    <div class="H3Panel">
+        <span data-lang="msgGlobalString.BasicProperties"></span>
+        <table>
+            <tr>
+                <td>
+                    {{LanData.BizRule.DisplayName}}
+                </td>
+                <td>
+                    <input type="text" id="txtDisplayName" maxlength="64" v-model="BizRuleDecisionMatrixColumn.DisplayName" detect-change="off" detect-blur="on" initial="off" v-validate:item-code="['htmlEscape','required']" />
+                    <span style="color:Red;" v-if="$formValidator.itemCode.required">{{LanData.msgGlobalString.EnumValueRequired}}</span>
+                    <span style="color:Red;" v-if="$formValidator.itemCode.htmlEscape">{{LanData.msgGlobalString.InvalidCode}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{LanData.BizRule.IsDefault}}
+                </td>
+                <td>
+                    <input type="checkbox" id="chkIsDefault" v-model="BizRuleDecisionMatrixColumn.IsDefault" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{LanData.BizRule.EffectiveCondition}}
+                </td>
+                <td>
+                    <input type="text" title="生效条件" id="txtEffectiveCondition" maxlength="64" v-model="BizRuleDecisionMatrixColumn.EffectiveCondition" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{LanData.BizRule.Description}}
+                </td>
+                <td>
+                    <textarea id="txtDescription" v-model="BizRuleDecisionMatrixColumn.Description" v-validate:description="{htmlEscape:true}" />
+                    <span style="color:Red;" v-if="$formValidator.description.htmlEscape">{{LanData.msgGlobalString.InvalidCode}}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{LanData.BizRule.SortKey}}
+                </td>
+                <td>
+                    <input type="text" id="txtSortKey" v-model="BizRuleDecisionMatrixColumn.SortKey" number v-validate:sort-key="{number:true}"/>
+                    <span style="color:Red;" v-if="$formValidator.sortKey.number">{{LanData.msgGlobalString.NumberValidate}}</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</validator>

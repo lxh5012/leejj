@@ -1,0 +1,11 @@
+﻿{
+	"engine":{
+		"needLogin" : "登录超时，请重新登录",
+		"codesRequired" : "请至少选择一行",
+		"canNotDoActionOnCurrentEngine":"不能操作当前使用的引擎 [{0}]"
+	},
+	"vessel":{
+		"codesRequired":"请至少选择一行",
+		"canNotRemoveCurrentVessel":"不能删除当前使用服务器 [{0}]"
+	}
+}

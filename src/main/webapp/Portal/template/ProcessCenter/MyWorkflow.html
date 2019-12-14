@@ -1,0 +1,63 @@
+﻿<!--
+    发起流程
+     -->
+<!--  ng-init="
+     app.settings.asideFolded=false;
+     app.settings.asideDock=false;" -->
+<div class="hbox hbox-auto-xs hbox-auto-sm">
+    <!-- main -->
+    <div class="col">
+        <!-- main header -->
+        <div class="bg-light lter b-b wrapper-md">
+
+         <!--<div class="w-icon searchContainer password-input" style="float: right">-->
+               <!--<input type="text" class="icon-inline form-control" style="width:300px"-->
+                      <!--ng-model="searchKey"-->
+                      <!--ng-change="searchKeyChange()"-->
+                      <!--autocomplete="off"-->
+                      <!--placeholder="{{LanJson.search}}">-->
+               <!--<i class="icon aufontAll h-icon-all-search-o"></i>-->
+          <!--</div>-->
+            <div class="form-title-name">
+                   <span ng-click="gobackUnfinish()">
+                        <i class="goback icon aufontAll h-icon-all-circle-left" ></i>
+                   </span>
+                <span class="h3" ng-bind="menuData.DisplayName"></span>
+            </div>
+        </div>
+
+        <div class="wrapper-md paddingbottomNone">
+            <div class="panel panel-default">
+                <div class="table-responsive">
+                    <!--表格部分Star-->
+                    <div style="width: 100%; display: block;">
+                        <table ui-jq="bootstrapTable2" ui-options="bootstrapTableOptions" id="MyWorkflowTable"> </table>
+                        <!--<table ui-jq="bootstrapTable" ui-options="bootstrapTableOptions" id="MyWorkflowTable"> </table>-->
+                    </div>
+                    <!--表格部分End-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- / main -->
+</div>
+<style>
+   .form-inline{
+       padding: 15px;
+    }
+   .like:hover {
+       color: #3A7CFF;
+   }
+   .unlikelink :hover {
+       color: #D6DBE5;
+   }
+   .unlikelink {
+       color: #D6DBE5;
+   }
+   .likelink {
+       color: #FF6851;
+   }
+   .likelink:hover {
+       color: #FF6851;
+   }
+</style>

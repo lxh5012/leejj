@@ -1,0 +1,81 @@
+﻿<script language="javascript" type="text/javascript">
+    $(function () {
+        $("#H3ToolBar").AspLinkToolBar();
+        $("#divEngineToolBar").AspLinkToolBar();
+
+        CreateLigerGrid(
+            $("#gvVessel"),
+            CreateVesselColums(),
+            $.Controller.Vessel.GetVesselList,
+            false);
+    });
+
+    function CreateVesselColums() {
+        return [
+            { display: "服务编码", name: "Code" },
+            { display: "服务地址", name: "Address" },
+            { display: "端口号", name: "Port" },
+            { display: "权重", name: "LoadWeight" },
+            { display: "顺序", name: "Order" },
+            { display: "服务状态", name: "CurrentState" }
+        ];
+    }
+
+    function DelVessel(obj) {
+        var manager = $("#gvVessel").ligerGetGridManager();
+        var rows = manager.getSelectedRows();
+        if (rows == null || rows.length == 0) {
+            $.H3Dialog.Warn({ content: "请选中内容" });
+            return;
+        }
+        var codes = "";
+        for (var i = 0; i < rows.length; i++) {
+            codes = codes + rows[i].Code + ";";
+        }
+        if (ConfirmDel(obj)) {
+            $.ajax({
+                url: $.Controller.Vessel.DeleteVessel,
+                type: 'get',
+                dataType: "json",
+                data: {codes:codes},
+                success: function (res) {
+                    if (res.Success) {
+                        manager.reload();
+                    } else {
+                    	if(res.Message === "needLogin") {
+                    		toLoginPage();
+                    	} else if(res.Message === "vessel.canNotRemoveCurrentVessel"){
+                            $.H3Dialog.Warn({ content: $.format($.Lang(res.Message), res.Extend.vesselCode) });
+                    	} else {
+                    		$.H3Dialog.Error({ content: "删除失败" });
+                    	}
+                    }
+                }
+            });
+        }
+    }
+    
+    function toLoginPage() {
+    	$.H3Dialog.Warn({ content: $.Lang("登录失效，请重新登录。") });
+    	top.location.href = "Login.html"
+    }
+
+    // 添加新服务器
+    function AddVessel(obj) {
+        //ShowDialog("添加服务器", _CLUSTERROOT_GLOBAL + "/TabMaster.html?url=EditVessel.html");
+        ShowDialog("添加服务器", "TabMaster.html?url=EditVessel.html");
+    }
+
+    function ReloadGrid() {
+        var manager = $("#gvVessel").ligerGetGridManager();
+        manager.reload();
+    }
+</script>
+<div>
+    <div id="H3ToolBar">
+        <a href="javascript:void(0)" onclick="AddVessel(this)" title="add">添加</a>
+        <a href="javascript:void(0)" onclick="DelVessel(this)" title="delete">移除</a>
+    </div>
+    <div id="gvVessel">
+    </div>
+</div>

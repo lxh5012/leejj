@@ -1,0 +1,71 @@
+﻿<div class="panel {{WebPartData.CssName==''? 'panel-default':WebPartData.CssName}}" ot_webpart_inst="{{WebPartData.ObjectID}}"
+     ot_part_for="{{WebPartData.WebPartPost}}"
+     style="{{WebPartData.Width<=0?'width:100%;':'width:'+WebPartData.Width+WebPartData.WidthUnit+';'}}
+     {{WebPartData.Height<=0?'height:100%;':'height:'+WebPartData.Height+WebPartData.HeightUnit+';'}}">
+    <div ng-show="OT_EditorModel" class="tool-button drag-handler portlet-handler">
+        <a class="button edit-button" ng-click="showEditModel('{{WebPartData.ObjectID}}','{{WebPartData.WebPartID}}','{{WebPartData.WebPartPost}}')">
+            <li class="fa fa-gear"></li>
+            <span style="margin-left:3px;" translate="HomePage.Setting"></span>
+        </a>
+        <a class="button delete-button" ng-click="RemoveWebPartInst('{{WebPartData.ObjectID }}')">
+            <li class="fa fa-remove"></li>
+            <span style="margin-left:3px;" translate="HomePage.Remove"></span>
+        </a>
+    </div>
+    <div class="panel-heading" style="padding-bottom:10px;" ng-show="{{WebPartData.TitleVisible=='1'}}">
+        <span class="panel_title" style="width:15px;height:15px;vertical-align:sub;">
+            <i class="{{WebPartData.TitleIcon}}" style="margin-left:3px;"></i>
+            {{WebPartData.Title}}
+        </span>
+        <a style="float:right;" ng-if="WebPartData.MoreLink.indexOf('http')==-1&&WebPartData.MorePos=='tr'"
+           ui-sref="{{WebPartData.MoreLink==''?'#':WebPartData.MoreLink}}" target="_blank">{{WebPartData.MoreText}}</a>
+        <a style="float:right;" ng-if="WebPartData.MoreLink.indexOf('http')!=-1&&WebPartData.MorePos=='tr'"
+           ng-href="{{WebPartData.MoreLinkl}}" target="_blank">{{WebPartData.MoreText}}</a>
+    </div>
+    <div class="panel-body">
+        <div class="Ascx"
+             id="{{WebPartData.ObjectID}}" data-ng-include="WebPartData.ControlPath"
+             ng-if="WebPartType.Text=='Ascx控件'">
+            Ascx控件
+        </div>
+        <div class="Static" id="{{WebPartData.ObjectID}}"
+             ng-if="WebPartType.Text=='静态内容'" style="word-break: break-all;">
+            <span ng-bind="HtmlContent"></span>
+        </div>
+        <div class="DataModel" id="{{WebPartData.ObjectID}}"
+             ng-if="WebPartType.Text=='数据模型'">
+            <table class="table table-striped m-b-none" style="width:99%;">
+            	<thead>
+            		<tr role="row" ng-repeat="trData in trDatas" ng-if="$index==0">
+                		<th ng-repeat="tdData in trData" rowspan="1" colspan="1" style="border-top: 1px solid #eaeff0;" title="{{tdData.Text}}">
+                			<span>{{tdData.Text}}</span>
+                		</th>
+            		</tr>
+            	</thead>
+                <tbody>
+                    <tr ng-repeat="trData in trDatas" ng-if="$index!=0">
+                        <td ng-repeat="tdData in trData">
+                           <!-- fixed by hxc-->
+                            <a ng-if="tdData.Href!='#'&&(tdData.Text==null||tdData.Text=='null'||tdData.Text=='&quot;null&quot;')" href="{{tdData.Href}}" target="_blank" title="{{tdData.Text}}">{{tdData.Text}}</a>
+                            <span ng-if="tdData.Href=='#'&&(tdData.Text==null||tdData.Text=='null'||tdData.Text=='&quot;null&quot;')" target="_blank" title="{{tdData.Text}}">{{tdData.Text}}</span>
+                            <a ng-if="tdData.Href!='#'&&!(tdData.Text==null||tdData.Text=='null'||tdData.Text=='&quot;null&quot;')" href="{{tdData.Href}}" target="_blank" title="{{tdData.Text}}">{{tdData.Text}}</a>
+                            <span ng-if="tdData.Href=='#'&&!(tdData.Text==null||tdData.Text=='null'||tdData.Text=='&quot;null&quot;')" target="_blank" title="{{tdData.Text}}">{{tdData.Text}}</span>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="Report" id="{{WebPartData.ObjectID}}"
+             ng-if="WebPartType.Text=='报表'" >
+            <div  class="ReportFiters report-content form-horizontal"></div>
+            <div  id="ReportPage" class="ReportPage report-content"></div>
+        </div>
+        <div class="data-more" style="{{WebPartData.MorePos=='br'?'text-align:right;':'text-align:left;'}}">
+            <a ng-if="WebPartData.MoreLink.indexOf('http')==-1&&WebPartData.MorePos!='tr'" ui-sref="{{WebPartData.MoreLink==''?'#':WebPartData.MoreLink}}" target="_blank">
+                {{WebPartData.MoreText}}
+            </a>
+            <a ng-if="WebPartData.MoreLink.indexOf('http')!=-1&&WebPartData.MorePos!='tr'" ng-href="{{WebPartData.MoreLink}}" target="_blank">{{WebPartData.MoreText}}</a>
+        </div>        
+    </div>
+</div>
