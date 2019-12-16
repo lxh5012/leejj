@@ -23,7 +23,7 @@ import net.sf.json.JSONObject;
 @RequestMapping(value = "/SpecialWorkflowJump")
 public class SpecialWorkflowJumpController extends ControllerBase {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(OrgUnitSyncController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SpecialWorkflowJumpController.class);
 	@Value("${specialIdentifier}")
 	private  String specialIdentifier;
 

@@ -12,13 +12,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import zkkg.controller.OrgUnitSyncController;
 import zkkg.vo.ZkOrgInfo;
 import zkkg.vo.ZkUserInfo;
 
 
  public class JdbcUtil {
-     private static final Logger LOGGER = LoggerFactory.getLogger(OrgUnitSyncController.class);
+     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcUtil.class);
 //     private static final String DRIVER = "oracle.jdbc.driver.OracleDriver";
 //     private static  final String URL = "jdbc:oracle:thin:@127.0.0.1:1521:orcl";
 //     private static  final String USER = "H3BPMTEST";
