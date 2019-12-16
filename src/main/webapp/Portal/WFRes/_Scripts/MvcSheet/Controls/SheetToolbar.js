@@ -742,6 +742,24 @@ $.MvcSheetToolbar.FinishInstance.Inherit($.MvcSheetToolbar.IButton, {
     }
 });
 //#endregion
+//#region 挂起流程
+$.MvcSheetToolbar.HangInstance = function (element, option, sheetInfo) {
+    return $.MvcSheetToolbar.HangInstance.Base.constructor.call(this, element, option, sheetInfo);
+};
+$.MvcSheetToolbar.HangInstance.Inherit($.MvcSheetToolbar.IButton, {
+    //PreRender: function () {
+    //    this.constructor.Base.PreRender();
+    //    //this.OnActionPreDo = function () {
+    //    //    return confirm("确定执行结束流程操作?");
+    //    //}
+    //},
+    DoAction: function () {
+        // $.MvcSheet.ConfirmAction(SheetLanguages.Current.ConfirmFinishInstance, function () {
+        //     $.MvcSheet.HangInstance(this);
+        // });
+        alert(123)
+    }
+});
 
 //#region 转发
 $.MvcSheetToolbar.Forward = function (element, option, sheetInfo) {

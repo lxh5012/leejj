@@ -30,6 +30,7 @@ jQuery.extend({
         Action_Close: "Close",
         Action_RetrieveInstance: "RetrieveInstance",
         Action_Viewed: "Viewed", //已阅
+        Action_Hang: "HangInstance", //挂起
 
         //默认Actions
         SaveAction: {
@@ -109,6 +110,13 @@ jQuery.extend({
             Icon: "fa-square",
             Text: "结束流程",
             en_us: "Finish Instance"
+        },
+        //默认Actions
+        HangInstanceAction: {
+            Action: "HangInstance",
+            Icon: "fa-save",
+            Text: "挂起",
+            en_us: "Hang Instance",
         },
         // UrgentAction: {
         //     Action: "Urgent",
@@ -1178,6 +1186,7 @@ jQuery.extend(
         },
         //结束流程
         FinishInstance: function (actionControl) {
+            debugger
             $.LoadingMask.Show(SheetLanguages.Current.Finishing);
             var SheetPostValue = this.GetMvcPostValue(this.Action_FinishInstance);
             var that = this;
@@ -1188,6 +1197,21 @@ jQuery.extend(
                 function (data) {
                     that.ResultHandler.apply(that, [actionControl, data]);
                 });
+        },
+        //挂起流程
+        HangInstance: function (actionControl) {
+            alert(12121)
+            // debugger
+            // // $.LoadingMask.Show(SheetLanguages.Current.Finishing);
+            // var SheetPostValue = this.GetMvcPostValue(this.Action_Hang);
+            // var that = this;
+            // this.PostSheet({
+            //         Command: this.Action_Hang,
+            //         MvcPostValue: JSON.stringify(SheetPostValue)
+            //     },
+            //     function (data) {
+            //         that.ResultHandler.apply(that, [actionControl, data]);
+            //     });
         },
         //取回流程
         RetrieveInstance: function (actionControl) {
@@ -1206,8 +1230,27 @@ jQuery.extend(
                 function () {
                     $.LoadingMask.Show(SheetLanguages.Current.Retrieving);
                 },
-                function () {},
+                function () {}
                 );
+        },
+        //获取Mvc表单传给后台的数据
+        GetMvcPostValue: function (actionName, destActivity, postValue) {
+            var SheetPostValue = {
+                Command: actionName,
+                DestActivityCode: destActivity,
+                PostValue: postValue,
+                BizObjectId: $.MvcSheetUI.SheetInfo.BizObjectID,
+                InstanceId: $.MvcSheetUI.SheetInfo.InstanceId,
+                BizObject: {}
+                //当前表单的数据项集合值
+            };
+
+            SheetPostValue.BizObject.DataItems = $.MvcSheetUI.SaveSheetData(actionName);
+            SheetPostValue.Priority = $.MvcSheetUI.Priority;
+            SheetPostValue.HiddenFields = $.MvcSheetUI.HiddenFields;
+            // TODO:需要获取当前提交人所选择的发起组织
+            SheetPostValue.ParentUnitID = $.MvcSheetUI.ParentUnitID;
+            return SheetPostValue;
         },
         //获取Mvc表单传给后台的数据
         GetMvcPostValue: function (actionName, destActivity, postValue) {
@@ -1418,6 +1461,7 @@ jQuery.extend(
         AddDefaultActions: function () {
             if ($.MvcSheetUI.SheetInfo && $.MvcSheetUI.SheetInfo.IsMobile) {
                 this.Actions.splice(0, this.Actions.length,
+                    this.HangInstanceAction,
                     this.RetrieveInstanceAction,
                     this.SaveAction,
                     this.ViewInstanceAction,
@@ -1440,6 +1484,7 @@ jQuery.extend(
                 );
             } else {
                 this.Actions.splice(0, this.Actions.length,
+                    this.HangInstanceAction,
                     this.RetrieveInstanceAction,
                     this.SaveAction,
                     this.ViewInstanceAction,
